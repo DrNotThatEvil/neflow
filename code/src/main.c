@@ -4,6 +4,8 @@
 #include <hardware/gpio.h>
 #include <hardware/i2c.h>
 
+#include "nf_config.h"
+#include "debounce.h"
 //#include "font.h"
 #include "ssd1306.h"
 
@@ -11,7 +13,7 @@ void setup_gpios(void);
 void animation(void);
 void gpio_callback(uint gpio, uint32_t events);
 
-static uint counter;
+volatile uint counter;
 
 int main()
 {
@@ -24,7 +26,15 @@ int main()
 
 void gpio_callback(uint gpio, uint32_t events)
 {
-    counter += 1;
+    if(debounce(gpio)) {
+        return;
+    }
+
+    if(gpio == 14) {
+        counter++;
+    }else if(gpio == 15 && counter > 0) {
+        counter--;
+    }
 }
 
 void setup_gpios(void)
@@ -35,8 +45,8 @@ void setup_gpios(void)
     gpio_pull_up(2);
     gpio_pull_up(3);
     
-    gpio_set_irq_enabled_with_callback(14, GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
-    gpio_set_irq_enabled_with_callback(15, GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
+    gpio_set_irq_enabled_with_callback(NF_MENU_UP_BTN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback);
+    gpio_set_irq_enabled(NF_MENU_DOWN_BTN, GPIO_IRQ_EDGE_RISE, true);
 }
 
 void animation(void)

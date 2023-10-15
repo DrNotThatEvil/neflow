@@ -1,4 +1,5 @@
 set(NEFLOW_HEADER_LIST 
+    "${neflow_SOURCE_DIR}/include/nf_config.h"
     "${neflow_SOURCE_DIR}/include/font.h"
     "${neflow_SOURCE_DIR}/include/ssd1306.h"
     "${neflow_SOURCE_DIR}/include/debounce.h"
