@@ -10,18 +10,20 @@
 #include "ssd1306.h"
 
 void setup_gpios(void);
-void animation(void);
+void animation(nf_state_t* _state);
 void gpio_callback(uint gpio, uint32_t events);
 
-volatile uint counter;
 
 int main()
 {
-    counter = 0;
-
     stdio_init_all();
+
+
+    nf_state_t* _state = malloc(sizeof(nf_state_t));
+    nf_init(_state);
+
     setup_gpios();
-    animation();
+    animation(_state);
 }
 
 void gpio_callback(uint gpio, uint32_t events)
@@ -30,11 +32,6 @@ void gpio_callback(uint gpio, uint32_t events)
         return;
     }
 
-    if(gpio == 14) {
-        counter++;
-    }else if(gpio == 15 && counter > 0) {
-        counter--;
-    }
 }
 
 void setup_gpios(void)
@@ -49,7 +46,7 @@ void setup_gpios(void)
     gpio_set_irq_enabled(NF_MENU_DOWN_BTN, GPIO_IRQ_EDGE_RISE, true);
 }
 
-void animation(void)
+void animation(nf_state_t* _state)
 {
 
     ssd1306_t disp;
@@ -61,9 +58,15 @@ void animation(void)
 
     for(;;)
     { 
-        sprintf(str, "%d", counter);
+        if(_state->_menu_state == NORMAL) {
+            sprintf(str, "NORMAL");
+        } else {
+            sprintf(str, "DUMB");
+        }
 
-        ssd1306_draw_string(&disp, 8, 24, 2, str);
+        ssd1306_draw_line(&disp, 49, 10, 64, 0);
+        ssd1306_draw_line(&disp, 64, 0, 79, 10);
+        ssd1306_draw_string(&disp, 24, 25, 2, str);
         ssd1306_show(&disp);
         sleep_ms(25);
         ssd1306_clear(&disp);

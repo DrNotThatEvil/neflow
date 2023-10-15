@@ -9,6 +9,7 @@ add_executable(neflow
     main.c
     ssd1306.c
     debounce.c
+    nf_config.c
     ${REFLOW_PLATE_HEADER_LIST}
 )
 
