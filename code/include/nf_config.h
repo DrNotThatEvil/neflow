@@ -2,6 +2,7 @@
 #define nf_config_h
 
 #include <pico/stdlib.h>
+#include "nf_menu.h"
 
 #define NF_BTN0_PIN 14
 #define NF_BTN1_PIN 15
@@ -30,7 +31,8 @@ typedef enum {
 
 typedef struct {
     nf_menu_state_t _menu_state;
-    nf_reflow_state_t _reflow_state;    
+    nf_reflow_state_t _reflow_state; 
+    _nf_menu_t* _menu;
 } nf_state_t;
 
 void nf_init(nf_state_t* _nf_state);
