@@ -57,7 +57,7 @@ void animation(nf_state_t* _state)
     char str[10];
 
     for(;;)
-    { 
+    {
         if(_state->_menu_state == NORMAL) {
             sprintf(str, "NORMAL");
         } else {
