@@ -4161,7 +4161,7 @@
     (property "Value" "Speaker" (at 203.2 154.94 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "" (at 198.12 157.48 0)
+    (property "Footprint" "Library:PassiveBuzzerSMD_JiangsuHuaneng_MLT-5030" (at 198.12 157.48 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 197.866 153.67 0)
