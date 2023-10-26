@@ -47,7 +47,13 @@ void gpio_callback(uint gpio, uint32_t events)
         return;
     }
 
-    _state->_menu->current_menu_option = ((_state->_menu->current_menu_option + 1) % NOPTIONS);
+    if (gpio == 15) {
+        _state->_menu->current_menu_option = ((_state->_menu->current_menu_option + 1) % NOPTIONS);
+    }
+
+    if (gpio == 13) {
+        _state->_menu->menu_options[_state->_menu->current_menu_option].select_fn((void*) _state->_menu->menu_options,  _state->_menu->current_menu_option);
+    }
 }
 
 void setup_gpios(void)
@@ -60,6 +66,7 @@ void setup_gpios(void)
     
     gpio_set_irq_enabled_with_callback(NF_MENU_UP_BTN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback);
     gpio_set_irq_enabled(NF_MENU_DOWN_BTN, GPIO_IRQ_EDGE_RISE, true);
+    gpio_set_irq_enabled(NF_MENU_SELECT_BTN, GPIO_IRQ_EDGE_RISE, true);
 }
 
 void animation(nf_state_t* _state)
@@ -76,10 +83,11 @@ void animation(nf_state_t* _state)
     {
         sprintf(str, "%s", _state->_menu->menu_options[_state->_menu->current_menu_option]);
 
-        //ssd1306_draw_line(&disp, 49, 10, 64, 0);
-        //ssd1306_draw_line(&disp, 64, 0, 79, 10);
-        //ssd1306_draw_string(&disp, 24, 25, 2, str);
+        ssd1306_draw_line(&disp, 49, 10, 64, 0);
+        ssd1306_draw_line(&disp, 64, 0, 79, 10);
+        ssd1306_draw_string(&disp, 24, 25, 2, str);
 
+        /*
         for(int i = 0; i < (60/5); i++) {
             ssd1306_draw_line(&disp, 0, (5 * i), 5, (5 * i));
         }
@@ -88,6 +96,7 @@ void animation(nf_state_t* _state)
         ssd1306_draw_line(&disp, 2, 0, 2, 60);
         ssd1306_draw_line(&disp, 5, 60, 128, 60);
         ssd1306_draw_line(&disp, 5, 61, 128, 61);
+
 
         int prevX = 0, prevY = HEIGHT;
         int x, y;
@@ -104,6 +113,7 @@ void animation(nf_state_t* _state)
 
             sleep_ms(100);
         }
+        */
 
         ssd1306_show(&disp);
         sleep_ms(200);

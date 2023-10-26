@@ -6,7 +6,7 @@
 
 #define NF_BTN0_PIN 14
 #define NF_BTN1_PIN 15
-#define NF_BTN2_PIN 6
+#define NF_BTN2_PIN 13
 #define NF_BTN3_PIN 7
 
 #define NF_MENU_UP_BTN NF_BTN0_PIN
