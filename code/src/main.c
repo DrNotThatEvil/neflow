@@ -23,11 +23,10 @@ void gpio_callback(uint gpio, uint32_t events);
 int main()
 {
     stdio_init_all();
+    setup_gpios();
 
     _state = malloc(sizeof(nf_state_t));
     nf_init(_state);
-
-    setup_gpios();
     animation(_state);
 }
 
@@ -37,22 +36,16 @@ void gpio_callback(uint gpio, uint32_t events)
         return;
     }
 
-    if (gpio == 14) {
-        if (_state->_menu->current_menu_option > 0) {
-            _state->_menu->current_menu_option = ((_state->_menu->current_menu_option - 1) % NOPTIONS);
-        } else {
-            _state->_menu->current_menu_option = (NOPTIONS - 1);
-        }
-        
-        return;
+    if (gpio == NF_MENU_BACK_BTN) {
+        _state->_menu->menu_options[_state->_menu->current_menu_option].back_fn((void*) _state->_menu);
     }
 
-    if (gpio == 15) {
-        _state->_menu->current_menu_option = ((_state->_menu->current_menu_option + 1) % NOPTIONS);
+    if (gpio == NF_MENU_NEXT_BTN) {
+        _state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu);
     }
 
-    if (gpio == 13) {
-        _state->_menu->menu_options[_state->_menu->current_menu_option].select_fn((void*) _state->_menu->menu_options,  _state->_menu->current_menu_option);
+    if (gpio == NF_MENU_SELECT_BTN) {
+        _state->_menu->menu_options[_state->_menu->current_menu_option].select_fn((void*) _state->_menu);
     }
 }
 
@@ -64,59 +57,34 @@ void setup_gpios(void)
     gpio_pull_up(2);
     gpio_pull_up(3);
     
-    gpio_set_irq_enabled_with_callback(NF_MENU_UP_BTN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback);
-    gpio_set_irq_enabled(NF_MENU_DOWN_BTN, GPIO_IRQ_EDGE_RISE, true);
+    gpio_set_irq_enabled_with_callback(NF_MENU_BACK_BTN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback);
     gpio_set_irq_enabled(NF_MENU_SELECT_BTN, GPIO_IRQ_EDGE_RISE, true);
+    gpio_set_irq_enabled(NF_MENU_NEXT_BTN, GPIO_IRQ_EDGE_RISE, true);
 }
 
 void animation(nf_state_t* _state)
 {
 
-    ssd1306_t disp;
-    disp.external_vcc=false;
-    ssd1306_init(&disp, 128, 64, 0x3C, i2c1);
-    ssd1306_clear(&disp);
-
-    char str[10];
+    ssd1306_clear(_state->_disp_ptr);
 
     for(;;)
     {
+        /*
         sprintf(str, "%s", _state->_menu->menu_options[_state->_menu->current_menu_option]);
 
-        ssd1306_draw_line(&disp, 49, 10, 64, 0);
-        ssd1306_draw_line(&disp, 64, 0, 79, 10);
-        ssd1306_draw_string(&disp, 24, 25, 2, str);
+        ssd1306_draw_line(_state->_disp_ptr, 49, 10, 64, 0);
+        ssd1306_draw_line(_state->_disp_ptr, 64, 0, 79, 10);
 
-        /*
-        for(int i = 0; i < (60/5); i++) {
-            ssd1306_draw_line(&disp, 0, (5 * i), 5, (5 * i));
-        }
+        ssd1306_draw_string(_state->_disp_ptr, 20, 22, 2, str);
 
-        ssd1306_draw_line(&disp, 1, 0, 1, 60);
-        ssd1306_draw_line(&disp, 2, 0, 2, 60);
-        ssd1306_draw_line(&disp, 5, 60, 128, 60);
-        ssd1306_draw_line(&disp, 5, 61, 128, 61);
-
-
-        int prevX = 0, prevY = HEIGHT;
-        int x, y;
-
-        for (x = 0; x < WIDTH; x++) {
-            // Simulate a hill-like shape (you can modify this function for different hill shapes)
-            y = HEIGHT - (int)(50 * sin(0.06 * x) + x * x * 0.0002);
-
-            ssd1306_draw_line(&disp, prevX, prevY, x, y);
-
-            prevX = x;
-            prevY = y;
-
-
-            sleep_ms(100);
-        }
+        ssd1306_draw_line(_state->_disp_ptr, 49, 50, 64, 60);
+        ssd1306_draw_line(_state->_disp_ptr, 64, 60, 79, 50);
         */
 
-        ssd1306_show(&disp);
-        sleep_ms(200);
-        ssd1306_clear(&disp);
+        nf_menu_render(_state->_menu);
+
+        ssd1306_show(_state->_disp_ptr);
+        sleep_ms(20);
+        ssd1306_clear(_state->_disp_ptr);
     }
 }

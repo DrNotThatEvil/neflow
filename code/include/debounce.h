@@ -4,7 +4,7 @@
 #include <pico/stdlib.h>
 
 #define NGPIO 5
-#define DEBOUNCE_MS 400
+#define DEBOUNCE_MS 500
 
 bool debounce(uint gpio);
 
