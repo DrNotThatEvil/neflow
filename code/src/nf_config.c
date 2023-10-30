@@ -4,6 +4,14 @@ void nf_init(nf_state_t* _state)
 {
     _state->_menu_state = NORMAL;
     _state->_reflow_state = NONE;
+
+    for(int i=0; i < 3; i++) {
+        _state->_buttons[i].pressed = false;
+        _state->_buttons[i].held = false;
+        _state->_buttons[i].held_count = 0;
+        _state->_buttons[i].released = false;
+    }
+
     _state->_disp_ptr = (ssd1306_t*) malloc(sizeof(ssd1306_t));
     _state->_profiles = (nf_profile_t*) malloc(3 * sizeof(nf_profile_t));
 
