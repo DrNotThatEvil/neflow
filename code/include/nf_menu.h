@@ -13,7 +13,6 @@
 /// INDEXES
 #define PROFILES 0
 #define REPEAT_FOR_EDIT_INCR 5
-#define ANIMATION_UPDATE_MS 1250
 
 typedef void (*on_select)(void* _menu_state, bool repeat);
 
