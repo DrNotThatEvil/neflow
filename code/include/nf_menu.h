@@ -14,6 +14,25 @@
 #define PROFILES 0
 #define REPEAT_FOR_EDIT_INCR 5
 
+typedef struct nf_menu _nf_menu_t;
+typedef struct nf_menu_option _nf_menu_option_t;
+
+typedef struct nf_menu_option_fn_ptrs _nf_menu_option_fn_ptrs;
+
+typedef struct nf_menu_option_fn_ptrs {
+    void (*on_s)(_nf_menu_t* menu_state);
+};
+
+typedef struct nf_menu_option {
+    void* extra_data;
+    nf_menu_option_fn_ptrs fnptrs;
+} _nf_menu_option_t;
+
+
+/// USE PTR POINTERS as a menu mechanism!
+/// you have a block of menu options use pointers for the forward and back ones
+/// you know? it's smart! remember this brain moment
+
 typedef void (*on_select)(void* _menu_state, bool repeat);
 
 typedef struct {
@@ -36,7 +55,7 @@ typedef struct {
     void* extra_data;
 } _nf_menu_option;
 
-typedef struct {
+typedef struct nf_menu {
     ssd1306_t* _disp_ptr;
     _nf_menu_option* menu_options;
     uint current_menu_option; 
