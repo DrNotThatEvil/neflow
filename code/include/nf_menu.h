@@ -14,24 +14,35 @@
 #define PROFILES 0
 #define REPEAT_FOR_EDIT_INCR 5
 
+
 typedef struct nf_menu _nf_menu_t;
 typedef struct nf_menu_option _nf_menu_option_t;
 
-typedef struct nf_menu_option_fn_ptrs _nf_menu_option_fn_ptrs;
+typedef struct nf_menu_option_fn_ptrs _nf_menu_option_fn_ptrs_t;
 
 typedef struct nf_menu_option_fn_ptrs {
-    void (*on_s)(_nf_menu_t* menu_state);
-};
+    void (*on_render)(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data); 
+    void (*on_btn)(_nf_menu_t* menu_state, uint btn, bool repeat, void* extra_data);
+} _nf_menu_option_fn_ptrs_t;
 
 typedef struct nf_menu_option {
+    uint id;
     void* extra_data;
-    nf_menu_option_fn_ptrs fnptrs;
+    _nf_menu_option_fn_ptrs_t fnptrs;
+    _nf_menu_option_t* next;
 } _nf_menu_option_t;
 
 
 /// USE PTR POINTERS as a menu mechanism!
 /// you have a block of menu options use pointers for the forward and back ones
 /// you know? it's smart! remember this brain moment
+
+// Notes
+// Split up screens in seperate files,
+// Each screen gets a init functions
+// Also aproach it diffently it's not a list of menu options
+// its a list of screens, the main_menu just handles the display change in the renderer
+
 
 typedef void (*on_select)(void* _menu_state, bool repeat);
 
