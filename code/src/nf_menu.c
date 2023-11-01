@@ -516,7 +516,7 @@ void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, nf_profile_t* _
     _menu_state->menu_options[1].select_fn = test_select;
     _menu_state->menu_options[1].next_fn = main_next;
     _menu_state->menu_options[1].extra_data = (void*)0;
-    
+
     _menu_state->menu_options[2].name = malloc(sizeof(char) * 20);
     strcpy(_menu_state->menu_options[2].name, "Config");
     _menu_state->menu_options[2].render_fn = main_menu_renderer;
