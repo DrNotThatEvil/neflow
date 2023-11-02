@@ -44,17 +44,18 @@ void gpio_callback(uint gpio, uint32_t events)
 
         if (gpio == NF_MENU_BACK_BTN && !_state->_buttons[NF_BACK_BTN_INDEX].pressed) {
             _state->_buttons[NF_BACK_BTN_INDEX].pressed = true;
-            _state->_menu->menu_options[_state->_menu->current_menu_option].back_fn((void*) _state->_menu, false);
+            nf_menu_btn_handler(_state->_menu, 0, false);
+            //_state->_menu->menu_options[_state->_menu->current_menu_option].back_fn((void*) _state->_menu, false);
         }
 
         if (gpio == NF_MENU_NEXT_BTN && !_state->_buttons[NF_NEXT_BTN_INDEX].pressed) {
             _state->_buttons[NF_NEXT_BTN_INDEX].pressed = true;
-            _state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu, false);
+            //_state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu, false);
         }
 
         if (gpio == NF_MENU_SELECT_BTN && !_state->_buttons[NF_SELECT_BTN_INDEX].pressed) {
             _state->_buttons[NF_SELECT_BTN_INDEX].pressed = true;
-            _state->_menu->menu_options[_state->_menu->current_menu_option].select_fn((void*) _state->_menu, false);
+            //_state->_menu->menu_options[_state->_menu->current_menu_option].select_fn((void*) _state->_menu, false);
         }
 
         return;
@@ -97,11 +98,11 @@ void update_btns(void)
             // only back and next should have repeat events
             if(_state->_buttons[i].held_count > BTN_REPEAT_UNTIL_HELD) {
                 if(i == NF_BACK_BTN_INDEX) {
-                    _state->_menu->menu_options[_state->_menu->current_menu_option].back_fn((void*) _state->_menu, true);
+                    //_state->_menu->menu_options[_state->_menu->current_menu_option].back_fn((void*) _state->_menu, true);
                 }
 
                 if(i == NF_NEXT_BTN_INDEX) {
-                    _state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu, true);
+                    //_state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu, true);
                 }
             } else {
                 _state->_buttons[i].held_count = (_state->_buttons[i].held_count + 1);

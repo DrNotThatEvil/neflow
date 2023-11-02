@@ -1,5 +1,6 @@
 #include "nf_menu.h"
 
+/**
 void profile_view_back(void* _menu_state, bool repeat);
 void profile_view_next(void* _menu_state, bool repeat);
 void profile_view_empty(void* _menu_state, bool repeat);
@@ -160,7 +161,7 @@ void edit_profile_renderer(void* _menu_state, bool repeat)
     ssd1306_draw_line(_disp_ptr, 5, 3, 5, 8);
     ssd1306_draw_line(_disp_ptr, 4, 4, 4, 7);
     ssd1306_draw_line(_disp_ptr, 3, 5, 3, 6);
-    */
+    
 
     char str[20];
     sprintf(str, "Editing Profile %d", (_menu->current_menu_option - 2));
@@ -482,23 +483,35 @@ void main_menu_renderer(void* _menu_state, bool repeat)
 
     ssd1306_draw_line(_disp_ptr, 122, 31, 127, 31);
     ssd1306_draw_line(_disp_ptr, 122, 32, 122, 32);
-*/
 
     //ssd1306_draw_line(_disp_ptr, , 50, 64, 60);
     //ssd1306_draw_line(_disp_ptr, 64, 60, 79, 50);
 }
+*/
+
+void nf_menu_btn_handler(_nf_menu_t* _menu, uint btn, bool repeat)
+{
+    //_menu->menu_options[_menu->current_menu_option].render_fn((void*)_menu, false);
+    (*_menu->current_screen)->fnptrs.on_btn(_menu, btn, repeat, (*_menu->current_screen)->extra_data);
+}
 
 void nf_menu_render(_nf_menu_t* _menu)
 {
-    _menu->menu_options[_menu->current_menu_option].render_fn((void*)_menu, false);
+    //_menu->menu_options[_menu->current_menu_option].render_fn((void*)_menu, false);
+    (*_menu->current_screen)->fnptrs.on_render(_menu, _menu->_disp_ptr, (*_menu->current_screen)->extra_data);
 }
 
 void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, nf_profile_t* _profiles)
 {
 
     _menu_state->_disp_ptr = _disp_ptr;
-    _menu_state->current_menu_option = 0;
     _menu_state->refresh_ms = 5;
+    _menu_state->menu_screens = NULL; //(_nf_menu_screen_t*) malloc(sizeof(_nf_menu_screen_t));
+
+    nf_main_menu_init(_menu_state);
+    *_menu_state->current_screen = _menu_state->menu_screens;
+
+    /*
     _menu_state->menu_options = (_nf_menu_option*) malloc(NOPTIONS * sizeof(_nf_menu_option));
 
     _menu_state->menu_options[PROFILES].name = malloc(sizeof(char) * 20);
@@ -545,4 +558,5 @@ void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, nf_profile_t* _
         _menu_state->menu_options[i].next_fn = profiles_next;
         _menu_state->menu_options[i].extra_data = (void*) _menu_profile_ptr;
     }
+    */
 }

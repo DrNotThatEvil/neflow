@@ -5,7 +5,11 @@
 #include <pico/stdlib.h>
 #include <pico/types.h>
 #include "nf_profile.h"
-#include "ssd1306.h"
+
+#include "nf_menu/nf_menu_common.h"
+#include "nf_menu/nf_main_menu.h"
+
+/*
 
 #define NOPTIONS 6
 #define MAIN_OPTIONS 3
@@ -14,10 +18,8 @@
 #define PROFILES 0
 #define REPEAT_FOR_EDIT_INCR 5
 
-
 typedef struct nf_menu _nf_menu_t;
 typedef struct nf_menu_screen _nf_menu_screen_t;
-
 typedef struct nf_menu_screen_fn_ptrs _nf_menu_screen_fn_ptrs_t;
 
 typedef struct nf_menu_screen_fn_ptrs {
@@ -28,8 +30,8 @@ typedef struct nf_menu_screen_fn_ptrs {
 typedef struct nf_menu_screen {
     uint id;
     void* extra_data;
-    _nf_menu_option_fn_ptrs_t fnptrs;
-    _nf_menu_option_t* next;
+    _nf_menu_screen_fn_ptrs_t fnptrs;
+    _nf_menu_screen_t* next;
 } _nf_menu_screen_t;
 
 
@@ -68,13 +70,16 @@ typedef struct {
 
 typedef struct nf_menu {
     ssd1306_t* _disp_ptr;
-    _nf_menu_option* menu_options;
-    uint current_menu_option;
+    _nf_menu_screen_t* menu_screens;
+    _nf_menu_screen_t** current_screen;
     uint refresh_ms;
 } _nf_menu_t;
 
+*/
+
 void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, nf_profile_t* _profiles);
 void nf_menu_render(_nf_menu_t* _menu_state);
+void nf_menu_btn_handler(_nf_menu_t* _menu_state, uint btn, bool repeat);
 
 
 #endif
