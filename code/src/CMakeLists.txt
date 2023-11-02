@@ -3,7 +3,8 @@ set(NEFLOW_HEADER_LIST
     "${neflow_SOURCE_DIR}/include/nf_config.h"
     "${neflow_SOURCE_DIR}/include/nf_menu.h"
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_menu_common.h"
-    "${neflow_SOURCE_DIR}/include/nf_menu/nf_main_menu.h"
+    "${neflow_SOURCE_DIR}/include/nf_menu/nf_main_menu_screen.h"
+    "${neflow_SOURCE_DIR}/include/nf_menu/nf_profiles_screen.h"
     "${neflow_SOURCE_DIR}/include/font.h"
     "${neflow_SOURCE_DIR}/include/ssd1306.h"
     "${neflow_SOURCE_DIR}/include/debounce.h"
@@ -16,12 +17,14 @@ add_executable(neflow
     nf_profile.c
     nf_config.c
     nf_menu.c
-    nf_menu/nf_main_menu.c
+    nf_menu/nf_menu_common.c
+    nf_menu/nf_main_menu_screen.c
+    nf_menu/nf_profiles_screen.c
     ${REFLOW_PLATE_HEADER_LIST}
 )
 
 target_include_directories(neflow
-    PUBLIC ../include
+    PUBLIC "${PROJECT_SOURCE_DIR}/include"
 )
 
 

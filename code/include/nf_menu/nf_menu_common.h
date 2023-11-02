@@ -27,5 +27,9 @@ typedef struct nf_menu {
     uint refresh_ms;
 } _nf_menu_t;
 
+void nf_menu_add_screen(_nf_menu_screen_t** _menu_screens_ptr, _nf_menu_screen_t* _new_screen);
+void nf_menu_change_screen(_nf_menu_t* _menu, uint screen_id);
+
+void draw_next_arrow(ssd1306_t* disp_ptr);
 
 #endif

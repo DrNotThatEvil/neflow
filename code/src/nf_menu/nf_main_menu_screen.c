@@ -1,14 +1,16 @@
-#include "nf_menu/nf_main_menu.h"
+#include "nf_menu/nf_main_menu_screen.h"
 
 void nf_main_menu_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data)
 {
     char str[20];
     uint test = *((uint*)extra_data);
 
-    if(test == 0) {
-        sprintf(str, "%s", "test\0");
+    if(test == PROFILES_INDEX) {
+        sprintf(str, "%s", "Profiles\0");
+    } else if (CALIBRATION_INDEX) {
+        sprintf(str, "%s", "Calibration\0");
     } else {
-        sprintf(str, "%s", "biem\0");
+        sprintf(str, "%s", "Config\0");
     }
 
     ssd1306_draw_line(disp_ptr, 122, 28, 122, 35);
@@ -22,19 +24,34 @@ void nf_main_menu_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extr
 void nf_main_menu_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void* extra_data)
 {
     uint* data = (uint*) extra_data;
-    *data = 1;
+
+    if(btn == 1) {
+        *data = ((*data) + 1) % 2;
+        return;
+    }
+
+    if(btn == 2) {
+        if(*data == PROFILES_INDEX) {
+            nf_menu_change_screen(menu_state, 1);
+        }
+
+        //if(*data == 1) {
+        //    *data = ((*data) + 1) % 2;
+        //}
+    }
 }
 
 void nf_main_menu_init(_nf_menu_t* _menu_state)
 {
     // get start of the screens.
     _nf_menu_screen_t** _menu_screens_ptr = &_menu_state->menu_screens;
-    _nf_menu_screen_t* main_screen = (_nf_menu_screen_t*) malloc(sizeof(_nf_menu_screen_t));
 
+    _nf_menu_screen_t* main_screen = (_nf_menu_screen_t*) malloc(sizeof(_nf_menu_screen_t));
     main_screen->id = 0;
     main_screen->extra_data = malloc(sizeof(uint));
-    uint* data = main_screen->extra_data;
-    *data = 0;
+
+    uint* option = main_screen->extra_data;
+    *option = PROFILES_INDEX;
 
     _nf_menu_screen_fn_ptrs_t main_screen_fns = {
         .on_render = nf_main_menu_render,
@@ -44,16 +61,6 @@ void nf_main_menu_init(_nf_menu_t* _menu_state)
     main_screen->fnptrs = main_screen_fns;
     main_screen->next = NULL;
 
-    // If the list is empty, make the new node the head of the list
-    if (*_menu_screens_ptr == NULL) {
-        *_menu_screens_ptr = main_screen;
-    } else {
-        // Find the last node and update its 'next' pointer
-        _nf_menu_screen_t* current = *_menu_screens_ptr;
-        while (current->next != NULL) {
-            current = current->next;
-        }
-        current->next = main_screen;
-    }
+    nf_menu_add_screen(_menu_screens_ptr, main_screen);
 
 }

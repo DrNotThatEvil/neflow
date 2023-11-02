@@ -50,11 +50,13 @@ void gpio_callback(uint gpio, uint32_t events)
 
         if (gpio == NF_MENU_NEXT_BTN && !_state->_buttons[NF_NEXT_BTN_INDEX].pressed) {
             _state->_buttons[NF_NEXT_BTN_INDEX].pressed = true;
+            nf_menu_btn_handler(_state->_menu, 1, false);
             //_state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu, false);
         }
 
         if (gpio == NF_MENU_SELECT_BTN && !_state->_buttons[NF_SELECT_BTN_INDEX].pressed) {
             _state->_buttons[NF_SELECT_BTN_INDEX].pressed = true;
+            nf_menu_btn_handler(_state->_menu, 2, false);
             //_state->_menu->menu_options[_state->_menu->current_menu_option].select_fn((void*) _state->_menu, false);
         }
 

@@ -7,7 +7,8 @@
 #include "nf_profile.h"
 
 #include "nf_menu/nf_menu_common.h"
-#include "nf_menu/nf_main_menu.h"
+#include "nf_menu/nf_main_menu_screen.h"
+#include "nf_menu/nf_profiles_screen.h"
 
 /*
 
