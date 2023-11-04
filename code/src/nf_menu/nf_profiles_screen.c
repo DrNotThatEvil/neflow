@@ -6,6 +6,7 @@ void nf_profiles_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra
     _nf_profiles_menu_state_t* profiles_state = ((_nf_profiles_menu_state_t*) extra_data);
 
     if(!profiles_state->selected) {
+        draw_prev_section(disp_ptr, "Main menu");
         sprintf(str, "Profile %d\0", (profiles_state->selected_profile+1));
 
         draw_next_arrow(disp_ptr);
@@ -15,6 +16,8 @@ void nf_profiles_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra
         ssd1306_draw_string(disp_ptr, 5, 40, 1, str);
         return;
     }
+    
+    draw_prev_section(disp_ptr, "Profiles");
 
     if(profiles_state->selected_option == 0) {
         sprintf(str, "Run", (profiles_state->selected_profile+1));
@@ -62,6 +65,11 @@ void nf_profiles_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void
             profiles_state->selected_option = ((profiles_state->selected_option) + 1) % 3;
             return;
         } 
+
+        if(btn == 2) {
+            nf_menu_change_screen(menu_state, 2);
+            return;
+        }
     }
 }
 

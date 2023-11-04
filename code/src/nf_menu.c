@@ -512,6 +512,7 @@ void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, nf_profile_t* _
     _menu_state->current_screen = &(_menu_state->menu_screens);
 
     nf_profiles_menu_init(_menu_state, _profiles);
+    nf_profile_edit_menu_init(_menu_state, _profiles);
 
     /*
     _menu_state->menu_options = (_nf_menu_option*) malloc(NOPTIONS * sizeof(_nf_menu_option));

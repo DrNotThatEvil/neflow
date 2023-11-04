@@ -25,8 +25,20 @@ void nf_menu_change_screen(_nf_menu_t* _menu, uint screen_id)
 
             return;
         }
-        current = &((_menu->menu_screens)->next);
+        current = &((*current)->next);
     }
+}
+
+void draw_prev_section(ssd1306_t* disp_ptr, const char* str)
+{
+    ssd1306_draw_pixel(disp_ptr, 2, 3);
+    ssd1306_draw_line(disp_ptr, 3, 2, 3, 4);
+    ssd1306_draw_line(disp_ptr, 4, 1, 4, 5);
+
+    ssd1306_draw_string(disp_ptr, 8, 0, 1, str);
+
+
+    ssd1306_draw_line(disp_ptr, 0, 9, 128, 9);
 }
 
 void draw_next_arrow(ssd1306_t* disp_ptr)
