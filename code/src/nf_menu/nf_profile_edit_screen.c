@@ -65,6 +65,22 @@ void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, 
 {
     _nf_profile_edit_screen_state_t* profile_edit_state = ((_nf_profile_edit_screen_state_t*) extra_data);
 
+    if(btn == 0) {
+        if (profile_edit_state->editing == 0) {
+            if(profile_edit_state->selected_value > 0) {
+                profile_edit_state->selected_value = (profile_edit_state->selected_value - 1) % 6;
+            }
+            return;
+        }
+
+
+        if(!profile_edit_state->adjust) {
+            if(profile_edit_state->editing > 1) {
+                profile_edit_state->editing = (profile_edit_state->editing - 1) % 3;
+            }
+        }
+    }
+
     if(btn == 1) {
         if (profile_edit_state->editing == 0) {
             profile_edit_state->selected_value = (profile_edit_state->selected_value + 1) % 6;
