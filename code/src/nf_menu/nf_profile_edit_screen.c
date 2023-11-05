@@ -10,12 +10,27 @@ void draw_edit_item(ssd1306_t* disp_ptr, uint y, bool selected, const char* str)
     }
 }
 
+void draw_edit_value(ssd1306_t* disp_ptr, uint y, bool selected, const char* str)
+{
+    ssd1306_draw_string(disp_ptr, 55, (y+3), 1, str);
+
+    uint la_x = 44;
+    if(selected) {
+        ssd1306_draw_line(disp_ptr, 44, (y+6), 44, (y+7));
+        ssd1306_draw_line(disp_ptr, 45, (y+5), 45, (y+8));
+        ssd1306_draw_line(disp_ptr, 46, (y+4), 46, (y+9));
+        ssd1306_draw_line(disp_ptr, 47, (y+3), 47, (y+10));
+        ssd1306_draw_line(disp_ptr, 48, (y+2), 48, (y+11));
+        //ssd1306_draw_line(disp_ptr, 1, (y+11), 127, (y+11));
+    }
+}
+
 void nf_profile_edit_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data)
 {
     _nf_profile_edit_screen_state_t* profile_edit_state = ((_nf_profile_edit_screen_state_t*) extra_data);
     uint selected = profile_edit_state->selected_value;
 
-    if(!profile_edit_state->editing) {
+    if(profile_edit_state->editing == 0) {
         draw_edit_item(disp_ptr, 0, (selected == 0), "Back");
         draw_edit_item(disp_ptr, 11, (selected == 1), "Pre-heat start");
         draw_edit_item(disp_ptr, 22, (selected == 2), "Pre-Heat end");
@@ -26,8 +41,18 @@ void nf_profile_edit_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* e
         return;
     }
 
+    draw_edit_item(disp_ptr, 0, (profile_edit_state->editing == 1), "Back");
+
+
+    draw_edit_item(disp_ptr, 11, (profile_edit_state->editing == 2), "Target temp:");
+    char str[20];
+    sprintf(str, "%d", 100);
+    draw_edit_value(disp_ptr, 22, true, str);
     
-    draw_edit_item(disp_ptr, 0, (selected == 0), "Back");
+    
+    draw_edit_item(disp_ptr, 34, (profile_edit_state->editing == 3), "Target time:");
+    sprintf(str, "%d", 100);
+    draw_edit_value(disp_ptr, 45, false, str);
 
 }
 
@@ -36,7 +61,12 @@ void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, 
     _nf_profile_edit_screen_state_t* profile_edit_state = ((_nf_profile_edit_screen_state_t*) extra_data);
 
     if(btn == 1) {
-        profile_edit_state->selected_value = (profile_edit_state->selected_value + 1) % 5;
+        if (profile_edit_state->selected_value == 0) {
+            profile_edit_state->selected_value = (profile_edit_state->selected_value + 1) % 5;
+            return;
+        }
+
+        profile_edit_state->editing = (profile_edit_state->editing % 3) + 1;
     }
 
     if(btn == 2) {
@@ -44,7 +74,7 @@ void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, 
             return;
         }
 
-        profile_edit_state->editing = true;
+        profile_edit_state->editing = 1;
     }
 }
 
@@ -59,7 +89,7 @@ void nf_profile_edit_menu_init(_nf_menu_t* _menu_state, nf_profile_t* _profiles_
     _nf_profile_edit_screen_state_t* profile_edit_state = (_nf_profile_edit_screen_state_t*) profile_edit_screen->extra_data;
     profile_edit_state->current_profile = NULL;
     profile_edit_state->selected_value = 0;
-    profile_edit_state->editing = false;
+    profile_edit_state->editing = 0;
 
     _nf_menu_screen_fn_ptrs_t profile_edit_screen_fns = {
         .on_render = nf_profile_edit_render,
