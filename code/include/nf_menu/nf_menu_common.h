@@ -13,6 +13,7 @@ typedef struct nf_profile_edit_screen_state {
     nf_profile_t** current_profile;
     uint selected_value;
     uint editing; 
+    bool adjust
 } _nf_profile_edit_screen_state_t;
 
 typedef struct nf_menu_screen_fn_ptrs {
