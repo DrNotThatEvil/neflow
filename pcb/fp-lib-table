@@ -3,4 +3,5 @@
   (lib (name "SSD1306")(type "KiCad")(uri "${KIPRJMOD}/ssd1306/SSD1306.pretty")(options "")(descr ""))
   (lib (name "Library")(type "KiCad")(uri "${KIPRJMOD}/library.pretty")(options "")(descr ""))
   (lib (name "silicone_btn")(type "KiCad")(uri "${KIPRJMOD}/silicone_btn/silicone_btn.pretty")(options "")(descr ""))
+  (lib (name "MCU_RaspberryPi_and_Boards")(type "KiCad")(uri "${KIPRJMOD}/KiCad-RP-Pico/RP-Pico Libraries/MCU_RaspberryPi_and_Boards.pretty")(options "")(descr ""))
 )
