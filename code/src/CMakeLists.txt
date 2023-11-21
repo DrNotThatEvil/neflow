@@ -30,7 +30,7 @@ target_include_directories(neflow
 )
 
 
-target_link_libraries(neflow pico_stdlib pico_malloc hardware_i2c)
+target_link_libraries(neflow pico_stdlib pico_malloc hardware_i2c pwm_tone)
 target_link_options(neflow PUBLIC -Xlinker --print-memory-usage)
 
 pico_add_extra_outputs(neflow)

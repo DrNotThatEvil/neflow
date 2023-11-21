@@ -7,6 +7,9 @@
 #include <hardware/i2c.h>
 
 #include "nf_config.h"
+#include "pwm-tone.h"
+#include "pitches.h"
+
 #include "debounce.h"
 //#include "font.h"
 #include "ssd1306.h"
@@ -18,6 +21,8 @@
 
 static nf_state_t* _state;
 static absolute_time_t btn_update_timeout = { 0u };
+
+struct tonegenerator_t generator;
 
 void setup_gpios(void);
 void update(nf_state_t* _state);
@@ -45,18 +50,24 @@ void gpio_callback(uint gpio, uint32_t events)
         if (gpio == NF_MENU_BACK_BTN && !_state->_buttons[NF_BACK_BTN_INDEX].pressed) {
             _state->_buttons[NF_BACK_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 0, false);
+
+            tone(&generator, NOTE_C4, 100);
             //_state->_menu->menu_options[_state->_menu->current_menu_option].back_fn((void*) _state->_menu, false);
         }
 
         if (gpio == NF_MENU_NEXT_BTN && !_state->_buttons[NF_NEXT_BTN_INDEX].pressed) {
             _state->_buttons[NF_NEXT_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 1, false);
+
+            tone(&generator, NOTE_E4, 100);
             //_state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu, false);
         }
 
         if (gpio == NF_MENU_SELECT_BTN && !_state->_buttons[NF_SELECT_BTN_INDEX].pressed) {
             _state->_buttons[NF_SELECT_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 2, false);
+
+            tone(&generator, NOTE_A4, 100);
             //_state->_menu->menu_options[_state->_menu->current_menu_option].select_fn((void*) _state->_menu, false);
         }
 
@@ -127,12 +138,39 @@ void update_btns(void)
 
 void setup_gpios(void)
 {
+    // Screen setup
     i2c_init(i2c1, 400000);
-    gpio_set_function(2, GPIO_FUNC_I2C);
-    gpio_set_function(3, GPIO_FUNC_I2C);
-    gpio_pull_up(2);
-    gpio_pull_up(3);
+    gpio_set_function(NF_SCREEN_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(NF_SCREEN_SCL, GPIO_FUNC_I2C);
+    gpio_pull_up(NF_SCREEN_SDA);
+    gpio_pull_up(NF_SCREEN_SCL);
+
+    // Speaker setup
+    tone_init(&generator, NF_SPKR_PIN);
+
+    // OUTPUTS
+    gpio_init(NF_SSR0_PIN);
+    gpio_set_dir(NF_SSR0_PIN, GPIO_OUT);
+
+    gpio_init(NF_SSR1_PIN);
+    gpio_set_dir(NF_SSR1_PIN, GPIO_OUT);
     
+    gpio_init(NF_FAN0_PIN);
+    gpio_set_dir(NF_FAN0_PIN, GPIO_OUT);
+    
+    gpio_init(NF_FAN1_PIN);
+    gpio_set_dir(NF_FAN1_PIN, GPIO_OUT);
+
+    // BUTTONS
+    gpio_init(NF_MENU_BACK_BTN);
+    gpio_set_dir(NF_MENU_BACK_BTN, GPIO_IN);
+    
+    gpio_init(NF_MENU_NEXT_BTN);
+    gpio_set_dir(NF_MENU_NEXT_BTN, GPIO_IN);
+    
+    gpio_init(NF_MENU_SELECT_BTN);
+    gpio_set_dir(NF_MENU_SELECT_BTN, GPIO_IN);
+
     gpio_set_irq_enabled_with_callback(NF_MENU_BACK_BTN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
     gpio_set_irq_enabled(NF_MENU_SELECT_BTN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
     gpio_set_irq_enabled(NF_MENU_NEXT_BTN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
