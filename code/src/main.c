@@ -22,7 +22,7 @@
 static nf_state_t* _state;
 static absolute_time_t btn_update_timeout = { 0u };
 
-struct tonegenerator_t generator;
+// struct tonegenerator_t generator;
 
 void setup_gpios(void);
 void update(nf_state_t* _state);
@@ -51,7 +51,7 @@ void gpio_callback(uint gpio, uint32_t events)
             _state->_buttons[NF_BACK_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 0, false);
 
-            tone(&generator, NOTE_C4, 100);
+            //tone(&generator, NOTE_C4, 100);
             //_state->_menu->menu_options[_state->_menu->current_menu_option].back_fn((void*) _state->_menu, false);
         }
 
@@ -59,7 +59,7 @@ void gpio_callback(uint gpio, uint32_t events)
             _state->_buttons[NF_NEXT_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 1, false);
 
-            tone(&generator, NOTE_E4, 100);
+            //tone(&generator, NOTE_E4, 100);
             //_state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu, false);
         }
 
@@ -67,7 +67,7 @@ void gpio_callback(uint gpio, uint32_t events)
             _state->_buttons[NF_SELECT_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 2, false);
 
-            tone(&generator, NOTE_A4, 100);
+            //tone(&generator, NOTE_A4, 100);
             //_state->_menu->menu_options[_state->_menu->current_menu_option].select_fn((void*) _state->_menu, false);
         }
 
@@ -146,7 +146,7 @@ void setup_gpios(void)
     gpio_pull_up(NF_SCREEN_SCL);
 
     // Speaker setup
-    tone_init(&generator, NF_SPKR_PIN);
+    //tone_init(&generator, NF_SPKR_PIN);
 
     // OUTPUTS
     gpio_init(NF_SSR0_PIN);

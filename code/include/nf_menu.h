@@ -5,10 +5,12 @@
 #include <pico/stdlib.h>
 #include <pico/types.h>
 
+#include "pwm-tone.h"
 #include "nf_menu/nf_menu_common.h"
 #include "nf_menu/nf_main_menu_screen.h"
 #include "nf_menu/nf_profiles_screen.h"
 #include "nf_menu/nf_profile_edit_screen.h"
+
 
 /*
 
@@ -78,7 +80,7 @@ typedef struct nf_menu {
 
 */
 
-void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, nf_profile_t* _profiles);
+void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t* _tonegen, nf_profile_t* _profiles);
 void nf_menu_render(_nf_menu_t* _menu_state);
 void nf_menu_btn_handler(_nf_menu_t* _menu_state, uint btn, bool repeat);
 

@@ -2,6 +2,8 @@
 #define nf_config_h
 
 #include <pico/stdlib.h>
+
+#include "pwm-tone.h"
 #include "ssd1306.h"
 #include "nf_profile.h"
 #include "nf_menu.h"
@@ -57,7 +59,8 @@ typedef struct {
 } nf_btn_state;
 
 typedef struct {
-    nf_btn_state _buttons[3];    
+    nf_btn_state _buttons[3];
+    tonegenerator_t* _tonegen;
     nf_menu_state_t _menu_state; /// TODO move this to the menu.h?
     nf_reflow_state_t _reflow_state; 
     ssd1306_t* _disp_ptr;

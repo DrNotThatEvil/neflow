@@ -27,11 +27,13 @@ void nf_main_menu_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, voi
 
     if(btn == 1) {
         *data = ((*data) + 1) % 2;
+        tone(menu_state->_tonegen, NOTE_E4, 100);
         return;
     }
 
     if(btn == 2) {
         if(*data == PROFILES_INDEX) {
+            tone(menu_state->_tonegen, NOTE_C4, 150);
             nf_menu_change_screen(menu_state, 1);
         }
 

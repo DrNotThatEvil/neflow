@@ -3,4 +3,4 @@
 	url = git@github.com:ncarandini/KiCad-RP-Pico.git
 [submodule "code/libs/RP2040-PWM-Tone"]
 	path = code/libs/RP2040-PWM-Tone
-	url = git@github.com:TuriSc/RP2040-PWM-Tone.git
+	url = git@github.com:DrNotThatEvil/RP2040-PWM-Tone.git

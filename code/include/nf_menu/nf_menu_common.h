@@ -1,6 +1,7 @@
 #ifndef NF_MENU_COMMON_H
 #define NF_MENU_COMMON_H
 
+#include "pwm-tone.h"
 #include "ssd1306.h"
 #include "nf_profile.h"
 
@@ -29,6 +30,7 @@ typedef struct nf_menu_screen {
 } _nf_menu_screen_t;
 
 typedef struct nf_menu {
+    tonegenerator_t* _tonegen;
     ssd1306_t* _disp_ptr;
     _nf_menu_screen_t* menu_screens;
     _nf_menu_screen_t** current_screen;
