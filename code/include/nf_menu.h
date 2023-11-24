@@ -8,6 +8,7 @@
 #include "pwm-tone.h"
 #include "nf_menu/nf_menu_common.h"
 #include "nf_menu/nf_main_menu_screen.h"
+#include "nf_menu/nf_test_menu_screen.h"
 #include "nf_menu/nf_profiles_screen.h"
 #include "nf_menu/nf_profile_edit_screen.h"
 

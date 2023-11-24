@@ -7,10 +7,14 @@ void nf_main_menu_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extr
 
     if(test == PROFILES_INDEX) {
         sprintf(str, "%s", "Profiles\0");
-    } else if (CALIBRATION_INDEX) {
+    } else if (test == CALIBRATION_INDEX) {
         sprintf(str, "%s", "Calibration\0");
-    } else {
+    } else if (test == CONFIG_INDEX) {
         sprintf(str, "%s", "Config\0");
+#if ENABLE_TEST_MENU == 1
+    } else if (test == TEST_MENU_INDEX) {
+        sprintf(str, "%s", "Test\0");
+#endif
     }
 
     ssd1306_draw_line(disp_ptr, 122, 28, 122, 35);
@@ -26,7 +30,7 @@ void nf_main_menu_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, voi
     uint* data = (uint*) extra_data;
 
     if(btn == 1) {
-        *data = ((*data) + 1) % 2;
+        *data = ((*data) + 1) % MAX_MAIN_MENU_OPTION_INDEX;
         tone(menu_state->_tonegen, NOTE_E4, 100);
         return;
     }
@@ -34,9 +38,15 @@ void nf_main_menu_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, voi
     if(btn == 2) {
         if(*data == PROFILES_INDEX) {
             tone(menu_state->_tonegen, NOTE_C4, 150);
-            nf_menu_change_screen(menu_state, 1);
+            nf_menu_change_screen(menu_state, PROFILES_SCREEN_ID);
         }
 
+#if ENABLE_TEST_MENU == 1
+        if(*data == TEST_MENU_INDEX) {
+            tone(menu_state->_tonegen, NOTE_C4, 150);
+            nf_menu_change_screen(menu_state, TEST_SCREEN_ID);
+        }
+#endif
         //if(*data == 1) {
         //    *data = ((*data) + 1) % 2;
         //}

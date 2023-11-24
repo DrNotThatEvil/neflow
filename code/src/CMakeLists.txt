@@ -1,4 +1,5 @@
 set(NEFLOW_HEADER_LIST 
+    "${neflow_SOURCE_DIR}/include/nf_common.h"
     "${neflow_SOURCE_DIR}/include/nf_profile.h"
     "${neflow_SOURCE_DIR}/include/nf_config.h"
     "${neflow_SOURCE_DIR}/include/nf_menu.h"
@@ -6,6 +7,7 @@ set(NEFLOW_HEADER_LIST
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_main_menu_screen.h"
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_profiles_screen.h"
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_profile_edit_screen.h"
+    "${neflow_SOURCE_DIR}/include/nf_menu/nf_test_menu_screen.h"
     "${neflow_SOURCE_DIR}/include/font.h"
     "${neflow_SOURCE_DIR}/include/ssd1306.h"
     "${neflow_SOURCE_DIR}/include/debounce.h"
@@ -22,6 +24,7 @@ add_executable(neflow
     nf_menu/nf_main_menu_screen.c
     nf_menu/nf_profiles_screen.c
     nf_menu/nf_profile_edit_screen.c
+    nf_menu/nf_test_menu_screen.c
     ${REFLOW_PLATE_HEADER_LIST}
 )
 
@@ -29,8 +32,9 @@ target_include_directories(neflow
     PUBLIC "${PROJECT_SOURCE_DIR}/include"
 )
 
+target_compile_definitions(neflow PUBLIC ENABLE_TEST_MENU=1)
 
-target_link_libraries(neflow pico_stdlib pico_malloc hardware_i2c pwm_tone)
+target_link_libraries(neflow pico_stdlib pico_multicore pico_malloc hardware_i2c pwm_tone)
 target_link_options(neflow PUBLIC -Xlinker --print-memory-usage)
 
 pico_add_extra_outputs(neflow)

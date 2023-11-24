@@ -40,7 +40,7 @@ void nf_profiles_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void
 
     if(!profiles_state->selected) {
         if(btn == 0) {
-            nf_menu_change_screen(menu_state, 0);
+            nf_menu_change_screen(menu_state, MAIN_MENU_SCREEN_ID);
             return;
         }
 
@@ -67,7 +67,7 @@ void nf_profiles_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void
         } 
 
         if(btn == 2) {
-            nf_menu_change_screen(menu_state, 2);
+            nf_menu_change_screen(menu_state, PROFILE_EDIT_SCREEN_ID);
             return;
         }
     }
@@ -79,7 +79,7 @@ void nf_profiles_menu_init(_nf_menu_t* _menu_state, nf_profile_t* _profiles)
     _nf_menu_screen_t** _menu_screens_ptr = &_menu_state->menu_screens;
     _nf_menu_screen_t* profiles_screen = (_nf_menu_screen_t*) malloc(sizeof(_nf_menu_screen_t));
 
-    profiles_screen->id = 1;
+    profiles_screen->id = PROFILES_SCREEN_ID;
     profiles_screen->extra_data = malloc(sizeof(_nf_profiles_menu_state_t));
 
     _nf_profiles_menu_state_t* profile_menu_state = (_nf_profiles_menu_state_t*) profiles_screen->extra_data;

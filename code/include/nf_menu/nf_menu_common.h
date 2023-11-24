@@ -1,9 +1,17 @@
 #ifndef NF_MENU_COMMON_H
 #define NF_MENU_COMMON_H
 
+#include "nf_common.h"
 #include "pwm-tone.h"
 #include "ssd1306.h"
 #include "nf_profile.h"
+
+#define MAIN_MENU_SCREEN_ID 0
+#define PROFILES_SCREEN_ID 1
+#define PROFILE_EDIT_SCREEN_ID 2
+#define CALIBRATION_SCREEN_ID 3
+#define TEST_SCREEN_ID 4
+
 
 typedef struct nf_menu _nf_menu_t;
 typedef struct nf_menu_screen _nf_menu_screen_t;

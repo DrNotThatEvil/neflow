@@ -3,15 +3,16 @@
 #include <stdlib.h>
 #include <pico/stdlib.h>
 #include <pico/types.h>
+#include <pico/multicore.h>
 #include <hardware/gpio.h>
 #include <hardware/i2c.h>
 
+#include "nf_common.h"
 #include "nf_config.h"
 #include "pwm-tone.h"
 #include "pitches.h"
 
 #include "debounce.h"
-//#include "font.h"
 #include "ssd1306.h"
 
 #define BTN_UPDATE_TIMEOUT_MS 50
@@ -22,12 +23,10 @@
 static nf_state_t* _state;
 static absolute_time_t btn_update_timeout = { 0u };
 
-// struct tonegenerator_t generator;
-
 void setup_gpios(void);
 void update(nf_state_t* _state);
 void gpio_callback(uint gpio, uint32_t events);
-
+void ui_core_entry();
 
 int main()
 {
@@ -36,9 +35,20 @@ int main()
 
     btn_update_timeout = make_timeout_time_ms(BTN_UPDATE_TIMEOUT_MS);
     _state = malloc(sizeof(nf_state_t));
+
     nf_init(_state);
+    multicore_launch_core1(ui_core_entry);
+
+    while (1) 
+        tight_loop_contents();
+    //update(_state);
+}
+
+void ui_core_entry(void) 
+{
     update(_state);
 }
+
 
 void gpio_callback(uint gpio, uint32_t events)
 {
@@ -51,7 +61,6 @@ void gpio_callback(uint gpio, uint32_t events)
             _state->_buttons[NF_BACK_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 0, false);
 
-            //tone(&generator, NOTE_C4, 100);
             //_state->_menu->menu_options[_state->_menu->current_menu_option].back_fn((void*) _state->_menu, false);
         }
 
@@ -59,7 +68,6 @@ void gpio_callback(uint gpio, uint32_t events)
             _state->_buttons[NF_NEXT_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 1, false);
 
-            //tone(&generator, NOTE_E4, 100);
             //_state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu, false);
         }
 
@@ -67,7 +75,6 @@ void gpio_callback(uint gpio, uint32_t events)
             _state->_buttons[NF_SELECT_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 2, false);
 
-            //tone(&generator, NOTE_A4, 100);
             //_state->_menu->menu_options[_state->_menu->current_menu_option].select_fn((void*) _state->_menu, false);
         }
 
@@ -125,7 +132,6 @@ void update_btns(void)
 
         
         if(_state->_buttons[i].released && _state->_buttons[i].pressed) {
-            
             // Fire released event here.. if i ever had one... (yes i'm picuteing the farily odd parents meme atm...)
             _state->_buttons[i].released = false;
             _state->_buttons[i].held = false;
@@ -183,19 +189,7 @@ void update(nf_state_t* _state)
 
     for(;;)
     {
-
         update_btns();
-        /*
-        sprintf(str, "%s", _state->_menu->menu_options[_state->_menu->current_menu_option]);
-
-        ssd1306_draw_line(_state->_disp_ptr, 49, 10, 64, 0);
-        ssd1306_draw_line(_state->_disp_ptr, 64, 0, 79, 10);
-
-        ssd1306_draw_string(_state->_disp_ptr, 20, 22, 2, str);
-
-        ssd1306_draw_line(_state->_disp_ptr, 49, 50, 64, 60);
-        ssd1306_draw_line(_state->_disp_ptr, 64, 60, 79, 50);
-        */
 
         ssd1306_clear(_state->_disp_ptr);
         nf_menu_render(_state->_menu);

@@ -117,7 +117,7 @@ void nf_profile_edit_menu_init(_nf_menu_t* _menu_state, nf_profile_t* _profiles_
     _nf_menu_screen_t** _menu_screens_ptr = &_menu_state->menu_screens;
     _nf_menu_screen_t* profile_edit_screen = (_nf_menu_screen_t*) malloc(sizeof(_nf_menu_screen_t));
 
-    profile_edit_screen->id = 2;
+    profile_edit_screen->id = PROFILE_EDIT_SCREEN_ID;
     profile_edit_screen->extra_data = malloc(sizeof(_nf_profile_edit_screen_state_t));
 
     _nf_profile_edit_screen_state_t* profile_edit_state = (_nf_profile_edit_screen_state_t*) profile_edit_screen->extra_data;
