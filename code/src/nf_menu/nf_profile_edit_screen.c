@@ -61,6 +61,12 @@ void nf_profile_edit_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* e
 
 }
 
+void nf_profile_edit_on_active_handler(_nf_menu_t* menu_state, void* extra_data)
+{
+    // TODO change the signature of the on active to get the screen extra_data and the passed extra data, makes it way easier to pass data like the 
+    // profile you are editing here, have some sleep my boi
+}
+
 void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void* extra_data)
 {
     _nf_profile_edit_screen_state_t* profile_edit_state = ((_nf_profile_edit_screen_state_t*) extra_data);
@@ -90,11 +96,14 @@ void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, 
 
         if(!profile_edit_state->adjust) {
             profile_edit_state->editing = (profile_edit_state->editing % 3) + 1;
+        } else {
+
         }
     }
 
     if(btn == 2) {
         if (profile_edit_state->selected_value == 0 && profile_edit_state->editing == 0) {
+            nf_menu_change_screen(menu_state, PROFILES_SCREEN_ID);
             return;
         }
 

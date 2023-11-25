@@ -19,13 +19,14 @@ typedef struct nf_menu_screen _nf_menu_screen_t;
 typedef struct nf_menu_screen_fn_ptrs _nf_menu_screen_fn_ptrs_t;
 
 typedef struct nf_profile_edit_screen_state {
-    nf_profile_t** current_profile;
+    nf_profile_t* current_profile;
     uint selected_value;
     uint editing; 
     bool adjust;
 } _nf_profile_edit_screen_state_t;
 
 typedef struct nf_menu_screen_fn_ptrs {
+    void (*on_active)(_nf_menu_t* menu_state, void* extra_data);
     void (*on_render)(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data);
     void (*on_btn)(_nf_menu_t* menu_state, uint btn, bool repeat, void* extra_data);
 } _nf_menu_screen_fn_ptrs_t;
@@ -46,6 +47,7 @@ typedef struct nf_menu {
 } _nf_menu_t;
 
 void nf_menu_add_screen(_nf_menu_screen_t** _menu_screens_ptr, _nf_menu_screen_t* _new_screen);
+void nf_menu_change_screen_with_data(_nf_menu_t* _menu, uint screen_id, void* extra_data);
 void nf_menu_change_screen(_nf_menu_t* _menu, uint screen_id);
 
 void draw_prev_section(ssd1306_t* disp_ptr, const char* str);

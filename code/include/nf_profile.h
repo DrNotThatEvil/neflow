@@ -3,6 +3,8 @@
 
 #include <pico/stdlib.h>
 #include <pico/types.h>
+#include "nf_common.h"
+#include "nf_memory.h"
 
 #define NPROFILES 3
 
@@ -21,6 +23,6 @@ typedef struct {
     bool initialized;
 } nf_profile_t;
 
-void nf_profiles_init(nf_profile_t* profiles_ptr);
+void nf_profiles_init(nf_profile_t* profiles_ptr, _nf_memory_state_t* _memory);
 
 #endif

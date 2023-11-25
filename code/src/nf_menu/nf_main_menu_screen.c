@@ -67,7 +67,8 @@ void nf_main_menu_init(_nf_menu_t* _menu_state)
 
     _nf_menu_screen_fn_ptrs_t main_screen_fns = {
         .on_render = nf_main_menu_render,
-        .on_btn = nf_main_menu_btn_handler
+        .on_btn = nf_main_menu_btn_handler,
+        .on_active = NULL
     };
     
     main_screen->fnptrs = main_screen_fns;

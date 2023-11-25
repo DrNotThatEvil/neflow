@@ -30,7 +30,9 @@
 #define NF_NEXT_BTN_INDEX 1
 #define NF_SELECT_BTN_INDEX 2
 
-// Machine 
-#define 
+// MEMORY RELATED
+#define PROFILE_UINT_SIZE 8
+#define NUMBER_OF_PROFILES 3
+
 
 #endif

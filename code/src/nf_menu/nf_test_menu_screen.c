@@ -146,7 +146,8 @@ void nf_test_menu_init(_nf_menu_t* _menu_state)
 
     _nf_menu_screen_fn_ptrs_t test_screen_fns = {
         .on_render = nf_test_render,
-        .on_btn = nf_test_btn_handler
+        .on_btn = nf_test_btn_handler,
+        .on_active = NULL
     };
     
     test_screen->fnptrs = test_screen_fns;

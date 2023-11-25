@@ -1,5 +1,6 @@
 set(NEFLOW_HEADER_LIST 
     "${neflow_SOURCE_DIR}/include/nf_common.h"
+    "${neflow_SOURCE_DIR}/include/nf_memory.h"
     "${neflow_SOURCE_DIR}/include/nf_profile.h"
     "${neflow_SOURCE_DIR}/include/nf_config.h"
     "${neflow_SOURCE_DIR}/include/nf_menu.h"
@@ -17,6 +18,8 @@ add_executable(neflow
     main.c
     ssd1306.c
     debounce.c
+    nf_memory.c
+    nf_profile.c
     nf_profile.c
     nf_config.c
     nf_menu.c
@@ -34,7 +37,7 @@ target_include_directories(neflow
 
 target_compile_definitions(neflow PUBLIC ENABLE_TEST_MENU=1)
 
-target_link_libraries(neflow pico_stdlib pico_multicore pico_malloc hardware_i2c pwm_tone)
+target_link_libraries(neflow pico_stdlib pico_multicore pico_malloc hardware_flash hardware_i2c pwm_tone)
 target_link_options(neflow PUBLIC -Xlinker --print-memory-usage)
 
 pico_add_extra_outputs(neflow)

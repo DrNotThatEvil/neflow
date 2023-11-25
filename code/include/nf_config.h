@@ -7,6 +7,7 @@
 
 #include "pwm-tone.h"
 #include "ssd1306.h"
+#include "nf_memory.h"
 #include "nf_profile.h"
 #include "nf_menu.h"
 
@@ -40,6 +41,7 @@ typedef struct {
     ssd1306_t* _disp_ptr;
     nf_profile_t* _profiles;
     _nf_menu_t* _menu;
+    _nf_memory_state_t* _memory;
 } nf_state_t;
 
 void nf_init(nf_state_t* _nf_state);

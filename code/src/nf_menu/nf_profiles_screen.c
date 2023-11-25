@@ -67,7 +67,7 @@ void nf_profiles_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void
         } 
 
         if(btn == 2) {
-            nf_menu_change_screen(menu_state, PROFILE_EDIT_SCREEN_ID);
+            nf_menu_change_screen_with_data(menu_state, PROFILE_EDIT_SCREEN_ID, (void*) profile_menu_state->profiles_ptr[profile_menu_state->selected_profile]);
             return;
         }
     }
@@ -90,7 +90,8 @@ void nf_profiles_menu_init(_nf_menu_t* _menu_state, nf_profile_t* _profiles)
 
     _nf_menu_screen_fn_ptrs_t profiles_screen_fns = {
         .on_render = nf_profiles_render,
-        .on_btn = nf_profiles_btn_handler
+        .on_btn = nf_profiles_btn_handler,
+        .on_active = NULL,
     };
     
     profiles_screen->fnptrs = profiles_screen_fns;
