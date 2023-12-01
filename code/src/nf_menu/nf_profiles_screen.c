@@ -67,13 +67,16 @@ void nf_profiles_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void
         } 
 
         if(btn == 2) {
-            nf_menu_change_screen_with_data(menu_state, PROFILE_EDIT_SCREEN_ID, (void*) profile_menu_state->profiles_ptr[profile_menu_state->selected_profile]);
+            if (profiles_state->selected_option == 2) {
+                tone(menu_state->_tonegen, NOTE_C4, 100);
+                nf_menu_change_screen_with_data(menu_state, PROFILE_EDIT_SCREEN_ID, (void*) (&profiles_state->profiles_ptr[profiles_state->selected_profile]));
+            }
             return;
         }
     }
 }
 
-void nf_profiles_menu_init(_nf_menu_t* _menu_state, nf_profile_t* _profiles)
+void nf_profiles_menu_init(_nf_menu_t* _menu_state, _nf_profile_t* _profiles)
 {
     // get start of the screens.
     _nf_menu_screen_t** _menu_screens_ptr = &_menu_state->menu_screens;

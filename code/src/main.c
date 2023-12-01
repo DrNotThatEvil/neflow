@@ -52,7 +52,7 @@ void ui_core_entry(void)
 
 void gpio_callback(uint gpio, uint32_t events)
 {
-    if((events & GPIO_IRQ_EDGE_RISE) != 0) {
+    if(events & GPIO_IRQ_EDGE_FALL) {
         if(debounce(gpio)) {
             return;
         }
@@ -61,6 +61,7 @@ void gpio_callback(uint gpio, uint32_t events)
             _state->_buttons[NF_BACK_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 0, false);
 
+            return;
             //_state->_menu->menu_options[_state->_menu->current_menu_option].back_fn((void*) _state->_menu, false);
         }
 
@@ -68,6 +69,7 @@ void gpio_callback(uint gpio, uint32_t events)
             _state->_buttons[NF_NEXT_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 1, false);
 
+            return;
             //_state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu, false);
         }
 
@@ -75,28 +77,29 @@ void gpio_callback(uint gpio, uint32_t events)
             _state->_buttons[NF_SELECT_BTN_INDEX].pressed = true;
             nf_menu_btn_handler(_state->_menu, 2, false);
 
+            return;
             //_state->_menu->menu_options[_state->_menu->current_menu_option].select_fn((void*) _state->_menu, false);
         }
-
-        return;
     }
 
-    if (gpio == NF_MENU_BACK_BTN) {
-        _state->_buttons[NF_BACK_BTN_INDEX].released = true;
-        //_state->_buttons[NF_BACK_BTN_INDEX].held = false;
-        //_state->_buttons[NF_BACK_BTN_INDEX].pressed = false;
-    }
+    if(events & GPIO_IRQ_EDGE_RISE) {
+        if (gpio == NF_MENU_BACK_BTN) {
+            _state->_buttons[NF_BACK_BTN_INDEX].released = true;
+            //_state->_buttons[NF_BACK_BTN_INDEX].held = false;
+            //_state->_buttons[NF_BACK_BTN_INDEX].pressed = false;
+        }
 
-    if (gpio == NF_MENU_NEXT_BTN) {
-        _state->_buttons[NF_NEXT_BTN_INDEX].released = true;
-        //_state->_buttons[NF_NEXT_BTN_INDEX].held = false;
-        //_state->_buttons[NF_NEXT_BTN_INDEX].pressed = false;
-    }
+        if (gpio == NF_MENU_NEXT_BTN) {
+            _state->_buttons[NF_NEXT_BTN_INDEX].released = true;
+            //_state->_buttons[NF_NEXT_BTN_INDEX].held = false;
+            //_state->_buttons[NF_NEXT_BTN_INDEX].pressed = false;
+        }
 
-    if (gpio == NF_MENU_SELECT_BTN) {
-        _state->_buttons[NF_SELECT_BTN_INDEX].released = true;
-        //_state->_buttons[NF_SELECT_BTN_INDEX].held = false;
-        //_state->_buttons[NF_SELECT_BTN_INDEX].pressed = false;
+        if (gpio == NF_MENU_SELECT_BTN) {
+            _state->_buttons[NF_SELECT_BTN_INDEX].released = true;
+            //_state->_buttons[NF_SELECT_BTN_INDEX].held = false;
+            //_state->_buttons[NF_SELECT_BTN_INDEX].pressed = false;
+        }
     }
 }
 
@@ -118,10 +121,12 @@ void update_btns(void)
             // only back and next should have repeat events
             if(_state->_buttons[i].held_count > BTN_REPEAT_UNTIL_HELD) {
                 if(i == NF_BACK_BTN_INDEX) {
+                    nf_menu_btn_handler(_state->_menu, 0, true);
                     //_state->_menu->menu_options[_state->_menu->current_menu_option].back_fn((void*) _state->_menu, true);
                 }
 
                 if(i == NF_NEXT_BTN_INDEX) {
+                    nf_menu_btn_handler(_state->_menu, 1, true);
                     //_state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu, true);
                 }
             } else {
@@ -178,8 +183,8 @@ void setup_gpios(void)
     gpio_set_dir(NF_MENU_SELECT_BTN, GPIO_IN);
 
     gpio_set_irq_enabled_with_callback(NF_MENU_BACK_BTN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
-    gpio_set_irq_enabled(NF_MENU_SELECT_BTN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
-    gpio_set_irq_enabled(NF_MENU_NEXT_BTN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
+    gpio_set_irq_enabled_with_callback(NF_MENU_SELECT_BTN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
+    gpio_set_irq_enabled_with_callback(NF_MENU_NEXT_BTN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
 }
 
 void update(nf_state_t* _state)

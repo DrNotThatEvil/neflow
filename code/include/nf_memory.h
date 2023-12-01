@@ -15,7 +15,7 @@ typedef struct nf_pid_data {
 
 typedef struct nf_memory {
     _nf_pid_data_t pid_data;
-    uint profile_data[NUMBER_OF_PROFILES][PROFILE_UINT_SIZE];
+    uint profile_data[NUMBER_OF_PROFILES];
 } _nf_memory_t;
 
 typedef struct nf_memory_state {

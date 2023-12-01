@@ -15,17 +15,18 @@ void nf_menu_add_screen(_nf_menu_screen_t** _menu_screens_ptr, _nf_menu_screen_t
     }
 }
 
-void nf_menu_change_screen_with_data(_nf_menu_t* _menu, uint screen_id, void* extra_data)
+void nf_menu_change_screen_with_data(_nf_menu_t* _menu, uint screen_id, void* on_active_extra_data)
 {
     _nf_menu_screen_t** current = &(_menu->menu_screens);
 
     while (*current != NULL) {
-        if ((*current)->id == screen_id) {
+        if ((*current)->id == screen_id)
+        {
             _menu->current_screen = current;
-            if((*_menu->current_screen)->fnptrs.on_active != NULL) {
-                (*_menu->current_screen)->fnptrs.on_active(_menu, extra_data);
+            if((*_menu->current_screen)->fnptrs.on_active != NULL)
+            {
+                (*_menu->current_screen)->fnptrs.on_active(_menu, (*_menu->current_screen)->extra_data, on_active_extra_data);
             }
-
 
             return;
         }

@@ -8,7 +8,10 @@
 
 #define NPROFILES 3
 
-typedef struct {
+typedef struct nf_profile
+{
+    uint targets[PROFILE_TARGETS_SIZE][2];
+    /*
     uint pre_heat_start_temp;
     uint pre_heat_start_target;
 
@@ -20,9 +23,10 @@ typedef struct {
 
     uint peak_temp;
     uint peak_target;
+    */
     bool initialized;
-} nf_profile_t;
+} _nf_profile_t;
 
-void nf_profiles_init(nf_profile_t* profiles_ptr, _nf_memory_state_t* _memory);
+void nf_profiles_init(_nf_profile_t* profiles_ptr, _nf_memory_state_t* _memory);
 
 #endif

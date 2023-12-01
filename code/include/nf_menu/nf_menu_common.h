@@ -19,14 +19,14 @@ typedef struct nf_menu_screen _nf_menu_screen_t;
 typedef struct nf_menu_screen_fn_ptrs _nf_menu_screen_fn_ptrs_t;
 
 typedef struct nf_profile_edit_screen_state {
-    nf_profile_t* current_profile;
+    _nf_profile_t* current_profile;
     uint selected_value;
     uint editing; 
     bool adjust;
 } _nf_profile_edit_screen_state_t;
 
 typedef struct nf_menu_screen_fn_ptrs {
-    void (*on_active)(_nf_menu_t* menu_state, void* extra_data);
+    void (*on_active)(_nf_menu_t* menu_state, void* extra_data, void* on_active_extra_data);
     void (*on_render)(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data);
     void (*on_btn)(_nf_menu_t* menu_state, uint btn, bool repeat, void* extra_data);
 } _nf_menu_screen_fn_ptrs_t;

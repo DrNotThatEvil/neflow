@@ -16,7 +16,7 @@ void nf_init(nf_state_t* _state)
     }
 
     _state->_disp_ptr = (ssd1306_t*) malloc(sizeof(ssd1306_t));
-    _state->_profiles = (nf_profile_t*) malloc(3 * sizeof(nf_profile_t));
+    _state->_profiles = (_nf_profile_t*) malloc(NUMBER_OF_PROFILES * sizeof(_nf_profile_t));
     _state->_memory = (_nf_memory_state_t*) malloc(sizeof(_nf_memory_state_t));
 
     _state->_menu = malloc(sizeof(_nf_menu_t));

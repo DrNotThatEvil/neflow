@@ -39,7 +39,7 @@ typedef struct {
     nf_menu_state_t _menu_state; /// TODO move this to the menu.h?
     nf_reflow_state_t _reflow_state; 
     ssd1306_t* _disp_ptr;
-    nf_profile_t* _profiles;
+    _nf_profile_t* _profiles;
     _nf_menu_t* _menu;
     _nf_memory_state_t* _memory;
 } nf_state_t;
