@@ -41,6 +41,11 @@ void nf_main_menu_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, voi
             nf_menu_change_screen(menu_state, PROFILES_SCREEN_ID);
         }
 
+        if(*data == CONFIG_INDEX) {
+            tone(menu_state->_tonegen, NOTE_C4, 150);
+            nf_menu_change_screen(menu_state, CONFIG_SCREEN_ID);
+        }
+
 #if ENABLE_TEST_MENU == 1
         if(*data == TEST_MENU_INDEX) {
             tone(menu_state->_tonegen, NOTE_C4, 150);

@@ -10,6 +10,9 @@ void nf_memory_init(_nf_memory_state_t* _memory)
     // If higher then it there was a saved value.
     _memory->was_saved = (_memory->empty_page_index > 0);
 
+    if(!_memory->was_saved) {
+    }
+
 }
 
 void nf_memory_get_first_empty_page(_nf_memory_state_t* _memory)
@@ -27,3 +30,4 @@ void nf_memory_get_first_empty_page(_nf_memory_state_t* _memory)
         }
     }
 }
+

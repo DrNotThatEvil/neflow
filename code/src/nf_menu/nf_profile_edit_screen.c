@@ -1,35 +1,5 @@
 #include "nf_menu/nf_profile_edit_screen.h"
 
-void draw_edit_item(ssd1306_t* disp_ptr, uint y, bool selected, const char* str)
-{
-    ssd1306_draw_string(disp_ptr, 5, (y+2), 1, str);
-
-    if(selected) {
-        ssd1306_draw_line(disp_ptr, 1, y, 127, y);
-        ssd1306_draw_line(disp_ptr, 1, (y+11), 127, (y+11));
-    }
-}
-
-void draw_edit_value(ssd1306_t* disp_ptr, uint y, bool selected, const char* str)
-{
-    ssd1306_draw_string(disp_ptr, 55, (y+4), 1, str);
-
-    if(selected) {
-        ssd1306_draw_line(disp_ptr, 44, (y+6), 44, (y+7));
-        ssd1306_draw_line(disp_ptr, 45, (y+5), 45, (y+8));
-        ssd1306_draw_line(disp_ptr, 46, (y+4), 46, (y+9));
-        ssd1306_draw_line(disp_ptr, 47, (y+3), 47, (y+10));
-        ssd1306_draw_line(disp_ptr, 48, (y+2), 48, (y+11));
-
-
-        ssd1306_draw_line(disp_ptr, 84, (y+2), 84, (y+11));
-        ssd1306_draw_line(disp_ptr, 85, (y+3), 85, (y+10));
-        ssd1306_draw_line(disp_ptr, 86, (y+4), 86, (y+9));
-        ssd1306_draw_line(disp_ptr, 87, (y+5), 87, (y+8));
-        ssd1306_draw_line(disp_ptr, 88, (y+6), 88, (y+7));
-        //ssd1306_draw_line(disp_ptr, 1, (y+11), 127, (y+11));
-    }
-}
 
 void nf_profile_edit_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data)
 {

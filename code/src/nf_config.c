@@ -25,5 +25,5 @@ void nf_init(nf_state_t* _state)
 
     nf_memory_init(_state->_memory);
     nf_profiles_init(_state->_profiles, _state->_memory);
-    nf_menu_init(_state->_menu, _state->_disp_ptr, _state->_tonegen, _state->_profiles);
+    nf_menu_init(_state->_menu, _state->_disp_ptr, _state->_tonegen, _state->_profiles, _state->_memory);
 }

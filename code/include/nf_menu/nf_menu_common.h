@@ -11,6 +11,7 @@
 #define PROFILE_EDIT_SCREEN_ID 2
 #define CALIBRATION_SCREEN_ID 3
 #define TEST_SCREEN_ID 4
+#define CONFIG_SCREEN_ID 5
 
 
 typedef struct nf_menu _nf_menu_t;
@@ -45,6 +46,11 @@ typedef struct nf_menu {
     _nf_menu_screen_t** current_screen;
     uint refresh_ms;
 } _nf_menu_t;
+
+
+
+void draw_edit_item(ssd1306_t* disp_ptr, uint y, bool selected, const char* str);
+void draw_edit_value(ssd1306_t* disp_ptr, uint y, bool selected, const char* str);
 
 void nf_menu_add_screen(_nf_menu_screen_t** _menu_screens_ptr, _nf_menu_screen_t* _new_screen);
 void nf_menu_change_screen_with_data(_nf_menu_t* _menu, uint screen_id, void* extra_data);

@@ -15,7 +15,7 @@ typedef struct nf_pid_data {
 
 typedef struct nf_memory {
     _nf_pid_data_t pid_data;
-    uint profile_data[NUMBER_OF_PROFILES];
+    uint profile_data[NUMBER_OF_PROFILES][PROFILE_TARGETS_SIZE][2];
 } _nf_memory_t;
 
 typedef struct nf_memory_state {
@@ -26,5 +26,7 @@ typedef struct nf_memory_state {
 
 void nf_memory_init(_nf_memory_state_t* _memory);
 void nf_memory_get_first_empty_page(_nf_memory_state_t* _memory);
+void nf_memory_init_non_saved(_nf_memory_state_t* _memory);
+
 
 #endif
