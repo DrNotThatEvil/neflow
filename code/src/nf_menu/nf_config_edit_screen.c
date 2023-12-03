@@ -4,53 +4,81 @@ void nf_config_edit_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* ex
 {
     _nf_config_edit_screen_state_t* config_edit_state = ((_nf_config_edit_screen_state_t*) extra_data);
     uint selected = config_edit_state->selected_value;
+    uint change = config_edit_state->change;
+
+    const char* config_options[5] = {"Back", "Kp", "Ki", "Kd", "Save" };
+    const float change_values[3] = { 1.0f, 0.1f, 0.01f };
 
     if(config_edit_state->editing == 0) {
-        draw_edit_item(disp_ptr, 0, (selected == 0), "Back");
-        draw_edit_item(disp_ptr, 11, (selected == 1), "SOME");
-        draw_edit_item(disp_ptr, 22, (selected == 2), "Somethingelse");
-        draw_edit_item(disp_ptr, 33, (selected == 3), "Another");
-        draw_edit_item(disp_ptr, 53, (selected == 4), "Save");
+        for(uint i=0; i < 5; i++) {
+            uint y = (i*10);
+            draw_edit_item(disp_ptr, y, (selected == i), config_options[i]);
+        }
 
         return;
     }
 
     draw_edit_item(disp_ptr, 0, (config_edit_state->editing == 1 && !config_edit_state->adjust), "Back");
-    draw_edit_item(disp_ptr, 11, (config_edit_state->editing == 2 && !config_edit_state->adjust), "Target temp:");
+    draw_edit_item(disp_ptr, 11, (config_edit_state->editing == 2 && !config_edit_state->adjust), config_options[selected]);
 
+    float value = config_edit_state->_memory_state->current_buffer->pid_data[selected - 1];
     char str[20];
-    sprintf(str, "%d", 10);
+    sprintf(str, "%.2f", value);
     draw_edit_value(disp_ptr, 22, (config_edit_state->editing == 2 && config_edit_state->adjust), str);
     
-    
+    draw_edit_item(disp_ptr, 34, (config_edit_state->editing == 3 && !config_edit_state->adjust), "Change:");
+    sprintf(str, "%.2f", change_values[change]);
+    draw_edit_value(disp_ptr, 45, (config_edit_state->editing == 3 && config_edit_state->adjust), str);
 }
 
 void nf_config_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void* extra_data)
 {
     _nf_config_edit_screen_state_t* config_edit_state = ((_nf_config_edit_screen_state_t*) extra_data);
+    const float change_values[3] = { 1.0f, 0.1f, 0.01f };
+    
     uint tone_duration = 100;
     if(repeat) {
         tone_duration = 50;
     }
 
-    /*
     if(btn == 0) {
-        if (profile_edit_state->editing == 0) {
-            if(profile_edit_state->selected_value > 0) {
-                profile_edit_state->selected_value = (profile_edit_state->selected_value - 1) % 6;
+        if (config_edit_state->editing == 0) {
+            if(config_edit_state->selected_value > 0) {
+                config_edit_state->selected_value = (config_edit_state->selected_value - 1) % 5;
             }
             return;
         }
 
-        if(!profile_edit_state->adjust) {
-            if(profile_edit_state->editing > 1) {
-                profile_edit_state->editing = (profile_edit_state->editing - 1) % 3;
+        if(!config_edit_state->adjust) {
+            if(config_edit_state->editing > 1) {
+                config_edit_state->editing = (config_edit_state->editing - 1) % 3;
             }
         }
 
-        if(profile_edit_state->adjust) {
-            uint selected = profile_edit_state->selected_value - 1;
-            uint edit = profile_edit_state->editing - 2;
+        if(config_edit_state->adjust) {
+            if(config_edit_state->editing == 2) {
+                uint selected = config_edit_state->selected_value - 1;
+                float* value = &(config_edit_state->_memory_state->current_buffer->pid_data[selected]);
+
+                if (*value > 0.01f) {
+                    if((*value - change_values[config_edit_state->change]) > 0.01f && (*value - change_values[config_edit_state->change]) < 100.0f){
+                        *value = (*value - change_values[config_edit_state->change]);
+                    } else {
+                        *value = 0.01f;
+                    }
+                } 
+            }
+
+            if(config_edit_state->editing == 3) {
+                if(config_edit_state->change > 0) {
+                    config_edit_state->change = (config_edit_state->change - 1) % 3;
+                }
+            }
+        }
+        /*
+        if(config_edit_state->adjust) {
+            uint selected = config_edit_state->selected_value - 1;
+            uint edit = config_edit_state->editing - 2;
             uint* value = &(profile_edit_state->current_profile->targets[selected][edit]);
 
             if(edit == 0 || selected == 0) {
@@ -67,19 +95,40 @@ void nf_config_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, v
                 }
             }
         }
+        */
     }
 
+
     if(btn == 1) {
-        if (profile_edit_state->editing == 0) {
-            profile_edit_state->selected_value = (profile_edit_state->selected_value + 1) % 6;
+        if (config_edit_state->editing == 0) {
+            config_edit_state->selected_value = (config_edit_state->selected_value + 1) % 5;
             return;
         }
 
-
-        if(!profile_edit_state->adjust) {
-            profile_edit_state->editing = (profile_edit_state->editing % 3) + 1;
+        if(!config_edit_state->adjust) {
+            config_edit_state->editing = (config_edit_state->editing % 3) + 1;
         } 
         
+        if(config_edit_state->adjust) {
+            if(config_edit_state->editing == 2) {
+                uint selected = config_edit_state->selected_value - 1;
+                float* value = &(config_edit_state->_memory_state->current_buffer->pid_data[selected]);
+
+                if (*value < 100.0f) {
+                    if((*value + change_values[config_edit_state->change]) > 0.0f && (*value + change_values[config_edit_state->change]) < 100.0f){
+                        *value = (*value + change_values[config_edit_state->change]);
+                    } else {
+                        *value = 100.0f;
+                    }
+                } 
+            }
+
+            if(config_edit_state->editing == 3) {
+                config_edit_state->change = (config_edit_state->change + 1) % 3;
+            }
+        }
+
+        /*
         if(profile_edit_state->adjust) {
             uint selected = profile_edit_state->selected_value - 1;
             uint edit = profile_edit_state->editing - 2;
@@ -90,48 +139,44 @@ void nf_config_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, v
                 tone(menu_state->_tonegen, NOTE_A3, tone_duration);
             }
         }
+        */
     }
 
     if(btn == 2 && !repeat) {
-        if (profile_edit_state->selected_value == 0 && profile_edit_state->editing == 0) {
+        if (config_edit_state->selected_value == 0 && config_edit_state->editing == 0) {
             tone(menu_state->_tonegen, NOTE_C3, tone_duration);
-            nf_menu_change_screen(menu_state, PROFILES_SCREEN_ID);
+            nf_menu_change_screen(menu_state, MAIN_MENU_SCREEN_ID);
             return;
         }
 
-        if (profile_edit_state->editing == 0) {
-            if(profile_edit_state->selected_value > 0 &&  profile_edit_state->selected_value < 4) {
-                profile_edit_state->editing = 1;
-
-                uint selected = profile_edit_state->selected_value - 1;
-
-                if (selected > 0) {
-                    uint* value_prev = &(profile_edit_state->current_profile->targets[selected-1][1]);
-                    uint* value = &(profile_edit_state->current_profile->targets[selected][1]);
-
-                    if (*value < *value_prev) {
-                        *value = *value_prev;
-                    }
-                }
+        if (config_edit_state->editing == 0) {
+            if(config_edit_state->selected_value > 0 &&  config_edit_state->selected_value < 4) {
+                config_edit_state->editing = 1;
             
                 tone(menu_state->_tonegen, NOTE_A4, tone_duration);
             }
-        } else {
-            include/nf_menu/nf_profile_edit_screen.hif (profile_edit_state->editing > 1) {
-                profile_edit_state->adjust = !profile_edit_state->adjust;
 
-                if (profile_edit_state->adjust) {
+            if(config_edit_state->selected_value == 4) {
+                tone(menu_state->_tonegen, NOTE_A4, tone_duration);
+
+                nf_memory_save(config_edit_state->_memory_state);
+            }
+
+        } else {
+            if (config_edit_state->editing > 1) {
+                config_edit_state->adjust = !config_edit_state->adjust;
+
+                if (config_edit_state->adjust) {
                     tone(menu_state->_tonegen, NOTE_A4, tone_duration);
                 } else {
                     tone(menu_state->_tonegen, NOTE_C4, tone_duration);
                 }
             } else {
-                profile_edit_state->editing = 0;
+                config_edit_state->editing = 0;
                 tone(menu_state->_tonegen, NOTE_C4, tone_duration);
             }
         }
     }
-    */
 }
 
 void nf_config_edit_menu_init(_nf_menu_t* _menu_state, _nf_memory_state_t* _memory_state_ptr)
@@ -147,6 +192,7 @@ void nf_config_edit_menu_init(_nf_menu_t* _menu_state, _nf_memory_state_t* _memo
     config_edit_state->selected_value = 0;
     config_edit_state->editing = 0;
     config_edit_state->adjust = false;
+    config_edit_state->change = 0;
 
     _nf_menu_screen_fn_ptrs_t config_edit_screen_fns = {
         .on_render = nf_config_edit_render,

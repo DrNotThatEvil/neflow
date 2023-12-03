@@ -9,6 +9,7 @@ typedef struct nf_config_edit_screen_state {
     uint selected_value;
     uint editing;
     bool adjust;
+    uint change;
 } _nf_config_edit_screen_state_t;
 
 void nf_config_edit_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data);

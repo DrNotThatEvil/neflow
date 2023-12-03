@@ -131,20 +131,15 @@ void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, 
 
             /*
             TODO:
-                It's that time again where i have to stop myself from going to deep into the night but progress!
-                The edit menu interaction is now able to get the current profile value
-                edit it and such (there will probs be some quirks it's good enough).
+                So the dog wants to sleep and my screen is keeping him up, and probs my loud ass typing
+                my headset just died so it's time again to say sleepy time.
 
-                Next time:
-                The saving of the profile to the flash of the RP2040 along with the reading of what's already stored there
-                next to this the Config screen needs to be added since 'profiles' and 'config' are both saved to the flash.
-                But i bet the config screen can take a lot of inspiration of this screen making that simpler.
+                For later, the saving of the CONFIG screen is now done this edit screen should also save the
+                values in using the 'save' method in nf_memory.c, also you need to implement a method to clean
+                the memory (clear page) if 'empty_page_index' is still -1 after tying to find it.
+                Don't forget to copy max page to the buffer at that point to to reference the current values. 
 
-                Next Next time:
-                I think that you won't have time to do anything more then the 'memory/config' screen next time
-                but for the next next time you can start with the 'TEMP' system, see the draw.io for logic.
-                knocking out the memory system first is smart tho cause then you can make testing quicker since you would
-                not have to configure the pid and profiles all the time.
+                Sleepy time! (Almost ready for temprature sensor stuff!)
             */
         } else {
             if (profile_edit_state->editing > 1) {
