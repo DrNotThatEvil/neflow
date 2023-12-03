@@ -23,6 +23,10 @@ typedef struct nf_memory_state {
 
 void nf_memory_init(_nf_memory_state_t* _memory);
 void nf_memory_get_first_empty_page(_nf_memory_state_t* _memory);
+
+void nf_memory_clear(_nf_memory_state_t* _memory);
+void nf_memory_load_page(_nf_memory_state_t* _memory, uint page);
+void nf_memory_load_last_page(_nf_memory_state_t* _memory);
 void nf_memory_save(_nf_memory_state_t* _memory);
 
 

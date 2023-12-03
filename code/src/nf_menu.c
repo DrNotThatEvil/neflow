@@ -22,7 +22,7 @@ void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t
     nf_main_menu_init(_menu_state);
     _menu_state->current_screen = &(_menu_state->menu_screens);
 
-    nf_test_menu_init(_menu_state);
+    nf_test_menu_init(_menu_state, _memory);
 
     nf_config_edit_menu_init(_menu_state, _memory);
     nf_profiles_menu_init(_menu_state, _profiles);

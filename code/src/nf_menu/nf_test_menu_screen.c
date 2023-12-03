@@ -48,9 +48,17 @@ bool testing_countdown(struct repeating_timer *t_ptr)
 
             melody(test_state->_tonegen, REJECT, 5);
         }
-        
-        const uint INDEX_TO_PIN[] = { NF_SSR0_PIN, NF_SSR1_PIN, NF_FAN0_PIN, NF_FAN1_PIN };
-        gpio_put(INDEX_TO_PIN[test_state->selected_option], 0);
+
+        if (test_state->selected_option < 4) {
+            const uint INDEX_TO_PIN[] = { NF_SSR0_PIN, NF_SSR1_PIN, NF_FAN0_PIN, NF_FAN1_PIN };
+            gpio_put(INDEX_TO_PIN[test_state->selected_option], 0);
+        } else {
+            if(!test_state->cancel) { 
+                test_state->cleaned_memory = true;
+                test_state->animation_timeout = make_timeout_time_ms(ANIMATION_TIMEOUT);
+                //nf_memory_clear(test_state->_memory);
+            }
+        }
 
         test_state->testing = false;
         test_state->cancel = false;
@@ -68,12 +76,27 @@ void nf_test_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_dat
     char str2[20];
     _nf_test_menu_state_t* test_state = ((_nf_test_menu_state_t*) extra_data);
 
+    const char* cleared_strings[4] = {  "Memory Cleared", "Please", "Reset", "Thanks!!"};
+    if(test_state->cleaned_memory) {
+        sprintf(str2, "%s", cleared_strings[test_state->cleared_animation]);
+        ssd1306_draw_string(disp_ptr, 5, 12 + (test_state->cleared_animation * 10), 1, str2);
+       
+        if (get_absolute_time()._private_us_since_boot < test_state->animation_timeout._private_us_since_boot) {
+            return;
+        }
+        
+        test_state->animation_timeout = make_timeout_time_ms(ANIMATION_TIMEOUT);
+        test_state->cleared_animation = (test_state->cleared_animation + 1) % 4;
+        tone(test_state->_tonegen, NOTE_A4, 100);
+        return;
+    }
+
     if(test_state->testing) {
         sprintf(str2, "Countdown: %d", test_state->countdown_time);
         ssd1306_draw_string(disp_ptr, 5, 15, 1, str2);
     }
 
-    const char* options[] = { "SSR0", "SSR1", "FAN0", "FAN1" };
+    const char* options[] = { "SSR0", "SSR1", "FAN0", "FAN1", "Clear Memory"};
     sprintf(str, "%s: %s", (test_state->testing ? "Testing: " : "Test: "), options[test_state->selected_option]);
     ssd1306_draw_string(disp_ptr, 5, 35 - (test_state->testing ? 0 : 10), 1, str);
 
@@ -83,6 +106,9 @@ void nf_test_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_dat
 void nf_test_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void* extra_data)
 {
     _nf_test_menu_state_t* test_state = ((_nf_test_menu_state_t*) extra_data);
+    if(test_state->cleaned_memory) {
+        return;
+    }
 
     if(!test_state->testing) {
         if(btn == 0) {
@@ -91,17 +117,21 @@ void nf_test_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void* ex
         }
 
         if(btn == 1) {
-            test_state->selected_option = ((test_state->selected_option) + 1) % 4;
+            test_state->selected_option = ((test_state->selected_option) + 1) % 5;
             return;
         } 
 
         if(btn == 2) {
             test_state->testing = true;
             test_state->cancel = false;
-            test_state->countdown_time = 60;
+            test_state->countdown_time = 10;
 
-            const uint INDEX_TO_PIN[] = { NF_SSR0_PIN, NF_SSR1_PIN, NF_FAN0_PIN, NF_FAN1_PIN };
-            gpio_put(INDEX_TO_PIN[test_state->selected_option], 1);
+            if(test_state->selected_option < 4) {
+                test_state->countdown_time = 60;
+                
+                const uint INDEX_TO_PIN[] = { NF_SSR0_PIN, NF_SSR1_PIN, NF_FAN0_PIN, NF_FAN1_PIN };
+                gpio_put(INDEX_TO_PIN[test_state->selected_option], 1);
+            }
             
             add_repeating_timer_ms(-900, testing_countdown, test_state, test_state->timer);
             return;
@@ -126,7 +156,7 @@ void nf_test_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void* ex
     }
 }
 
-void nf_test_menu_init(_nf_menu_t* _menu_state)
+void nf_test_menu_init(_nf_menu_t* _menu_state, _nf_memory_state_t* memory)
 {
     // get start of the screens.
     _nf_menu_screen_t** _menu_screens_ptr = &_menu_state->menu_screens;
@@ -137,8 +167,13 @@ void nf_test_menu_init(_nf_menu_t* _menu_state)
     test_screen->extra_data = malloc(sizeof(_nf_test_menu_state_t));
 
     _nf_test_menu_state_t* test_menu_state = (_nf_test_menu_state_t*) test_screen->extra_data;
+    test_menu_state->_memory = memory;
     test_menu_state->timer = (struct repeating_timer*) malloc(sizeof(struct repeating_timer));
     test_menu_state->selected_option = 0;
+    test_menu_state->cleaned_memory = false;
+    test_menu_state->cleared_animation = 0;
+    test_menu_state->animation_timeout = make_timeout_time_ms(ANIMATION_TIMEOUT);
+
     test_menu_state->testing = false;
     test_menu_state->cancel = false;
     test_menu_state->_tonegen = _menu_state->_tonegen;

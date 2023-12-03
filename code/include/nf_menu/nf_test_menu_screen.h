@@ -3,6 +3,7 @@
 
 #include <pico/stdlib.h>
 #include "pwm-tone.h"
+#include "nf_memory.h"
 #include "nf_menu/nf_menu_common.h"
 
 #define SSR0_INDEX 0
@@ -10,7 +11,14 @@
 #define FAN0_INDEX 2
 #define FAN1_INDEX 3
 
+#define ANIMATION_TIMEOUT 1000
+
 typedef struct nf_test_menu_state {
+    _nf_memory_state_t* _memory;
+    bool cleaned_memory;
+    uint cleared_animation;
+    absolute_time_t animation_timeout;
+
     uint selected_option;
     bool testing;
     bool cancel;
@@ -21,7 +29,7 @@ typedef struct nf_test_menu_state {
 
 void nf_test_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data);
 void nf_test_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void* extra_data);
-void nf_test_menu_init(_nf_menu_t* _menu_state);
+void nf_test_menu_init(_nf_menu_t* _menu_state, _nf_memory_state_t* memory);
 
 
 #endif
