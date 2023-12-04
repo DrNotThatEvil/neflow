@@ -157,7 +157,7 @@ void nf_config_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, v
             }
 
             if(config_edit_state->selected_value == 4) {
-                tone(menu_state->_tonegen, NOTE_A4, tone_duration);
+                //tone(menu_state->_tonegen, NOTE_A4, tone_duration);
 
                 nf_memory_save(config_edit_state->_memory_state);
             }

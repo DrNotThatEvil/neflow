@@ -56,7 +56,7 @@ bool testing_countdown(struct repeating_timer *t_ptr)
             if(!test_state->cancel) { 
                 test_state->cleaned_memory = true;
                 test_state->animation_timeout = make_timeout_time_ms(ANIMATION_TIMEOUT);
-                //nf_memory_clear(test_state->_memory);
+                nf_memory_clear(test_state->_memory);
             }
         }
 
