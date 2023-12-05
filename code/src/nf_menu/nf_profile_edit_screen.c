@@ -111,8 +111,50 @@ void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, 
             return;
         }
 
+        if (profile_edit_state->selected_value == 5 && profile_edit_state->editing == 0) {
+            uint prev_time = 0;
+            bool has_failed = false;
+            for(uint i=0; (i<3 && !has_failed); i++) {
+                uint* temp = &(profile_edit_state->current_profile->targets[i][0]);
+                uint* time = &(profile_edit_state->current_profile->targets[i][1]);
+
+                if(*temp == 1 || *time == 1 || *temp > 230) {
+                    has_failed = true; 
+                }
+
+                if(i>0) {
+                    if(*time < prev_time) {
+                        has_failed = true;
+                    }
+                }
+
+                if(has_failed) {
+                    tone(menu_state->_tonegen, NOTE_C2, tone_duration);
+                }
+
+                prev_time = *time;
+            } 
+
+            for(uint j=0; (j<3 && !has_failed); j++) {
+                uint* temp2 = &(profile_edit_state->current_profile->targets[j][0]);
+                uint* time2 = &(profile_edit_state->current_profile->targets[j][1]);
+
+                /*
+                    TODO 2023-12-05:
+                    After some mistakes trying to read the data the checks now all seem to work well
+                    good i checkt it agian cause trying to reach a error temprature could be dangerous (duhh right there but still).
+
+                    Next step is saving this data to the profile stored int the memory system.
+                    and calling the save method.
+                */
+            } 
+
+
+            //tone(menu_state->_tonegen, NOTE_A3, tone_duration);
+        }
+
         if (profile_edit_state->editing == 0) {
-            if(profile_edit_state->selected_value > 0 &&  profile_edit_state->selected_value < 4) {
+            if(profile_edit_state->selected_value > 0 &&  profile_edit_state->selected_value < 5) {
                 profile_edit_state->editing = 1;
 
                 uint selected = profile_edit_state->selected_value - 1;

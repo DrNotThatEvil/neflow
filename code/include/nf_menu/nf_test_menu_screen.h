@@ -13,9 +13,12 @@
 
 #define ANIMATION_TIMEOUT 1000
 
+#define MEMORY_SHOULD_CLEAR 1
+#define MEMORY_CLEARED 2
+
 typedef struct nf_test_menu_state {
     _nf_memory_state_t* _memory;
-    bool cleaned_memory;
+    uint cleaned_memory;
     uint cleared_animation;
     absolute_time_t animation_timeout;
 

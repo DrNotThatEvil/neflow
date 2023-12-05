@@ -31,7 +31,10 @@ bool testing_countdown(struct repeating_timer *t_ptr)
                 {MELODY_END, 0},
             };
 
-            melody(test_state->_tonegen, CONFIRM_DONE, 5);
+
+            if (test_state->selected_option < 4) {
+                melody(test_state->_tonegen, CONFIRM_DONE, 5);
+            }
         } else {
             note_t REJECT[] = {
                 {NOTE_CM1, 128},
@@ -54,9 +57,8 @@ bool testing_countdown(struct repeating_timer *t_ptr)
             gpio_put(INDEX_TO_PIN[test_state->selected_option], 0);
         } else {
             if(!test_state->cancel) { 
-                test_state->cleaned_memory = true;
+                test_state->cleaned_memory = MEMORY_SHOULD_CLEAR;
                 test_state->animation_timeout = make_timeout_time_ms(ANIMATION_TIMEOUT);
-                nf_memory_clear(test_state->_memory);
             }
         }
 
@@ -76,8 +78,13 @@ void nf_test_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_dat
     char str2[20];
     _nf_test_menu_state_t* test_state = ((_nf_test_menu_state_t*) extra_data);
 
+    if(test_state->cleaned_memory == MEMORY_SHOULD_CLEAR) {
+        test_state->cleaned_memory = MEMORY_CLEARED;
+        nf_memory_clear(test_state->_memory);
+    }
+
     const char* cleared_strings[4] = {  "Memory Cleared", "Please", "Reset", "Thanks!!"};
-    if(test_state->cleaned_memory) {
+    if(test_state->cleaned_memory > 0) {
         sprintf(str2, "%s", cleared_strings[test_state->cleared_animation]);
         ssd1306_draw_string(disp_ptr, 5, 12 + (test_state->cleared_animation * 10), 1, str2);
        
@@ -106,7 +113,7 @@ void nf_test_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_dat
 void nf_test_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void* extra_data)
 {
     _nf_test_menu_state_t* test_state = ((_nf_test_menu_state_t*) extra_data);
-    if(test_state->cleaned_memory) {
+    if(test_state->cleaned_memory > 0) {
         return;
     }
 
@@ -170,7 +177,7 @@ void nf_test_menu_init(_nf_menu_t* _menu_state, _nf_memory_state_t* memory)
     test_menu_state->_memory = memory;
     test_menu_state->timer = (struct repeating_timer*) malloc(sizeof(struct repeating_timer));
     test_menu_state->selected_option = 0;
-    test_menu_state->cleaned_memory = false;
+    test_menu_state->cleaned_memory = 0;
     test_menu_state->cleared_animation = 0;
     test_menu_state->animation_timeout = make_timeout_time_ms(ANIMATION_TIMEOUT);
 
