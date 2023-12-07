@@ -4,16 +4,20 @@ void nf_profiles_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra
 {
     char str[20];
     _nf_profiles_menu_state_t* profiles_state = ((_nf_profiles_menu_state_t*) extra_data);
-
+    
     if(!profiles_state->selected) {
+        _nf_profile_t* selected_profile = (&profiles_state->_profile_state->_profiles[profiles_state->selected_profile]);
+    
         draw_prev_section(disp_ptr, "Main menu");
         sprintf(str, "Profile %d\0", (profiles_state->selected_profile+1));
 
         draw_next_arrow(disp_ptr);
         ssd1306_draw_string(disp_ptr, 5, 25, 2, str);
-        
-        sprintf(str, "not configured!\0");
-        ssd1306_draw_string(disp_ptr, 5, 40, 1, str);
+
+        if(!selected_profile->initialized) {
+            sprintf(str, "not configured!\0");
+            ssd1306_draw_string(disp_ptr, 5, 40, 1, str);
+        }
         return;
     }
     
@@ -69,14 +73,14 @@ void nf_profiles_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void
         if(btn == 2) {
             if (profiles_state->selected_option == 2) {
                 tone(menu_state->_tonegen, NOTE_C4, 100);
-                nf_menu_change_screen_with_data(menu_state, PROFILE_EDIT_SCREEN_ID, (void*) (&profiles_state->profiles_ptr[profiles_state->selected_profile]));
+                nf_menu_change_screen_with_data(menu_state, PROFILE_EDIT_SCREEN_ID, (void*) (&profiles_state->_profile_state->_profiles[profiles_state->selected_profile]));
             }
             return;
         }
     }
 }
 
-void nf_profiles_menu_init(_nf_menu_t* _menu_state, _nf_profile_t* _profiles)
+void nf_profiles_menu_init(_nf_menu_t* _menu_state, _nf_profile_state_t* _profile_state)
 {
     // get start of the screens.
     _nf_menu_screen_t** _menu_screens_ptr = &_menu_state->menu_screens;
@@ -89,7 +93,7 @@ void nf_profiles_menu_init(_nf_menu_t* _menu_state, _nf_profile_t* _profiles)
     profile_menu_state->selected_profile = 0;
     profile_menu_state->selected_option = 0;
     profile_menu_state->selected = false;
-    profile_menu_state->profiles_ptr = _profiles;
+    profile_menu_state->_profile_state = _profile_state;
 
     _nf_menu_screen_fn_ptrs_t profiles_screen_fns = {
         .on_render = nf_profiles_render,

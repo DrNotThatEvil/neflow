@@ -4,6 +4,7 @@
 #include "nf_common.h"
 #include "pwm-tone.h"
 #include "ssd1306.h"
+#include "nf_memory.h"
 #include "nf_profile.h"
 
 #define MAIN_MENU_SCREEN_ID 0
@@ -13,7 +14,6 @@
 #define TEST_SCREEN_ID 4
 #define CONFIG_SCREEN_ID 5
 
-
 typedef struct nf_menu _nf_menu_t;
 typedef struct nf_menu_screen _nf_menu_screen_t;
 
@@ -21,6 +21,8 @@ typedef struct nf_menu_screen_fn_ptrs _nf_menu_screen_fn_ptrs_t;
 
 typedef struct nf_profile_edit_screen_state {
     _nf_profile_t* current_profile;
+    _nf_profile_state_t* _profile_state;
+    //_nf_memory_state_t* _memory;
     uint selected_value;
     uint editing; 
     bool adjust;

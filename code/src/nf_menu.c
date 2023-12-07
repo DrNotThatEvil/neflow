@@ -12,7 +12,7 @@ void nf_menu_render(_nf_menu_t* _menu)
     (*_menu->current_screen)->fnptrs.on_render(_menu, _menu->_disp_ptr, (*_menu->current_screen)->extra_data);
 }
 
-void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t* _tonegen, _nf_profile_t* _profiles, _nf_memory_state_t* _memory)
+void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t* _tonegen, _nf_profile_state_t* _profile_state, _nf_memory_state_t* _memory)
 {
     _menu_state->_disp_ptr = _disp_ptr;
     _menu_state->_tonegen = _tonegen;
@@ -25,6 +25,6 @@ void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t
     nf_test_menu_init(_menu_state, _memory);
 
     nf_config_edit_menu_init(_menu_state, _memory);
-    nf_profiles_menu_init(_menu_state, _profiles);
-    nf_profile_edit_menu_init(_menu_state, _profiles);
+    nf_profiles_menu_init(_menu_state, _profile_state);
+    nf_profile_edit_menu_init(_menu_state, _profile_state);
 }

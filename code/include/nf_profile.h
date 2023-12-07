@@ -14,6 +14,13 @@ typedef struct nf_profile
     bool initialized;
 } _nf_profile_t;
 
-void nf_profiles_init(_nf_profile_t* profiles_ptr, _nf_memory_state_t* _memory);
+typedef struct nf_profile_state
+{
+    _nf_memory_state_t* _memory;
+    _nf_profile_t* _profiles;
+} _nf_profile_state_t;
+
+void nf_profiles_init(_nf_profile_state_t* _profile_state, _nf_memory_state_t* _memory);
+void nf_profile_save(_nf_profile_state_t* _profile_state, _nf_profile_t* _profile);
 
 #endif

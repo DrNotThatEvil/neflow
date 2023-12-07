@@ -135,20 +135,12 @@ void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, 
                 prev_time = *time;
             } 
 
-            for(uint j=0; (j<3 && !has_failed); j++) {
-                uint* temp2 = &(profile_edit_state->current_profile->targets[j][0]);
-                uint* time2 = &(profile_edit_state->current_profile->targets[j][1]);
-
-                /*
-                    TODO 2023-12-05:
-                    After some mistakes trying to read the data the checks now all seem to work well
-                    good i checkt it agian cause trying to reach a error temprature could be dangerous (duhh right there but still).
-
-                    Next step is saving this data to the profile stored int the memory system.
-                    and calling the save method.
-                */
-            } 
-
+            if(!has_failed) {
+                nf_profiles_save(profile_edit_state->_profile_state, profile_edit_state->current_profile);
+                profile_edit_state->current_profile->initialized = true;
+                tone(menu_state->_tonegen, NOTE_A3, tone_duration);
+                return;
+            }
 
             //tone(menu_state->_tonegen, NOTE_A3, tone_duration);
         }
@@ -170,19 +162,6 @@ void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, 
             
                 tone(menu_state->_tonegen, NOTE_A4, tone_duration);
             }
-
-            /*
-            TODO:
-                So the dog wants to sleep and my screen is keeping him up, and probs my loud ass typing
-                my headset just died so it's time again to say sleepy time.
-
-                For later, the saving of the CONFIG screen is now done this edit screen should also save the
-                values in using the 'save' method in nf_memory.c, also you need to implement a method to clean
-                the memory (clear page) if 'empty_page_index' is still -1 after tying to find it.
-                Don't forget to copy max page to the buffer at that point to to reference the current values. 
-
-                Sleepy time! (Almost ready for temprature sensor stuff!)
-            */
         } else {
             if (profile_edit_state->editing > 1) {
                 profile_edit_state->adjust = !profile_edit_state->adjust;
@@ -200,7 +179,7 @@ void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, 
     }
 }
 
-void nf_profile_edit_menu_init(_nf_menu_t* _menu_state, _nf_profile_t* _profiles_ptr)
+void nf_profile_edit_menu_init(_nf_menu_t* _menu_state, _nf_profile_state_t* _profile_state)
 {
     _nf_menu_screen_t** _menu_screens_ptr = &_menu_state->menu_screens;
     _nf_menu_screen_t* profile_edit_screen = (_nf_menu_screen_t*) malloc(sizeof(_nf_menu_screen_t));
@@ -210,6 +189,8 @@ void nf_profile_edit_menu_init(_nf_menu_t* _menu_state, _nf_profile_t* _profiles
 
     _nf_profile_edit_screen_state_t* profile_edit_state = (_nf_profile_edit_screen_state_t*) profile_edit_screen->extra_data;
     profile_edit_state->current_profile = NULL;
+    //profile_edit_state->_memory = _memory;
+    profile_edit_state->_profile_state = _profile_state;
     profile_edit_state->selected_value = 0;
     profile_edit_state->editing = 0;
     profile_edit_state->adjust = false;

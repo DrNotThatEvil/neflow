@@ -82,7 +82,7 @@ typedef struct nf_menu {
 
 */
 
-void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t* _tonegen, _nf_profile_t* _profiles, _nf_memory_state_t* _memory);
+void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t* _tonegen, _nf_profile_state_t* _profile_state, _nf_memory_state_t* _memory);
 void nf_menu_render(_nf_menu_t* _menu_state);
 void nf_menu_btn_handler(_nf_menu_t* _menu_state, uint btn, bool repeat);
 
