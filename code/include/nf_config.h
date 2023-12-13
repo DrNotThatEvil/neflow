@@ -10,6 +10,7 @@
 #include "nf_memory.h"
 #include "nf_profile.h"
 #include "nf_menu.h"
+#include "nf_max31855.h"
 
 // State of the reflow oven.
 typedef enum {

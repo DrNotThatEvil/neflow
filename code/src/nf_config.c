@@ -3,6 +3,7 @@
 void nf_init(nf_state_t* _state)
 {
     _state->_tonegen = malloc(sizeof(tonegenerator_t));
+
     tone_init(_state->_tonegen, NF_SPKR_PIN);
 
     _state->_menu_state = NORMAL;

@@ -20,6 +20,11 @@
 
 #define NF_SPKR_PIN 6
 
+// SPI PINS
+#define NF_SPI_SCK 18
+#define NF_SPI_MISO 16
+#define NF_TEMP0_CS 19
+#define NF_TEMP1_CS 20
 
 #define NF_MENU_BACK_BTN NF_BTN0_PIN
 #define NF_MENU_NEXT_BTN NF_BTN1_PIN

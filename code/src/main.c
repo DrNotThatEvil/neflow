@@ -11,6 +11,7 @@
 #include "nf_config.h"
 #include "pwm-tone.h"
 #include "pitches.h"
+#include "nf_max31855.h"
 
 #include "debounce.h"
 #include "ssd1306.h"
@@ -21,17 +22,23 @@
 #define HEIGHT 64
 
 static nf_state_t* _state;
+static _nf_tempsys_t* _tempsys;
 static absolute_time_t btn_update_timeout = { 0u };
 
 void setup_gpios(void);
 void update(nf_state_t* _state);
 void gpio_callback(uint gpio, uint32_t events);
 void ui_core_entry();
+void get_temp();
 
 int main()
 {
     stdio_init_all();
     setup_gpios();
+    
+    _tempsys = malloc(sizeof(_nf_tempsys_t));
+    nf_tempsys_init(_tempsys); 
+    get_temp();
 
     btn_update_timeout = make_timeout_time_ms(BTN_UPDATE_TIMEOUT_MS);
     _state = malloc(sizeof(nf_state_t));
@@ -49,6 +56,14 @@ void ui_core_entry(void)
     update(_state);
 }
 
+void get_temp()
+{
+    _nf_max31855_result_t* res = (_nf_max31855_result_t*) malloc(sizeof(_nf_max31855_result_t));
+    nf_max31855_read(_temp, NF_TEMP0_CS, res);
+    free(res);
+
+    sleep_ms(1);
+}
 
 void gpio_callback(uint gpio, uint32_t events)
 {
