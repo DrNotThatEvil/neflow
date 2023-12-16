@@ -19,6 +19,9 @@ void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t
     _menu_state->refresh_ms = 5;
     _menu_state->menu_screens = NULL; 
 
+    _menu_state->_temps0 = NULL;
+    _menu_state->_temps1 = NULL;
+
     nf_main_menu_init(_menu_state);
     _menu_state->current_screen = &(_menu_state->menu_screens);
 
@@ -27,4 +30,10 @@ void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t
     nf_config_edit_menu_init(_menu_state, _memory);
     nf_profiles_menu_init(_menu_state, _profile_state);
     nf_profile_edit_menu_init(_menu_state, _profile_state);
+}
+
+void nf_menu_temps(_nf_menu_t* _menu_state, _nf_temps_t* _temps0, _nf_temps_t* _temps1)
+{
+    _menu_state->_temps0 = _temps0;
+    _menu_state->_temps1 = _temps1;
 }

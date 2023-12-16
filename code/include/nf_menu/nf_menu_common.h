@@ -2,6 +2,7 @@
 #define NF_MENU_COMMON_H
 
 #include "nf_common.h"
+#include "nf_tempsys.h"
 #include "pwm-tone.h"
 #include "ssd1306.h"
 #include "nf_memory.h"
@@ -46,6 +47,8 @@ typedef struct nf_menu {
     ssd1306_t* _disp_ptr;
     _nf_menu_screen_t* menu_screens;
     _nf_menu_screen_t** current_screen;
+    _nf_temps_t* _temps0;
+    _nf_temps_t* _temps1;
     uint refresh_ms;
 } _nf_menu_t;
 

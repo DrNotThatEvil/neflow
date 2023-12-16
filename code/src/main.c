@@ -11,7 +11,7 @@
 #include "nf_config.h"
 #include "pwm-tone.h"
 #include "pitches.h"
-#include "nf_max31855.h"
+#include "nf_tempsys.h"
 
 #include "debounce.h"
 #include "ssd1306.h"
@@ -20,6 +20,7 @@
 #define BTN_REPEAT_UNTIL_HELD 8
 #define WIDTH 128
 #define HEIGHT 64
+
 
 static nf_state_t* _state;
 static _nf_tempsys_t* _tempsys;
@@ -36,18 +37,22 @@ int main()
     stdio_init_all();
     setup_gpios();
     
-    _tempsys = malloc(sizeof(_nf_tempsys_t));
-    nf_tempsys_init(_tempsys); 
-    get_temp();
+    //get_temp();
 
     btn_update_timeout = make_timeout_time_ms(BTN_UPDATE_TIMEOUT_MS);
     _state = malloc(sizeof(nf_state_t));
+    _tempsys = malloc(sizeof(_nf_tempsys_t));
 
     nf_init(_state);
+    nf_tempsys_init(_tempsys);
+    
     multicore_launch_core1(ui_core_entry);
 
-    while (1) 
-        tight_loop_contents();
+    multicore_fifo_push_blocking(TEMP_CORE_STARTED_FLAG);
+    while (1) {
+        nf_tempsys_loop(_tempsys);
+        sleep_ms(200);
+    }
     //update(_state);
 }
 
@@ -56,14 +61,6 @@ void ui_core_entry(void)
     update(_state);
 }
 
-void get_temp()
-{
-    _nf_max31855_result_t* res = (_nf_max31855_result_t*) malloc(sizeof(_nf_max31855_result_t));
-    nf_max31855_read(_temp, NF_TEMP0_CS, res);
-    free(res);
-
-    sleep_ms(1);
-}
 
 void gpio_callback(uint gpio, uint32_t events)
 {
@@ -204,17 +201,48 @@ void setup_gpios(void)
 
 void update(nf_state_t* _state)
 {
+    bool error_triggered = false;
+    uint error_animation = 0;
+    uint32_t temp_started = multicore_fifo_pop_blocking();
+    if(temp_started != TEMP_CORE_STARTED_FLAG) {
+        error_triggered = true;
+    }
 
     ssd1306_clear(_state->_disp_ptr);
-
     for(;;)
     {
-        update_btns();
+        if(error_triggered) {
+            ssd1306_clear(_state->_disp_ptr);
+            if(error_animation == 0) {
+                ssd1306_draw_string(_state->_disp_ptr, 5, 10, 2, "ERROR !!");
+                ssd1306_draw_string(_state->_disp_ptr, 5, 35, 1, "Reset oven!");
+            }
+            ssd1306_show(_state->_disp_ptr);
+            sleep_ms(1000);
+            error_animation = (error_animation + 1) % 2;
+            continue;
+        } else {
 
-        ssd1306_clear(_state->_disp_ptr);
-        nf_menu_render(_state->_menu);
-        ssd1306_show(_state->_disp_ptr);
+            if (multicore_fifo_rvalid()) {
+                uint32_t message = multicore_fifo_pop_blocking();
+                
+                if(message == TEMP_ERROR_FLAG) {
+                    error_triggered = true;
+                    continue;
+                }
+            }
 
-        sleep_ms(_state->_menu->refresh_ms);
+            _nf_temps_t* temp0_temps = (_nf_temps_t*) &(_tempsys->_results[0][_tempsys->read_index[0]]);
+            _nf_temps_t* temp1_temps = (_nf_temps_t*) &(_tempsys->_results[1][_tempsys->read_index[1]]);
+            nf_menu_temps(_state->_menu, temp0_temps, temp1_temps);
+            update_btns();
+
+            ssd1306_clear(_state->_disp_ptr);
+
+            nf_menu_render(_state->_menu);
+            ssd1306_show(_state->_disp_ptr);
+
+            sleep_ms(_state->_menu->refresh_ms);
+        }
     }
 }

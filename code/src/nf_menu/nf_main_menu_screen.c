@@ -2,9 +2,12 @@
 
 void nf_main_menu_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data)
 {
+    char temp_str[20];
+    sprintf(temp_str, "Temp: %.2f", menu_state->_temps0->thermocouple);
+    ssd1306_draw_string(disp_ptr, 5, 5, 1, temp_str);
+    
     char str[20];
     uint test = *((uint*)extra_data);
-
     if(test == PROFILES_INDEX) {
         sprintf(str, "%s", "Profiles\0");
     } else if (test == CALIBRATION_INDEX) {

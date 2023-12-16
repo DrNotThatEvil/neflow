@@ -14,12 +14,6 @@
 
 // State of the reflow oven.
 typedef enum {
-    NORMAL,
-    CALIBATION,
-    REFLOWING
-} nf_menu_state_t;
-
-typedef enum {
     NONE,
     PREHEAT,
     SOAK,
@@ -37,7 +31,6 @@ typedef struct {
 typedef struct {
     nf_btn_state _buttons[3];
     tonegenerator_t* _tonegen;
-    nf_menu_state_t _menu_state; /// TODO move this to the menu.h?
     nf_reflow_state_t _reflow_state; 
     ssd1306_t* _disp_ptr;
     _nf_profile_state_t* _profile_state;

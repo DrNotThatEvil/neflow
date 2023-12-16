@@ -1,14 +1,14 @@
 #include "nf_max31855.h"
 
-static inline void nf_max31855_cs_select() {
+static inline void nf_max31855_cs_select(uint cs_pin) {
     asm volatile("nop \n nop \n nop");
-    gpio_put(NF_TEMP0_CS, 0);
+    gpio_put(cs_pin, 0);
     asm volatile("nop \n nop \n nop");
 }
 
-static inline void nf_max31855_cs_deselect() {
+static inline void nf_max31855_cs_deselect(uint cs_pin) {
     asm volatile("nop \n nop \n nop");
-    gpio_put(NF_TEMP0_CS, 1);
+    gpio_put(cs_pin, 1);
     asm volatile("nop \n nop \n nop");
 }
 
@@ -25,19 +25,21 @@ void nf_max31855_init(_nf_max31855_t* sensor_state)
     gpio_set_dir(NF_TEMP0_CS, GPIO_OUT);
     gpio_put(NF_TEMP0_CS, 1);
 
-    bi_decl(bi_1pin_with_name(NF_TEMP0_CS, "SPI CS"));
+    gpio_init(NF_TEMP1_CS);
+    gpio_set_dir(NF_TEMP1_CS, GPIO_OUT);
+    gpio_put(NF_TEMP1_CS, 1);
+
+    bi_decl(bi_1pin_with_name(NF_TEMP0_CS, "SPI CS TEMP0"));
+    bi_decl(bi_1pin_with_name(NF_TEMP1_CS, "SPI CS TEMP1"));
 
     spi_init(sensor_state->spi, 500000);
-    nf_max31855_cs_deselect();
-
-    //gpio_init(NF_TEMP1_CS);
-    //gpio_set_dir(NF_TEMP1_CS, GPIO_OUT);
-    //gpio_put(NF_TEMP1_CS, 1);
+    nf_max31855_cs_deselect(NF_TEMP0_CS);
+    nf_max31855_cs_deselect(NF_TEMP1_CS);
 }
 
 void nf_max31855_read(_nf_max31855_t* sensor_state, uint temp_sensor, _nf_max31855_result_t* result)
 {
-    result->sensor = 0;
+    result->sensor = temp_sensor;
     result->status = false;
     result->thermocouple = 0.0;
     result->internal = 0.0;
@@ -46,9 +48,9 @@ void nf_max31855_read(_nf_max31855_t* sensor_state, uint temp_sensor, _nf_max318
     uint32_t data = 0;
     uint8_t buf[4];
 
-    nf_max31855_cs_select();
+    nf_max31855_cs_select(temp_sensor);
     spi_read_blocking(sensor_state->spi, 0, buf, 4);
-    nf_max31855_cs_deselect();
+    nf_max31855_cs_deselect(temp_sensor);
 
     data = buf[0];
     data <<= 8;
@@ -75,5 +77,4 @@ void nf_max31855_read(_nf_max31855_t* sensor_state, uint temp_sensor, _nf_max318
         result->internal = (double) (0xF800 | (tmp & 0x7FF));
     }
     result->internal *= 0.0625;
-
 }

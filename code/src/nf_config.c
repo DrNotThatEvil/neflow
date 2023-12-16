@@ -6,7 +6,6 @@ void nf_init(nf_state_t* _state)
 
     tone_init(_state->_tonegen, NF_SPKR_PIN);
 
-    _state->_menu_state = NORMAL;
     _state->_reflow_state = NONE;
 
     for(int i=0; i < 3; i++) {
