@@ -1,11 +1,14 @@
 #ifndef NF_MENU_COMMON_H
 #define NF_MENU_COMMON_H
 
+#include <pico/multicore.h>
+
 #include "nf_common.h"
 #include "nf_tempsys.h"
 #include "pwm-tone.h"
 #include "ssd1306.h"
 #include "nf_memory.h"
+#include "nf_tempsys.h"
 #include "nf_profile.h"
 
 #define MAIN_MENU_SCREEN_ID 0
@@ -42,16 +45,22 @@ typedef struct nf_menu_screen {
     _nf_menu_screen_t* next;
 } _nf_menu_screen_t;
 
+typedef enum nf_menu_state {
+    MENU_STATE_NORMAL,
+    MENU_STATE_CALIBRATION,
+    MENU_STATE_REFLOW
+} _nf_menu_state_t;
+
 typedef struct nf_menu {
     tonegenerator_t* _tonegen;
     ssd1306_t* _disp_ptr;
+    _nf_tempsys_t* _tempsys;
+    double cur_temp;
+    _nf_menu_state_t _state;
     _nf_menu_screen_t* menu_screens;
     _nf_menu_screen_t** current_screen;
-    _nf_temps_t* _temps0;
-    _nf_temps_t* _temps1;
     uint refresh_ms;
 } _nf_menu_t;
-
 
 
 void draw_edit_item(ssd1306_t* disp_ptr, uint y, bool selected, const char* str);

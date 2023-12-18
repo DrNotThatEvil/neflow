@@ -9,9 +9,9 @@
 
 #include "nf_common.h"
 #include "nf_config.h"
+#include "nf_tempsys.h"
 #include "pwm-tone.h"
 #include "pitches.h"
-#include "nf_tempsys.h"
 
 #include "debounce.h"
 #include "ssd1306.h"
@@ -23,7 +23,6 @@
 
 
 static nf_state_t* _state;
-static _nf_tempsys_t* _tempsys;
 static absolute_time_t btn_update_timeout = { 0u };
 
 void setup_gpios(void);
@@ -41,17 +40,15 @@ int main()
 
     btn_update_timeout = make_timeout_time_ms(BTN_UPDATE_TIMEOUT_MS);
     _state = malloc(sizeof(nf_state_t));
-    _tempsys = malloc(sizeof(_nf_tempsys_t));
 
     nf_init(_state);
-    nf_tempsys_init(_tempsys);
-    
     multicore_launch_core1(ui_core_entry);
+    sleep_ms(100);
 
     multicore_fifo_push_blocking(TEMP_CORE_STARTED_FLAG);
     while (1) {
-        nf_tempsys_loop(_tempsys);
-        sleep_ms(200);
+        nf_tempsys_loop(_state);
+        sleep_ms(100);
     }
     //update(_state);
 }
@@ -202,6 +199,7 @@ void setup_gpios(void)
 void update(nf_state_t* _state)
 {
     bool error_triggered = false;
+    uint error_type = 0;
     uint error_animation = 0;
     uint32_t temp_started = multicore_fifo_pop_blocking();
     if(temp_started != TEMP_CORE_STARTED_FLAG) {
@@ -214,7 +212,9 @@ void update(nf_state_t* _state)
         if(error_triggered) {
             ssd1306_clear(_state->_disp_ptr);
             if(error_animation == 0) {
-                ssd1306_draw_string(_state->_disp_ptr, 5, 10, 2, "ERROR !!");
+                char str[20];
+                sprintf(str, "ERROR: %d!!", error_type);
+                ssd1306_draw_string(_state->_disp_ptr, 5, 10, 2, str);
                 ssd1306_draw_string(_state->_disp_ptr, 5, 35, 1, "Reset oven!");
             }
             ssd1306_show(_state->_disp_ptr);
@@ -226,15 +226,15 @@ void update(nf_state_t* _state)
             if (multicore_fifo_rvalid()) {
                 uint32_t message = multicore_fifo_pop_blocking();
                 
-                if(message == TEMP_ERROR_FLAG) {
+                if(message >= TEMP_ERROR_FLAG) {
                     error_triggered = true;
+                    error_type = message;
                     continue;
                 }
             }
 
-            _nf_temps_t* temp0_temps = (_nf_temps_t*) &(_tempsys->_results[0][_tempsys->read_index[0]]);
-            _nf_temps_t* temp1_temps = (_nf_temps_t*) &(_tempsys->_results[1][_tempsys->read_index[1]]);
-            nf_menu_temps(_state->_menu, temp0_temps, temp1_temps);
+            _nf_temps_t* temp0_temps = (_nf_temps_t*) &(_state->_tempsys->_results[0][_state->_tempsys->read_index[0]]);
+            nf_menu_update_cur_temp(_state->_menu, temp0_temps->thermocouple);
             update_btns();
 
             ssd1306_clear(_state->_disp_ptr);

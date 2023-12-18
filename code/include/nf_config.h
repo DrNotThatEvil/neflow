@@ -10,7 +10,7 @@
 #include "nf_memory.h"
 #include "nf_profile.h"
 #include "nf_menu.h"
-#include "nf_max31855.h"
+#include "nf_tempsys.h"
 
 // State of the reflow oven.
 typedef enum {
@@ -34,11 +34,12 @@ typedef struct {
     nf_reflow_state_t _reflow_state; 
     ssd1306_t* _disp_ptr;
     _nf_profile_state_t* _profile_state;
+    _nf_tempsys_t* _tempsys;
     _nf_menu_t* _menu;
     _nf_memory_state_t* _memory;
 } nf_state_t;
 
 void nf_init(nf_state_t* _nf_state);
-
+void nf_tempsys_loop(nf_state_t* _nf_state);
 
 #endif

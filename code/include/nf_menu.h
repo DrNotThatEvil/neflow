@@ -82,9 +82,18 @@ typedef struct nf_menu {
 
 */
 
-void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t* _tonegen, _nf_profile_state_t* _profile_state, _nf_memory_state_t* _memory);
-void nf_menu_temps(_nf_menu_t* _menu_state, _nf_temps_t* _temps0, _nf_temps_t* _temps1);
+void nf_menu_init(
+    _nf_menu_t* _menu_state, 
+    ssd1306_t* _disp_ptr, 
+    tonegenerator_t* _tonegen, 
+    _nf_profile_state_t* _profile_state, 
+    _nf_memory_state_t* _memory,
+    _nf_tempsys_t* _tempsys
+);
 
+void nf_menu_update_cur_temp(_nf_menu_t* _menu, double temp);
+
+uint nf_menu_get_menu_state(_nf_menu_t* _menu_state);
 void nf_menu_render(_nf_menu_t* _menu_state);
 void nf_menu_btn_handler(_nf_menu_t* _menu_state, uint btn, bool repeat);
 

@@ -12,15 +12,38 @@ void nf_menu_render(_nf_menu_t* _menu)
     (*_menu->current_screen)->fnptrs.on_render(_menu, _menu->_disp_ptr, (*_menu->current_screen)->extra_data);
 }
 
-void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t* _tonegen, _nf_profile_state_t* _profile_state, _nf_memory_state_t* _memory)
+void nf_menu_update_cur_temp(_nf_menu_t* _menu, double temp)
 {
+    _menu->cur_temp = temp;
+}
+
+uint nf_menu_get_menu_state(_nf_menu_t* _menu)
+{
+    if (_menu->_state == MENU_STATE_NORMAL) {
+        return 0;
+    }
+
+    if (_menu->_state == MENU_STATE_CALIBRATION) {
+        return 1;
+    }
+}
+
+void nf_menu_init(
+    _nf_menu_t* _menu_state,
+    ssd1306_t* _disp_ptr,
+    tonegenerator_t* _tonegen,
+    _nf_profile_state_t* _profile_state,
+    _nf_memory_state_t* _memory,
+    _nf_tempsys_t* _tempsys
+) {
     _menu_state->_disp_ptr = _disp_ptr;
     _menu_state->_tonegen = _tonegen;
+    _menu_state->_tempsys = _tempsys;
+
+    _menu_state->_state = MENU_STATE_NORMAL;
     _menu_state->refresh_ms = 5;
     _menu_state->menu_screens = NULL; 
-
-    _menu_state->_temps0 = NULL;
-    _menu_state->_temps1 = NULL;
+    _menu_state->cur_temp = 0.0;
 
     nf_main_menu_init(_menu_state);
     _menu_state->current_screen = &(_menu_state->menu_screens);
@@ -30,10 +53,4 @@ void nf_menu_init(_nf_menu_t* _menu_state, ssd1306_t* _disp_ptr, tonegenerator_t
     nf_config_edit_menu_init(_menu_state, _memory);
     nf_profiles_menu_init(_menu_state, _profile_state);
     nf_profile_edit_menu_init(_menu_state, _profile_state);
-}
-
-void nf_menu_temps(_nf_menu_t* _menu_state, _nf_temps_t* _temps0, _nf_temps_t* _temps1)
-{
-    _menu_state->_temps0 = _temps0;
-    _menu_state->_temps1 = _temps1;
 }
