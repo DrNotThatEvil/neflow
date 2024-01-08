@@ -13,6 +13,8 @@
 #include "nf_menu/nf_profiles_screen.h"
 #include "nf_menu/nf_profile_edit_screen.h"
 
+#define NF_MENU_BTN_UPDATE_TIMEOUT_MS 50
+#define NF_MENU_BTN_REPEAT_UNTIL_HELD 8
 
 /*
 
@@ -82,6 +84,7 @@ typedef struct nf_menu {
 
 */
 
+
 void nf_menu_init(
     _nf_menu_t* _menu_state, 
     ssd1306_t* _disp_ptr, 
@@ -91,8 +94,11 @@ void nf_menu_init(
     _nf_tempsys_t* _tempsys
 );
 
-void nf_menu_update_cur_temp(_nf_menu_t* _menu, double temp);
+void menu_gpio_callback(_nf_menu_t* _menu_state, uint gpio, uint32_t events);
+void menu_update(_nf_menu_t* _menu_state);
+void menu_update_buttons(_nf_menu_t* _menu_state);
 
+void nf_menu_update_cur_temp(_nf_menu_t* _menu, double temp);
 uint nf_menu_get_menu_state(_nf_menu_t* _menu_state);
 void nf_menu_render(_nf_menu_t* _menu_state);
 void nf_menu_btn_handler(_nf_menu_t* _menu_state, uint btn, bool repeat);

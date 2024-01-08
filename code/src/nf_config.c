@@ -7,14 +7,6 @@ void nf_init(nf_state_t* _state)
     tone_init(_state->_tonegen, NF_SPKR_PIN);
 
     _state->_reflow_state = NONE;
-
-    for(int i=0; i < 3; i++) {
-        _state->_buttons[i].pressed = false;
-        _state->_buttons[i].held = false;
-        _state->_buttons[i].held_count = 0;
-        _state->_buttons[i].released = false;
-    }
-
     _state->_disp_ptr = (ssd1306_t*) malloc(sizeof(ssd1306_t));
     _state->_profile_state = (_nf_profile_state_t*) malloc(sizeof(_nf_profile_state_t));
     //_state->_profiles = (_nf_profile_t*) malloc(NUMBER_OF_PROFILES * sizeof(_nf_profile_t));

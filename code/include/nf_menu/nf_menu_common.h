@@ -51,7 +51,16 @@ typedef enum nf_menu_state {
     MENU_STATE_REFLOW
 } _nf_menu_state_t;
 
+typedef struct nf_button_state {
+    bool pressed;
+    bool held;
+    uint held_count;
+    bool released;
+} nf_btn_state_t;
+
 typedef struct nf_menu {
+    absolute_time_t btn_update_timeout;
+    nf_btn_state_t _buttons[3];
     tonegenerator_t* _tonegen;
     ssd1306_t* _disp_ptr;
     _nf_tempsys_t* _tempsys;

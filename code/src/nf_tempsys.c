@@ -140,13 +140,13 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
             */
 
             _nf_pid_controller(_tempsys, 100.f);
-            if(_tempsys->pid_output > 75.f + 5.0f) {
+            if(_tempsys->pid_output > 50.f + 5.0f) {
                 gpio_put(NF_SSR0_PIN, 1);
-            } else if (_tempsys->pid_output < 75.f - 5.0f) {
+            } else if (_tempsys->pid_output < 50.f - 5.0f) {
                 gpio_put(NF_SSR0_PIN, 0);
             }
 
-            sleep_ms(150);
+            sleep_ms(450);
             return;
         }
     }

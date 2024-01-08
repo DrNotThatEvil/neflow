@@ -21,7 +21,14 @@ Added basic profiles (no flash yet but thats gonna go after editing and saving)
 * Add loading the profiles from flash storage.
 * Restructure the nf_menu.c functions to reduce the duplicate code.
 * Add 'confirm screen' after the 'Run' menu option to make sure it's not being called on accident (use different button maybe?)
-* 
+
+
+# Refactor  
+* The modules have a lot of crossing dependencies needs to be fixed.
+* some headers have weird names nf_config.h for example has the system state? after cleanup
+this can be fixed to a better name i think.
+
+
 
 # Bugs
 The first time can go negative while editing? Do idea why but if you don't do that it's fine to tired to figure it out now.

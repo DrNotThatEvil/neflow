@@ -8,6 +8,8 @@
 #include <hardware/i2c.h>
 
 #include "nf_common.h"
+
+
 #include "nf_config.h"
 #include "nf_tempsys.h"
 #include "pwm-tone.h"
@@ -20,7 +22,6 @@
 #define BTN_REPEAT_UNTIL_HELD 8
 #define WIDTH 128
 #define HEIGHT 64
-
 
 static nf_state_t* _state;
 static absolute_time_t btn_update_timeout = { 0u };
@@ -55,10 +56,16 @@ int main()
 
 void ui_core_entry(void) 
 {
-    update(_state);
+    menu_update(_state->_menu);
+}
+
+void gpio_callback(uint gpio, uint32_t events)
+{
+    menu_gpio_callback(_state->_menu, gpio, events);
 }
 
 
+/*
 void gpio_callback(uint gpio, uint32_t events)
 {
     if(events & GPIO_IRQ_EDGE_FALL) {
@@ -155,6 +162,7 @@ void update_btns(void)
     }
 
 }
+*/
 
 void setup_gpios(void)
 {
@@ -196,6 +204,7 @@ void setup_gpios(void)
     gpio_set_irq_enabled_with_callback(NF_MENU_NEXT_BTN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
 }
 
+/*
 void update(nf_state_t* _state)
 {
     bool error_triggered = false;
@@ -246,3 +255,4 @@ void update(nf_state_t* _state)
         }
     }
 }
+*/

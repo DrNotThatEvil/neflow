@@ -22,16 +22,8 @@ typedef enum {
 } nf_reflow_state_t;
 
 typedef struct {
-    bool pressed;
-    bool held;
-    uint held_count;
-    bool released;
-} nf_btn_state;
-
-typedef struct {
-    nf_btn_state _buttons[3];
     tonegenerator_t* _tonegen;
-    nf_reflow_state_t _reflow_state; 
+    nf_reflow_state_t _reflow_state;
     ssd1306_t* _disp_ptr;
     _nf_profile_state_t* _profile_state;
     _nf_tempsys_t* _tempsys;
