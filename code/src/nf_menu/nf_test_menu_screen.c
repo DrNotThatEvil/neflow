@@ -88,7 +88,7 @@ void nf_test_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_dat
         sprintf(str2, "%s", cleared_strings[test_state->cleared_animation]);
         ssd1306_draw_string(disp_ptr, 5, 12 + (test_state->cleared_animation * 10), 1, str2);
        
-        if (get_absolute_time()._private_us_since_boot < test_state->animation_timeout._private_us_since_boot) {
+        if (get_absolute_time() < test_state->animation_timeout) {
             return;
         }
         

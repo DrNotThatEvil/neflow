@@ -1,11 +1,5 @@
 #include "nf_menu.h"
 
-
-
-
-
-
-
 void nf_menu_init(
     _nf_menu_t* _menu_state,
     ssd1306_t* _disp_ptr,
@@ -27,7 +21,8 @@ void nf_menu_init(
     _menu_state->_tonegen = _tonegen;
     _menu_state->_tempsys = _tempsys;
 
-    _menu_state->_state = MENU_STATE_NORMAL;
+    _menu_state->_state = MENU_STATE_INIT;
+    _menu_state->_error_state = {0};
     _menu_state->refresh_ms = 5;
     _menu_state->menu_screens = NULL; 
     _menu_state->cur_temp = 0.0;
@@ -132,8 +127,8 @@ void menu_update(_nf_menu_t* _menu_state)
                 }
             }
 
-            _nf_temps_t* temp0_temps = (_nf_temps_t*) &(_state->_tempsys->_results[0][_state->_tempsys->read_index[0]]);
-            nf_menu_update_cur_temp(_state->_menu, temp0_temps->thermocouple);
+            //_nf_temps_t* temp0_temps = (_nf_temps_t*) &(_menu_state->_tempsys->_results[0][_state->_tempsys->read_index[0]]);
+            //nf_menu_update_cur_temp(_menu_state->_menu, temp0_temps->thermocouple);
             menu_update_btns();
 
             ssd1306_clear(_menu_state->_disp_ptr);
@@ -145,16 +140,38 @@ void menu_update(_nf_menu_t* _menu_state)
     }
 }
 
+bool menu_can_update(_nf_menu_t* _menu_state)
+{
+    /*
+     * TODO (DrNotThatEvil, 2024-01-09, 22:22):
+     * This needs to be updated so the loop will error if temp_started does this on first run
+     * but after that the loop should be fine to run, also if this fails you can move error logic in the
+     * resulting if i think.
+     * 
+     * After this the temp update can be moved to the ui core in main.c
+     * and the you can furture refactor the nf_config.h/nf_config.c stuff so it's less spagett
+     * i'm liking how it's going so far tho.. so that's nice i guess.
+    */ 
+
+    bool error_triggered = false;
+    uint error_type = 0;
+    uint error_animation = 0;
+    uint32_t temp_started = multicore_fifo_pop_blocking();
+    if(temp_started != TEMP_CORE_STARTED_FLAG) {
+        error_triggered = true;
+    }
+}
+
 void menu_update_buttons(_nf_menu_t* _menu_state)
 {
-    if (get_absolute_time()._private_us_since_boot < _menu_state->btn_update_timeout._private_us_since_boot) {
+    if (get_absolute_time() < _menu_state->btn_update_timeout) {
         return;
     }
     
     _menu_state->btn_update_timeout = make_timeout_time_ms(NF_MENU_BTN_UPDATE_TIMEOUT_MS);
 
     for(int i=0; i < 3; i++) {
-        if(_menu_state->_buttons[i].pressed && !_state->_buttons[i].held && !_state->_buttons[i].released) {
+        if(_menu_state->_buttons[i].pressed && !_menu_state->_buttons[i].held && !_menu_state->_buttons[i].released) {
             _menu_state->_buttons[i].held = true;
         }
 
@@ -163,12 +180,12 @@ void menu_update_buttons(_nf_menu_t* _menu_state)
             // only back and next should have repeat events
             if(_menu_state->_buttons[i].held_count > NF_MENU_BTN_REPEAT_UNTIL_HELD) {
                 if(i == NF_BACK_BTN_INDEX) {
-                    nf_menu_btn_handler(_menu_state->_menu, 0, true);
+                    nf_menu_btn_handler(_menu_state, 0, true);
                     //_state->_menu->menu_options[_state->_menu->current_menu_option].back_fn((void*) _state->_menu, true);
                 }
 
                 if(i == NF_NEXT_BTN_INDEX) {
-                    nf_menu_btn_handler(_menu_state->_menu, 1, true);
+                    nf_menu_btn_handler(_menu_state, 1, true);
                     //_state->_menu->menu_options[_state->_menu->current_menu_option].next_fn((void*) _state->_menu, true);
                 }
             } else {

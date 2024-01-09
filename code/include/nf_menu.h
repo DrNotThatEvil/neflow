@@ -6,6 +6,7 @@
 #include <pico/types.h>
 
 #include "pwm-tone.h"
+#include "debounce.h"
 #include "nf_menu/nf_menu_common.h"
 #include "nf_menu/nf_main_menu_screen.h"
 #include "nf_menu/nf_test_menu_screen.h"
@@ -96,6 +97,7 @@ void nf_menu_init(
 
 void menu_gpio_callback(_nf_menu_t* _menu_state, uint gpio, uint32_t events);
 void menu_update(_nf_menu_t* _menu_state);
+void menu_should_update(_nf_menu_t* _menu_state);
 void menu_update_buttons(_nf_menu_t* _menu_state);
 
 void nf_menu_update_cur_temp(_nf_menu_t* _menu, double temp);

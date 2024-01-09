@@ -24,14 +24,15 @@ void nf_memory_init(_nf_memory_state_t* _memory)
     }
 
 
+    /*
     if(_memory->was_saved) {
         bool loaded = nf_memory_load_page(_memory, (_memory->empty_page_index - 1));
-        /*
-        if(!loaded) {
-            nf_initalize_empty(_memory);
-        }
-        */
+
+        //if(!loaded) {
+        //    nf_initalize_empty(_memory);
+        //}
     }
+    */
 }
 
 void nf_memory_get_first_empty_page(_nf_memory_state_t* _memory)

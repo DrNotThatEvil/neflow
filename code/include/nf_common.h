@@ -1,6 +1,10 @@
 #ifndef NF_COMMON_H
 #define NF_COMMON_H
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <pico/stdlib.h>
+
 //// PIN CONFIG
 // SCREEN
 #define NF_SCREEN_SDA 14

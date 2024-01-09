@@ -46,10 +46,17 @@ typedef struct nf_menu_screen {
 } _nf_menu_screen_t;
 
 typedef enum nf_menu_state {
+    MENU_STATE_ERROR,
+    MENU_STATE_INIT,
     MENU_STATE_NORMAL,
     MENU_STATE_CALIBRATION,
     MENU_STATE_REFLOW
 } _nf_menu_state_t;
+
+typedef struct nf_menu_error_state {
+    uint error_type;
+    uint error_animation;
+} _nf_menu_error_state_t;
 
 typedef struct nf_button_state {
     bool pressed;
@@ -66,6 +73,7 @@ typedef struct nf_menu {
     _nf_tempsys_t* _tempsys;
     double cur_temp;
     _nf_menu_state_t _state;
+    _nf_menu_error_state_t _error_state;
     _nf_menu_screen_t* menu_screens;
     _nf_menu_screen_t** current_screen;
     uint refresh_ms;
