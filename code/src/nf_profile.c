@@ -25,7 +25,7 @@ void nf_profiles_init(_nf_profile_state_t* _profile_state, _nf_memory_state_t* _
     }
 }
 
-void nf_profiles_save(_nf_profile_state_t* _profile_state, _nf_profile_t* _profile)
+void nf_profile_save(_nf_profile_state_t* _profile_state, _nf_profile_t* _profile)
 {
     ptrdiff_t offset = _profile - _profile_state->_profiles;
     for(uint j = 0; j < PROFILE_TARGETS_SIZE; j++) 

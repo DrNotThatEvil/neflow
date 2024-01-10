@@ -52,7 +52,7 @@ typedef struct nf_tempsys {
 } _nf_tempsys_t;
 
 
-void nf_initalize_tempsys(_nf_tempsys_t* _tempsys, _nf_memory_state_t* _memory);
+void nf_tempsys_init(_nf_tempsys_t* _tempsys, _nf_memory_state_t* _memory);
 void nf_tempsys_set_state(_nf_tempsys_t* _tempsys, uint new_state);
 void nf_tempsys_update(_nf_tempsys_t* _tempsys);
 

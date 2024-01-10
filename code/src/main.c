@@ -56,10 +56,12 @@ int main()
 
 void ui_core_entry(void) 
 {
-    _nf_temps_t* temp0_temps = (_nf_temps_t*) &(_menu_state->_tempsys->_results[0][_state->_tempsys->read_index[0]]);
-    nf_menu_update_cur_temp(_menu_state->_menu, temp0_temps->thermocouple);
-
-    menu_update(_state->_menu);
+    for(;;)
+    {
+        menu_update(_state->_menu);
+        _nf_temps_t* temp0_temps = (_nf_temps_t*) &(_state->_tempsys->_results[0][_state->_tempsys->read_index[0]]);
+        nf_menu_update_cur_temp(_state->_menu, temp0_temps->thermocouple);
+    }
 }
 
 void gpio_callback(uint gpio, uint32_t events)

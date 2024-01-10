@@ -136,7 +136,7 @@ void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, 
             } 
 
             if(!has_failed) {
-                nf_profiles_save(profile_edit_state->_profile_state, profile_edit_state->current_profile);
+                nf_profile_save(profile_edit_state->_profile_state, profile_edit_state->current_profile);
                 profile_edit_state->current_profile->initialized = true;
                 tone(menu_state->_tonegen, NOTE_A3, tone_duration);
                 return;

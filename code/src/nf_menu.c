@@ -22,7 +22,9 @@ void nf_menu_init(
     _menu_state->_tempsys = _tempsys;
 
     _menu_state->_state = MENU_STATE_INIT;
-    _menu_state->_error_state = {0};
+    _menu_state->_error_state.error_type = 0;
+    _menu_state->_error_state.error_animation = 0;
+
     _menu_state->refresh_ms = 5;
     _menu_state->menu_screens = NULL; 
     _menu_state->cur_temp = 0.0;
@@ -92,73 +94,65 @@ void menu_gpio_callback(_nf_menu_t* _menu, uint gpio, uint32_t events)
 
 void menu_update(_nf_menu_t* _menu_state)
 {
-    bool error_triggered = false;
-    uint error_type = 0;
-    uint error_animation = 0;
-    uint32_t temp_started = multicore_fifo_pop_blocking();
-    if(temp_started != TEMP_CORE_STARTED_FLAG) {
-        error_triggered = true;
-    }
-
+    bool error_triggered = menu_can_update(_menu_state);
     ssd1306_clear(_menu_state->_disp_ptr);
-    for(;;)
-    {
-        if(error_triggered) {
-            ssd1306_clear(_menu_state->_disp_ptr);
-            if(error_animation == 0) {
-                char str[20];
-                sprintf(str, "ERROR: %d!!", error_type);
-                ssd1306_draw_string(_menu_state->_disp_ptr, 5, 10, 2, str);
-                ssd1306_draw_string(_menu_state->_disp_ptr, 5, 35, 1, "Reset oven!");
-            }
-            ssd1306_show(_menu_state->_disp_ptr);
-            sleep_ms(1000);
-            error_animation = (error_animation + 1) % 2;
-            continue;
-        } else {
-
-            if (multicore_fifo_rvalid()) {
-                uint32_t message = multicore_fifo_pop_blocking();
-                
-                if(message >= TEMP_ERROR_FLAG) {
-                    error_triggered = true;
-                    error_type = message;
-                    continue;
-                }
-            }
-
-            //_nf_temps_t* temp0_temps = (_nf_temps_t*) &(_menu_state->_tempsys->_results[0][_state->_tempsys->read_index[0]]);
-            //nf_menu_update_cur_temp(_menu_state->_menu, temp0_temps->thermocouple);
-            menu_update_btns();
-
-            ssd1306_clear(_menu_state->_disp_ptr);
-            nf_menu_render(_menu_state);
-            ssd1306_show(_menu_state->_disp_ptr);
-
-            sleep_ms(_menu_state->refresh_ms);
+    if(_menu_state->_state == MENU_STATE_ERROR || !error_triggered) {
+        if(_menu_state->_error_state.error_animation == 0) {
+            char str[20];
+            sprintf(str, "ERROR: %d!!", _menu_state->_error_state.error_type);
+            ssd1306_draw_string(_menu_state->_disp_ptr, 5, 10, 2, str);
+            ssd1306_draw_string(_menu_state->_disp_ptr, 5, 35, 1, "Reset oven!");
         }
+        ssd1306_show(_menu_state->_disp_ptr);
+        sleep_ms(1000);
+        _menu_state->_error_state.error_animation = (_menu_state->_error_state.error_animation + 1) % 2;
+    } else {
+        //_nf_temps_t* temp0_temps = (_nf_temps_t*) &(_menu_state->_tempsys->_results[0][_state->_tempsys->read_index[0]]);
+        //nf_menu_update_cur_temp(_menu_state->_menu, temp0_temps->thermocouple);
+        menu_update_buttons(_menu_state);
+
+        nf_menu_render(_menu_state);
+        ssd1306_show(_menu_state->_disp_ptr);
+        sleep_ms(_menu_state->refresh_ms);
     }
 }
 
 bool menu_can_update(_nf_menu_t* _menu_state)
 {
-    /*
-     * TODO (DrNotThatEvil, 2024-01-09, 22:22):
-     * This needs to be updated so the loop will error if temp_started does this on first run
-     * but after that the loop should be fine to run, also if this fails you can move error logic in the
-     * resulting if i think.
-     * 
-     * After this the temp update can be moved to the ui core in main.c
-     * and the you can furture refactor the nf_config.h/nf_config.c stuff so it's less spagett
-     * i'm liking how it's going so far tho.. so that's nice i guess.
-    */ 
+    if(_menu_state->_state == MENU_STATE_INIT)
+    {
+        uint32_t temp_started = multicore_fifo_pop_blocking();
+        if(temp_started != TEMP_CORE_STARTED_FLAG)
+        {
+            _menu_state->_state = MENU_STATE_ERROR;
+            return false;
+        }
 
-    bool error_triggered = false;
-    uint error_type = 0;
-    uint error_animation = 0;
-    uint32_t temp_started = multicore_fifo_pop_blocking();
-    if(temp_started != TEMP_CORE_STARTED_FLAG) {
-        error_triggered = true;
+        if(temp_started == TEMP_CORE_STARTED_FLAG)
+        {
+            _menu_state->_state = MENU_STATE_NORMAL;
+            return true;
+        }
+    }
+
+    if(_menu_state->_state == MENU_STATE_ERROR)
+    {
+        return false;
+    } 
+
+    if(_menu_state->_state == MENU_STATE_NORMAL)
+    {
+        if (multicore_fifo_rvalid())
+        {
+            uint32_t message = multicore_fifo_pop_blocking();
+            if(message >= TEMP_ERROR_FLAG) {
+                _menu_state->_state = MENU_STATE_ERROR;
+                _menu_state->_error_state.error_type = message;
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 

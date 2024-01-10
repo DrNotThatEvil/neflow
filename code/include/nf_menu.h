@@ -97,7 +97,7 @@ void nf_menu_init(
 
 void menu_gpio_callback(_nf_menu_t* _menu_state, uint gpio, uint32_t events);
 void menu_update(_nf_menu_t* _menu_state);
-void menu_should_update(_nf_menu_t* _menu_state);
+bool menu_can_update(_nf_menu_t* _menu_state);
 void menu_update_buttons(_nf_menu_t* _menu_state);
 
 void nf_menu_update_cur_temp(_nf_menu_t* _menu, double temp);
