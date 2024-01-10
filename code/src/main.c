@@ -169,6 +169,17 @@ void update_btns(void)
 }
 */
 
+/*
+ * TODO (DrNotThatEvil, 2024-01-10, 19:27):
+ * The menu system has been reworked a little bit, i'm kind of thinking of keeping the nf_config.h
+ * instead of moving it to the other name cause it's a big rework for just a rename and most systems
+ * do actually depend on eachtorher now. 
+ * 
+ * the screen might be moved from nf_menu.c/nf_menu.h because that's not uses anywhere else.
+ * but since the dog really wants attention i will let you decide that later.
+ * 
+*/
+
 void setup_gpios(void)
 {
     // Screen setup
