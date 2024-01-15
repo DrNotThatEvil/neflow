@@ -9,6 +9,7 @@ void nf_tempsys_init(_nf_tempsys_t* _tempsys, _nf_memory_state_t* _memory)
     _tempsys->_curr_state = PRE_INIT;
     _tempsys->_prev_state = PRE_INIT;
     _tempsys->_tempmode = UNKNOWN;
+    _tempsys->heater_state = 0;
 
     for(uint i = 0; i < 2; i++) {
         for(uint j = 0; j < 2; j++) {
@@ -112,6 +113,10 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
             _tempsys->integral = 0.f;
             _tempsys->prev_error = 0.f;
             _tempsys->pid_output = 0.f;
+
+            _tempsys->pid_data[0] = _tempsys->_memory->current_buffer->pid_data[0][0];
+            _tempsys->pid_data[1] = _tempsys->_memory->current_buffer->pid_data[0][1];
+            _tempsys->pid_data[2] = _tempsys->_memory->current_buffer->pid_data[0][2];
             _tempsys->_prev_state = CALIBRATION;
             return;
         }
@@ -139,11 +144,15 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
                 Other stuff? don't know the pid works kind off so that's nice :)
             */
 
+           // Changed this to 70.f for a bit.
+
             _nf_pid_controller(_tempsys, 100.f);
-            if(_tempsys->pid_output > 50.f + 5.0f) {
+            if(_tempsys->pid_output > 70.f + 2.5f) {
                 gpio_put(NF_SSR0_PIN, 1);
-            } else if (_tempsys->pid_output < 50.f - 5.0f) {
+                _tempsys->heater_state = 1;
+            } else if (_tempsys->pid_output < 70.f - 2.5f) {
                 gpio_put(NF_SSR0_PIN, 0);
+                _tempsys->heater_state = 0;
             }
 
             sleep_ms(450);
@@ -159,15 +168,15 @@ void nf_tempsys_set_state(_nf_tempsys_t* _tempsys, uint new_state)
         return;
     }
 
-    if(new_state == 0) {
+    if(new_state == 1) {
         state = NORMAL;
     }
 
-    if(new_state == 1) {
+    if(new_state == 2) {
         state = CALIBRATION;
     }
 
-    //_tempsys->_prev_state = _tempsys->_curr_state;
+    _tempsys->_prev_state = _tempsys->_curr_state;
     _tempsys->_curr_state = state;
 }
 

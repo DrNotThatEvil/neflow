@@ -2,7 +2,7 @@
 
 void nf_memory_init(_nf_memory_state_t* _memory)
 {
-    //nf_memory_clear(_memory);
+    //nf_memory_clear(_memory); 
 
     _memory->current_buffer = malloc(sizeof(_nf_memory_t));
     nf_initalize_empty(_memory);
@@ -23,16 +23,12 @@ void nf_memory_init(_nf_memory_state_t* _memory)
         // load failed
     }
 
-
-    /*
     if(_memory->was_saved) {
-        bool loaded = nf_memory_load_page(_memory, (_memory->empty_page_index - 1));
+        // bool loaded = nf_memory_load_page(_memory, (_memory->empty_page_index - 1));
+        nf_memory_load_page(_memory, (_memory->empty_page_index - 1));
 
-        //if(!loaded) {
-        //    nf_initalize_empty(_memory);
-        //}
+        // load failed
     }
-    */
 }
 
 void nf_memory_get_first_empty_page(_nf_memory_state_t* _memory)
@@ -53,9 +49,13 @@ void nf_memory_get_first_empty_page(_nf_memory_state_t* _memory)
 
 void nf_initalize_empty(_nf_memory_state_t* _memory)
 {
-    _memory->current_buffer->pid_data[0] = 1.0f;
-    _memory->current_buffer->pid_data[1] = 1.0f;
-    _memory->current_buffer->pid_data[2] = 1.0f;
+    _memory->current_buffer->pid_data[0][0] = 1.0f;
+    _memory->current_buffer->pid_data[0][1] = 1.0f;
+    _memory->current_buffer->pid_data[0][2] = 1.0f;
+
+    _memory->current_buffer->pid_data[1][0] = 1.0f;
+    _memory->current_buffer->pid_data[1][1] = 1.0f;
+    _memory->current_buffer->pid_data[1][2] = 1.0f;
 
     for(uint i = 0; i < NUMBER_OF_PROFILES; i++) 
     {
@@ -86,9 +86,13 @@ bool nf_memory_load_page(_nf_memory_state_t* _memory, uint page)
     }
 
     _nf_memory_t *p_memory = (_nf_memory_t*) (buffer+sizeof(uint8_t));
-    memcpy(&_memory->current_buffer->pid_data[0], &p_memory->pid_data[0], sizeof(float));
-    memcpy(&_memory->current_buffer->pid_data[1], &p_memory->pid_data[1], sizeof(float));
-    memcpy(&_memory->current_buffer->pid_data[2], &p_memory->pid_data[2], sizeof(float));
+
+    memcpy(&_memory->current_buffer->pid_data[0][0], &p_memory->pid_data[0][0], sizeof(float));
+    memcpy(&_memory->current_buffer->pid_data[0][1], &p_memory->pid_data[0][1], sizeof(float));
+    memcpy(&_memory->current_buffer->pid_data[0][2], &p_memory->pid_data[0][2], sizeof(float));
+    memcpy(&_memory->current_buffer->pid_data[1][0], &p_memory->pid_data[1][0], sizeof(float));
+    memcpy(&_memory->current_buffer->pid_data[1][1], &p_memory->pid_data[1][1], sizeof(float));
+    memcpy(&_memory->current_buffer->pid_data[1][2], &p_memory->pid_data[1][2], sizeof(float));
 
     for(uint i = 0; i < NUMBER_OF_PROFILES; i++) 
     {
@@ -130,6 +134,11 @@ void nf_memory_save(_nf_memory_state_t* _memory)
     }
 }
 
+void nf_memory_save_with_callback(_nf_memory_state_t* _memory, MemorySaveCallback cb, void* ptr)
+{
+    nf_memory_save(_memory);
+    cb(ptr);
+}
 /* 
 TODO:
  Do some more testing with the memory but it seems to page correctly and write correctly.

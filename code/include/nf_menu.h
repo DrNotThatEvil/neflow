@@ -5,6 +5,7 @@
 #include <pico/stdlib.h>
 #include <pico/types.h>
 
+#include "ssd1306.h"
 #include "pwm-tone.h"
 #include "debounce.h"
 #include "nf_menu/nf_menu_common.h"
@@ -13,6 +14,7 @@
 #include "nf_menu/nf_config_edit_screen.h"
 #include "nf_menu/nf_profiles_screen.h"
 #include "nf_menu/nf_profile_edit_screen.h"
+#include "nf_menu/nf_calibration_screen.h"
 
 #define NF_MENU_BTN_UPDATE_TIMEOUT_MS 50
 #define NF_MENU_BTN_REPEAT_UNTIL_HELD 8
@@ -88,7 +90,6 @@ typedef struct nf_menu {
 
 void nf_menu_init(
     _nf_menu_t* _menu_state, 
-    ssd1306_t* _disp_ptr, 
     tonegenerator_t* _tonegen, 
     _nf_profile_state_t* _profile_state, 
     _nf_memory_state_t* _memory,
@@ -101,6 +102,8 @@ bool menu_can_update(_nf_menu_t* _menu_state);
 void menu_update_buttons(_nf_menu_t* _menu_state);
 
 void nf_menu_update_cur_temp(_nf_menu_t* _menu, double temp);
+void nf_menu_update_heater_state(_nf_menu_t* _menu, uint state);
+
 uint nf_menu_get_menu_state(_nf_menu_t* _menu_state);
 void nf_menu_render(_nf_menu_t* _menu_state);
 void nf_menu_btn_handler(_nf_menu_t* _menu_state, uint btn, bool repeat);

@@ -5,6 +5,10 @@ void nf_main_menu_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extr
     char temp_str[20];
     sprintf(temp_str, "Temp: %.2f", menu_state->cur_temp);
     ssd1306_draw_string(disp_ptr, 5, 5, 1, temp_str);
+
+    if(menu_state->heater_state == 1) {
+        ssd1306_draw_square(disp_ptr, 120, 5, 5, 5);
+    }
     
     char str[20];
     uint test = *((uint*)extra_data);
@@ -51,6 +55,7 @@ void nf_main_menu_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, voi
 
         if(*data == CALIBRATION_INDEX) {
             menu_state->_state = MENU_STATE_CALIBRATION;
+            nf_menu_change_screen(menu_state, CALIBRATION_SCREEN_ID);
         }
 #if ENABLE_TEST_MENU == 1
         if(*data == TEST_MENU_INDEX) {

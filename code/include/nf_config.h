@@ -24,7 +24,6 @@ typedef enum {
 typedef struct {
     tonegenerator_t* _tonegen;
     nf_reflow_state_t _reflow_state;
-    ssd1306_t* _disp_ptr;
     _nf_profile_state_t* _profile_state;
     _nf_tempsys_t* _tempsys;
     _nf_menu_t* _menu;

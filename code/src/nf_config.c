@@ -7,21 +7,18 @@ void nf_init(nf_state_t* _state)
     tone_init(_state->_tonegen, NF_SPKR_PIN);
 
     _state->_reflow_state = NONE;
-    _state->_disp_ptr = (ssd1306_t*) malloc(sizeof(ssd1306_t));
     _state->_profile_state = (_nf_profile_state_t*) malloc(sizeof(_nf_profile_state_t));
     //_state->_profiles = (_nf_profile_t*) malloc(NUMBER_OF_PROFILES * sizeof(_nf_profile_t));
     _state->_memory = (_nf_memory_state_t*) malloc(sizeof(_nf_memory_state_t));
     _state->_tempsys = (_nf_tempsys_t*) malloc(sizeof(_nf_tempsys_t));
 
     _state->_menu = malloc(sizeof(_nf_menu_t));
-    _state->_disp_ptr->external_vcc = false;
 
-    ssd1306_init(_state->_disp_ptr, 128, 64, 0x3C, i2c1);
     nf_memory_init(_state->_memory);
     nf_profiles_init(_state->_profile_state, _state->_memory);
 
     nf_tempsys_init(_state->_tempsys, _state->_memory);
-    nf_menu_init(_state->_menu, _state->_disp_ptr, _state->_tonegen, _state->_profile_state, _state->_memory, _state->_tempsys);
+    nf_menu_init(_state->_menu, _state->_tonegen, _state->_profile_state, _state->_memory, _state->_tempsys);
 }
 
 void nf_tempsys_loop(nf_state_t* _nf_state)

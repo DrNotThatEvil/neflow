@@ -13,8 +13,10 @@
 
 #define NF_MEMORY_PREFIX_BYTE 0xB9
 
+typedef void (*MemorySaveCallback)(void* ptr);
+
 typedef struct nf_memory {
-    float pid_data[3];
+    float pid_data[2][3];
     uint profile_data[NUMBER_OF_PROFILES][PROFILE_TARGETS_SIZE][2];
 } _nf_memory_t;
 
@@ -31,7 +33,9 @@ void nf_initalize_empty(_nf_memory_state_t* _memory);
 void nf_memory_clear(_nf_memory_state_t* _memory);
 bool nf_memory_load_page(_nf_memory_state_t* _memory, uint page);
 bool nf_memory_load_last_page(_nf_memory_state_t* _memory);
+
 void nf_memory_save(_nf_memory_state_t* _memory);
+void nf_memory_save_with_callback(_nf_memory_state_t* _memory, MemorySaveCallback cb, void* ptr);
 
 
 #endif

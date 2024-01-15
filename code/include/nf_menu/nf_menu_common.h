@@ -67,11 +67,13 @@ typedef struct nf_button_state {
 
 typedef struct nf_menu {
     absolute_time_t btn_update_timeout;
+    absolute_time_t scr_update_timeout;
     nf_btn_state_t _buttons[3];
     tonegenerator_t* _tonegen;
     ssd1306_t* _disp_ptr;
     _nf_tempsys_t* _tempsys;
     double cur_temp;
+    uint heater_state;
     _nf_menu_state_t _state;
     _nf_menu_error_state_t _error_state;
     _nf_menu_screen_t* menu_screens;

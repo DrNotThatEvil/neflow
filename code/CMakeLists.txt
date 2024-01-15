@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.28)
 
 set(PICO_BOARD pico)
 include(cmake/pico_sdk_import.cmake)

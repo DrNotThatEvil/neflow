@@ -11,6 +11,8 @@ set(NEFLOW_HEADER_LIST
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_profiles_screen.h"
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_profile_edit_screen.h"
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_config_edit_screen.h"
+    "${neflow_SOURCE_DIR}/include/nf_menu/nf_graph.h"
+    "${neflow_SOURCE_DIR}/include/nf_menu/nf_calibration_screen.h"
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_test_menu_screen.h"
     "${neflow_SOURCE_DIR}/include/font.h"
     "${neflow_SOURCE_DIR}/include/ssd1306.h"
@@ -33,6 +35,7 @@ add_executable(neflow
     nf_menu/nf_profiles_screen.c
     nf_menu/nf_profile_edit_screen.c
     nf_menu/nf_config_edit_screen.c
+    nf_menu/nf_calibration_screen.c
     nf_menu/nf_test_menu_screen.c
     ${REFLOW_PLATE_HEADER_LIST}
 )
