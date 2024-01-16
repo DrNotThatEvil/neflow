@@ -76,6 +76,7 @@ void nf_main_menu_init(_nf_menu_t* _menu_state)
 
     _nf_menu_screen_t* main_screen = (_nf_menu_screen_t*) malloc(sizeof(_nf_menu_screen_t));
     main_screen->id = MAIN_MENU_SCREEN_ID;
+    main_screen->autoclear = true;
     main_screen->extra_data = malloc(sizeof(uint));
 
     uint* option = main_screen->extra_data;

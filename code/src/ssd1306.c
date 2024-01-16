@@ -181,6 +181,13 @@ void ssd1306_draw_square(ssd1306_t *p, uint32_t x, uint32_t y, uint32_t width, u
 
 }
 
+void ssd1306_clear_square(ssd1306_t *p, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+    for(uint32_t i=0; i<width; ++i)
+        for(uint32_t j=0; j<height; ++j)
+            ssd1306_clear_pixel(p, x+i, y+j);
+
+}
+
 void ssd1306_draw_empty_square(ssd1306_t *p, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
     ssd1306_draw_line(p, x, y, x+width, y);
     ssd1306_draw_line(p, x, y+height, x+width, y+height);

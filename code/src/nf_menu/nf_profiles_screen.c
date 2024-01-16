@@ -96,6 +96,7 @@ void nf_profiles_menu_init(_nf_menu_t* _menu_state, _nf_profile_state_t* _profil
     _nf_menu_screen_t* profiles_screen = (_nf_menu_screen_t*) malloc(sizeof(_nf_menu_screen_t));
 
     profiles_screen->id = PROFILES_SCREEN_ID;
+    profiles_screen->autoclear = true;
     profiles_screen->extra_data = malloc(sizeof(_nf_profiles_menu_state_t));
 
     _nf_profiles_menu_state_t* profile_menu_state = (_nf_profiles_menu_state_t*) profiles_screen->extra_data;

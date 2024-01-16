@@ -41,6 +41,7 @@ typedef struct nf_menu_screen_fn_ptrs {
 typedef struct nf_menu_screen {
     uint id;
     void* extra_data;
+    bool autoclear;
     _nf_menu_screen_fn_ptrs_t fnptrs;
     _nf_menu_screen_t* next;
 } _nf_menu_screen_t;

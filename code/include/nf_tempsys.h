@@ -40,6 +40,7 @@ typedef struct nf_tempsys {
     _nf_tempsys_state_t _prev_state;
     _nf_tempsys_state_t _curr_state;
     _nf_tempsys_temp_mode_t _tempmode;
+    absolute_time_t _pid_timeout; 
 
     uint heater_state;
     float pid_data[3];

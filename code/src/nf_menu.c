@@ -105,8 +105,8 @@ void menu_update(_nf_menu_t* _menu_state)
     }
 
     bool error_triggered = menu_can_update(_menu_state);
-    ssd1306_clear(_menu_state->_disp_ptr);
     if(_menu_state->_state == MENU_STATE_ERROR || !error_triggered) {
+        ssd1306_clear(_menu_state->_disp_ptr);
         if(_menu_state->_error_state.error_animation == 0) {
             char str[20];
             sprintf(str, "ERROR: %d!!", _menu_state->_error_state.error_type);
@@ -257,5 +257,9 @@ void nf_menu_btn_handler(_nf_menu_t* _menu, uint btn, bool repeat)
 void nf_menu_render(_nf_menu_t* _menu)
 {
     //_menu->menu_options[_menu->current_menu_option].render_fn((void*)_menu, false);
+    if((*_menu->current_screen)->autoclear) {
+        ssd1306_clear(_menu->_disp_ptr);
+    }
+
     (*_menu->current_screen)->fnptrs.on_render(_menu, _menu->_disp_ptr, (*_menu->current_screen)->extra_data);
 }

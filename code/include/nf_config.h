@@ -28,6 +28,7 @@ typedef struct {
     _nf_tempsys_t* _tempsys;
     _nf_menu_t* _menu;
     _nf_memory_state_t* _memory;
+    absolute_time_t _temploop_timer;
 } nf_state_t;
 
 void nf_init(nf_state_t* _nf_state);

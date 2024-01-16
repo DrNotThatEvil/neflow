@@ -171,6 +171,7 @@ void nf_test_menu_init(_nf_menu_t* _menu_state, _nf_memory_state_t* memory)
 
 
     test_screen->id = TEST_SCREEN_ID;
+    test_screen->autoclear = true;
     test_screen->extra_data = malloc(sizeof(_nf_test_menu_state_t));
 
     _nf_test_menu_state_t* test_menu_state = (_nf_test_menu_state_t*) test_screen->extra_data;

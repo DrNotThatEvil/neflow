@@ -24,7 +24,7 @@
 #define HEIGHT 64
 
 static nf_state_t* _state;
-static absolute_time_t btn_update_timeout = { 0u };
+//static absolute_time_t btn_update_timeout;
 
 void setup_gpios(void);
 void update(nf_state_t* _state);
@@ -39,17 +39,15 @@ int main()
     
     //get_temp();
 
-    btn_update_timeout = make_timeout_time_ms(BTN_UPDATE_TIMEOUT_MS);
+    //btn_update_timeout = make_timeout_time_ms(BTN_UPDATE_TIMEOUT_MS);
     _state = malloc(sizeof(nf_state_t));
 
     nf_init(_state);
     multicore_launch_core1(ui_core_entry);
-    sleep_ms(100);
 
     multicore_fifo_push_blocking(TEMP_CORE_STARTED_FLAG);
     while (1) {
         nf_tempsys_loop(_state);
-        sleep_ms(100);
     }
     //update(_state);
 }

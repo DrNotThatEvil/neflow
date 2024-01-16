@@ -118,6 +118,7 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
             _tempsys->pid_data[1] = _tempsys->_memory->current_buffer->pid_data[0][1];
             _tempsys->pid_data[2] = _tempsys->_memory->current_buffer->pid_data[0][2];
             _tempsys->_prev_state = CALIBRATION;
+            _tempsys->_pid_timeout = make_timeout_time_ms(450);
             return;
         }
 
@@ -145,6 +146,10 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
             */
 
            // Changed this to 70.f for a bit.
+            if(get_absolute_time()._private_us_since_boot < _tempsys->_pid_timeout._private_us_since_boot) 
+            {
+                return;
+            }
 
             _nf_pid_controller(_tempsys, 100.f);
             if(_tempsys->pid_output > 70.f + 2.5f) {
@@ -155,7 +160,7 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
                 _tempsys->heater_state = 0;
             }
 
-            sleep_ms(450);
+            _tempsys->_pid_timeout = make_timeout_time_ms(450);
             return;
         }
     }

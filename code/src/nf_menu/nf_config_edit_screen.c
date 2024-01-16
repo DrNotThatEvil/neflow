@@ -223,6 +223,7 @@ void nf_config_edit_menu_init(_nf_menu_t* _menu_state, _nf_memory_state_t* _memo
     _nf_menu_screen_t* config_edit_screen = (_nf_menu_screen_t*) malloc(sizeof(_nf_menu_screen_t));
 
     config_edit_screen->id = CONFIG_SCREEN_ID;
+    config_edit_screen->autoclear = true;
     config_edit_screen->extra_data = malloc(sizeof(_nf_config_edit_screen_state_t));
 
     _nf_config_edit_screen_state_t* config_edit_state = (_nf_config_edit_screen_state_t*) config_edit_screen->extra_data;
