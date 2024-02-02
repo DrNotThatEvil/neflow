@@ -1,4 +1,5 @@
 #include "nf_menu/nf_calibration_screen.h"
+#include "nf_menu/nf_graph_font.h"
 
 /*
  * TODO (DrNotThatEvil, 2024-01-15, 22:16):
@@ -19,6 +20,15 @@
  * To make it look nice draw a line from the last pixel of the previous line to the
  * first pixel of the new line, this should make it look pretty nice i think?
 */
+
+double my_ceil(double x) {
+    int intPart = (int)x;
+    if (x > intPart) {
+        return intPart + 1.0;
+    } else {
+        return x;
+    }
+}
 
 void nf_calibration_screen_init(_nf_menu_t* _menu_state)
 {
@@ -48,31 +58,105 @@ void _nf_gen_calibration_screen_state(_nf_calibration_screen_state_t* _cali_stat
 {
     _cali_state->_sample_count = 0;
     _cali_state->_sum = 0.0;
-    _cali_state->_avg_count = 0;
-    _cali_state->_background_drawn = false;
-    _cali_state->_last_line_end_x = 0;
-    _cali_state->_last_line_end_y = 0;
+    _cali_state->_avg_index = 0;
+    _cali_state->_drawing = false;
+
+    _cali_state->_temp_high_value = 50;
+    _cali_state->_sec_high_value = 60;
+
+    for(uint8_t i = 0; i < 9; i++)
+    {
+        _cali_state->_averages[i] = 0.0;
+    }
 
     _cali_state->_sample_timeout = make_timeout_time_ms(NF_SAMPLE_TIMEOUT);
     _cali_state->_avg_timeout = make_timeout_time_ms(NF_AVG_TIMEOUT);
 }
 
+void _nf_format_gvalue(uint16_t value, char* target)
+{
+    sprintf(target, "%d", value);
+    if (strlen(target) == 1)
+    {
+        sprintf(target, "::%d", value);
+    }
+    else if (strlen(target) == 2)
+    {
+        sprintf(target, ":%d", value);
+    }
+
+}
+
 void nf_calibration_screen_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data)
 {
     _nf_calibration_screen_state_t* cali_state = (_nf_calibration_screen_state_t*) extra_data;
-    if(!cali_state->_background_drawn)
-    {
-        ssd1306_clear(disp_ptr);
-        ssd1306_bmp_show_image(disp_ptr, nf_graph, nf_graph_size);
-        cali_state->_background_drawn = true;
-    }
+    ssd1306_clear(disp_ptr);
+
+    // Left Line
+    ssd1306_draw_line(disp_ptr, 17, 0, 19, 0);
+    ssd1306_draw_pixel(disp_ptr, 18, 25);
+    ssd1306_draw_line(disp_ptr, 19, 0, 19, 50);
+    
+    // Bottom Line
+    ssd1306_draw_line(disp_ptr, 17, 50, 119, 50);
+    ssd1306_draw_line(disp_ptr, 69 , 50, 69, 52);
+    ssd1306_draw_line(disp_ptr, 119 , 50, 119, 52);
+
+    //ssd1306_draw_line(disp_ptr, 39 + (i * 20), 51, 39 + (i * 20), 52);
+
+    char str[20];
+    _nf_format_gvalue(cali_state->_sec_high_value / 2, str);
+    ssd1306_draw_string_with_font(disp_ptr, 60, 55, 1, graph_font_5x5, str);
+    
+    _nf_format_gvalue(cali_state->_sec_high_value, str);
+    ssd1306_draw_string_with_font(disp_ptr, 110, 55, 1, graph_font_5x5, str);
+
+    ssd1306_draw_string_with_font(disp_ptr, 0, 50, 1, graph_font_5x5, "::0");
+    
+    _nf_format_gvalue(cali_state->_temp_high_value / 2, str);
+    ssd1306_draw_string_with_font(disp_ptr, 0, 25, 1, graph_font_5x5, str);
+    
+    _nf_format_gvalue(cali_state->_temp_high_value, str);
+    ssd1306_draw_string_with_font(disp_ptr, 0, 0, 1, graph_font_5x5, str);
 
     if(menu_state->heater_state == 1) {
         ssd1306_draw_square(disp_ptr, 120, 5, 5, 5);
     }
-    else
-    {
-        ssd1306_clear_square(disp_ptr, 120, 5, 5, 5);
+
+    uint32_t cy = 0;
+    uint32_t ex = 0;
+
+    if (cali_state->_drawing) {
+        for(uint8_t i = 0; i < cali_state->_avg_index; i++)
+        {
+            uint32_t last_line_end_x = ex;
+            uint32_t last_line_end_y = cy;
+            
+            double sx_d = (((double) i) * 5.0) / ((double) cali_state->_sec_high_value) * 100.0; 
+            double ex_d = (((double) (i + 1)) * 5.0) / ((double) cali_state->_sec_high_value) * 100.0; 
+
+            uint32_t sx = NF_GRAPH_ZERO_X + my_ceil(sx_d);
+            ex = NF_GRAPH_ZERO_X + my_ceil(ex_d);
+            //ex = ((((i + 1) * 5) / cali_state->_sec_high_value) * 100);
+            cy = NF_GRAPH_ZERO_Y - ((NF_GRAPH_ZERO_Y + 1) * (cali_state->_averages[i] / cali_state->_temp_high_value));
+
+            if(last_line_end_x > 0 && last_line_end_y > 0) 
+            {
+                ssd1306_draw_line(disp_ptr, 
+                    last_line_end_x,
+                    last_line_end_y,
+                    sx,
+                    cy
+                );
+            }
+
+            ssd1306_draw_line(disp_ptr, 
+                sx,
+                cy,
+                ex,
+                cy
+            );
+        }
     }
 
     if(get_absolute_time()._private_us_since_boot < cali_state->_sample_timeout._private_us_since_boot)
@@ -86,7 +170,33 @@ void nf_calibration_screen_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, v
 
     if(get_absolute_time()._private_us_since_boot > cali_state->_avg_timeout._private_us_since_boot)
     {
-        double average = cali_state->_sum / cali_state->_sample_count;
+        double avg = cali_state->_sum / cali_state->_sample_count;
+        cali_state->_averages[cali_state->_avg_index] = avg;
+        cali_state->_drawing = true;
+
+        if(cali_state->_sec_high_value < 500) {
+            double sec_percentage = (((double)cali_state->_avg_index) * 5.0) / ((double) cali_state->_sec_high_value) ;
+            if (sec_percentage > 0.7) {
+                cali_state->_sec_high_value += 60;
+
+                if(cali_state->_sec_high_value > 500) {
+                    cali_state->_sec_high_value = 500;
+                }
+            }
+        }
+
+        if(cali_state->_temp_high_value < 200) {
+            double temp_percentage = (avg / ((double) cali_state->_temp_high_value));
+            if (temp_percentage > 0.7) {
+                cali_state->_temp_high_value += 50;
+
+                if(cali_state->_temp_high_value > 200) {
+                    cali_state->_temp_high_value = 200;
+                }
+            }
+        }
+
+        /*
         uint32_t sx = NF_GRAPH_ZERO_X + cali_state->_avg_count;
         uint32_t ex = NF_GRAPH_ZERO_X + (cali_state->_avg_count + 1);
         uint32_t cy = NF_GRAPH_ZERO_Y - ((NF_GRAPH_ZERO_Y + 1) * (average / 200.0));
@@ -113,12 +223,13 @@ void nf_calibration_screen_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, v
         char temp_str[20];
         sprintf(temp_str, "Avg: %.2f", average);
         ssd1306_draw_string(disp_ptr, 30, 5, 1, temp_str);
+        */
 
-        cali_state->_avg_count++;
+        cali_state->_avg_index = (cali_state->_avg_index + 1) % 100;
         cali_state->_sum = 0.0;
         cali_state->_sample_count = 0;
-        cali_state->_last_line_end_x = ex;
-        cali_state->_last_line_end_y = cy; 
+        //cali_state->_last_line_end_x = ex;
+        //cali_state->_last_line_end_y = cy; 
         cali_state->_avg_timeout = make_timeout_time_ms(NF_AVG_TIMEOUT);
     }
 

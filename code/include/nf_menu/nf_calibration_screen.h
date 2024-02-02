@@ -5,9 +5,9 @@
 #include "nf_menu/nf_graph.h"
 
 #define NF_GRAPH_ZERO_X 20
-#define NF_GRAPH_MAX_X 120
+#define NF_GRAPH_MAX_X 119
 
-#define NF_GRAPH_ZERO_Y 44
+#define NF_GRAPH_ZERO_Y 49
 #define NF_GRAPH_MAX_Y 0
 
 #define NF_AVG_TIMEOUT 1000
@@ -18,10 +18,12 @@
 typedef struct nf_calibration_screen_state {
     uint8_t _sample_count;
     double _sum;
-    uint8_t _avg_count;
-    bool _background_drawn;
-    uint32_t _last_line_end_x;
-    uint32_t _last_line_end_y;
+    uint8_t _avg_index;
+    double _averages[100];
+    bool _drawing;
+    
+    uint8_t _temp_high_value;
+    uint16_t _sec_high_value;
     absolute_time_t _sample_timeout;
     absolute_time_t _avg_timeout;
 } _nf_calibration_screen_state_t;
