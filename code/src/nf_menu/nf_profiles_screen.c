@@ -72,7 +72,7 @@ void nf_profiles_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void
 
         if(btn == 2) {
             _nf_profile_t* _profile = (&profiles_state->_profile_state->_profiles[profiles_state->selected_profile]);
-            if (profiles_state->selected_option == 2) {
+            if (profiles_state->selected_option == 1) {
                 tone(menu_state->_tonegen, NOTE_A4, 100);
                 nf_menu_change_screen_with_data(menu_state, PROFILE_EDIT_SCREEN_ID, (void*) _profile);
                 return;

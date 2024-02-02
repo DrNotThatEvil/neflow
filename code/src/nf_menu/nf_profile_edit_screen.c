@@ -97,7 +97,12 @@ void nf_profile_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, 
             uint edit = profile_edit_state->editing - 2;
             uint* value = &(profile_edit_state->current_profile->targets[selected][edit]);
 
-            if (*value < 229) {
+            if (*value < 229 && edit == 0) {
+                *value = (*value + 1);
+                tone(menu_state->_tonegen, NOTE_A3, tone_duration);
+            }
+
+            if (*value < 255 && edit == 1) {
                 *value = (*value + 1);
                 tone(menu_state->_tonegen, NOTE_A3, tone_duration);
             }

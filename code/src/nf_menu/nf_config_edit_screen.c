@@ -182,8 +182,8 @@ void nf_config_edit_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, v
                 if(config_edit_state->selected_value == 3) {
                     //tone(menu_state->_tonegen, NOTE_A4, tone_duration);
 
-                    nf_memory_save(config_edit_state->_memory_state);
-                    //nf_memory_save_with_callback(config_edit_state->_memory_state, nf_config_edit_cb, (void*)menu_state);
+                    //nf_memory_save(config_edit_state->_memory_state);
+                    nf_memory_save_with_callback(config_edit_state->_memory_state, nf_config_edit_cb, (void*)menu_state);
                 }
             }
             

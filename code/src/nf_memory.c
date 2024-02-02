@@ -70,7 +70,9 @@ void nf_initalize_empty(_nf_memory_state_t* _memory)
 void nf_memory_clear(_nf_memory_state_t* _memory)
 {
     uint32_t ints = save_and_disable_interrupts();
+    multicore_lockout_start_blocking(); // Stop core1
     flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
+    multicore_lockout_end_blocking(); // Restart core1
     restore_interrupts(ints);
     _memory->empty_page_index = 0;
 }
@@ -78,6 +80,7 @@ void nf_memory_clear(_nf_memory_state_t* _memory)
 bool nf_memory_load_page(_nf_memory_state_t* _memory, uint page)
 {
     uint32_t ints = save_and_disable_interrupts();
+    //multicore_lockout_start_blocking(); // Stop core1
     int addr = XIP_BASE + FLASH_TARGET_OFFSET + (page * FLASH_PAGE_SIZE);
 
     uint8_t *buffer = (uint8_t*) addr;
@@ -103,6 +106,7 @@ bool nf_memory_load_page(_nf_memory_state_t* _memory, uint page)
         }
     }
 
+    //multicore_lockout_end_blocking(); // Restart core1
     restore_interrupts(ints);
 }
 
@@ -118,11 +122,14 @@ void nf_memory_save(_nf_memory_state_t* _memory)
     // Check if on max or no empty page available (same as reaching max page)
     if (_memory->empty_page_index < max_page && _memory->empty_page_index != -1) {
         uint32_t ints = save_and_disable_interrupts();
+        multicore_lockout_start_blocking(); // Stop core1
         
         uint8_t *data_to_write = (uint8_t*) malloc(sizeof(uint8_t) + sizeof(_nf_memory_t)); 
         data_to_write[0] = (uint8_t) NF_MEMORY_PREFIX_BYTE;
         memcpy(&data_to_write[1], _memory->current_buffer, sizeof(_nf_memory_t));
         flash_range_program(FLASH_TARGET_OFFSET + (_memory->empty_page_index*FLASH_PAGE_SIZE), data_to_write, FLASH_PAGE_SIZE);
+
+        multicore_lockout_end_blocking(); // Restart core1
         restore_interrupts(ints);
 
         _memory->empty_page_index = _memory->empty_page_index + 1;

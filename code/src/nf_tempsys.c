@@ -152,15 +152,16 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
             }
 
             _nf_pid_controller(_tempsys, 100.f);
-            if(_tempsys->pid_output > 70.f + 2.5f) {
+            if(_tempsys->pid_output > 72.f + 1.5f) {
                 gpio_put(NF_SSR0_PIN, 1);
                 _tempsys->heater_state = 1;
-            } else if (_tempsys->pid_output < 70.f - 2.5f) {
+            } else if (_tempsys->pid_output < 72.f - 1.5f) {
                 gpio_put(NF_SSR0_PIN, 0);
                 _tempsys->heater_state = 0;
             }
 
-            _tempsys->_pid_timeout = make_timeout_time_ms(450);
+            // was 450
+            _tempsys->_pid_timeout = make_timeout_time_ms(225);
             return;
         }
     }
@@ -242,5 +243,7 @@ void _nf_swap_indexes(_nf_tempsys_t* _tempsys)
 
 void _nf_trigger_error(_nf_tempsys_t* _tempsys, uint error_flag)
 {
-    multicore_fifo_push_blocking(error_flag);
+    //multicore_fifo_push_blocking(error_flag);
+
+    // TODO (DrNotThatEvil, 2024-02-02, 14:05): Fix this for a better mechanisms
 }

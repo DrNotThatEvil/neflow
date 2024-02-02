@@ -126,6 +126,25 @@ void nf_calibration_screen_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, v
     uint32_t cy = 0;
     uint32_t ex = 0;
 
+    if (cali_state->_temp_high_value > 100) {
+        double percent_y = (100.0 / ((double)cali_state->_temp_high_value));
+        uint16_t dash_line_y = NF_GRAPH_ZERO_Y - ((NF_GRAPH_ZERO_Y + 1) * percent_y);
+
+        char line_y[20];
+        sprintf(line_y, "line: %.2f", percent_y);
+        ssd1306_draw_string(disp_ptr, 30, 5, 1, line_y);
+
+        
+        for(uint8_t x = NF_GRAPH_ZERO_X; x < NF_GRAPH_MAX_X; x += 10) {
+            ssd1306_draw_line(disp_ptr, 
+                x,
+                dash_line_y,
+                x + 5,
+                dash_line_y
+            );
+        }
+    }
+
     if (cali_state->_drawing) {
         for(uint8_t i = 0; i < cali_state->_avg_index; i++)
         {
@@ -133,7 +152,7 @@ void nf_calibration_screen_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, v
             uint32_t last_line_end_y = cy;
             
             double sx_d = (((double) i) * 5.0) / ((double) cali_state->_sec_high_value) * 100.0; 
-            double ex_d = (((double) (i + 1)) * 5.0) / ((double) cali_state->_sec_high_value) * 100.0; 
+            double ex_d = (((double) (i + 1)) * 5.0) / ((double) cali_state->_sec_high_value) * 100.0;
 
             uint32_t sx = NF_GRAPH_ZERO_X + my_ceil(sx_d);
             ex = NF_GRAPH_ZERO_X + my_ceil(ex_d);

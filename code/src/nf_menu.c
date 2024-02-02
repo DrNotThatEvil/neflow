@@ -131,6 +131,7 @@ bool menu_can_update(_nf_menu_t* _menu_state)
 {
     if(_menu_state->_state == MENU_STATE_INIT)
     {
+        /*
         uint32_t temp_started = multicore_fifo_pop_blocking();
         if(temp_started != TEMP_CORE_STARTED_FLAG)
         {
@@ -143,6 +144,10 @@ bool menu_can_update(_nf_menu_t* _menu_state)
             _menu_state->_state = MENU_STATE_NORMAL;
             return true;
         }
+        */
+
+        _menu_state->_state = MENU_STATE_NORMAL;
+        return true;
     }
 
     if(_menu_state->_state == MENU_STATE_ERROR)
@@ -152,6 +157,7 @@ bool menu_can_update(_nf_menu_t* _menu_state)
 
     if(_menu_state->_state == MENU_STATE_NORMAL || _menu_state->_state == MENU_STATE_CALIBRATION)
     {
+        /*
         if (multicore_fifo_rvalid())
         {
             uint32_t message = multicore_fifo_pop_blocking();
@@ -161,6 +167,7 @@ bool menu_can_update(_nf_menu_t* _menu_state)
                 return false;
             }
         }
+        */
 
         return true;
     }

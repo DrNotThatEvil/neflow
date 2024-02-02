@@ -45,15 +45,16 @@ int main()
     nf_init(_state);
     multicore_launch_core1(ui_core_entry);
 
-    multicore_fifo_push_blocking(TEMP_CORE_STARTED_FLAG);
+    //multicore_fifo_push_blocking(TEMP_CORE_STARTED_FLAG);
     while (1) {
         nf_tempsys_loop(_state);
     }
     //update(_state);
 }
 
-void ui_core_entry(void) 
+void ui_core_entry(void)
 {
+    multicore_lockout_victim_init();
     for(;;)
     {
         menu_update(_state->_menu);
