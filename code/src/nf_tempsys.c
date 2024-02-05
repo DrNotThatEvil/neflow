@@ -4,6 +4,9 @@ void nf_tempsys_init(_nf_tempsys_t* _tempsys, _nf_memory_state_t* _memory)
 {
     _tempsys->_memory = _memory;
     _tempsys->_temp  = malloc(sizeof(_nf_max31855_t));
+
+    _tempsys->_menu_msq_queue_ptr = ((void*)0);
+    
     nf_max31855_init(_tempsys->_temp);
 
     _tempsys->_curr_state = PRE_INIT;
@@ -167,6 +170,11 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
     }
 }
 
+void nf_tempsys_set_queue(_nf_tempsys_t* _tempsys, queue_t* _menu_msg_queue_ptr)
+{
+    _tempsys->_menu_msq_queue_ptr = _menu_msg_queue_ptr;
+}
+
 void nf_tempsys_set_state(_nf_tempsys_t* _tempsys, uint new_state)
 {
     _nf_tempsys_state_t state = _tempsys->_curr_state;
@@ -241,8 +249,30 @@ void _nf_swap_indexes(_nf_tempsys_t* _tempsys)
     _tempsys->read_index[1] = tmp_windex_1;
 }
 
+void _nf_send_temp_update(_nf_tempsys_t* _tempsys)
+{
+    if(_tempsys->_menu_msq_queue_ptr != NULL)
+    {
+        // TODO (DrNotThatEvil, 2024-02-05, 21:48): Extend this for mutiple sensors
+        _nf_tempsys_msg temp_update_msg = { 
+            .msg_type = TEMPSYS_MSG_TEMP_UPDATE_TYPE ,
+            .value_ptr = (void*) &(_state->_tempsys->_results[0][_state->_tempsys->read_index[0]]);
+        };
+        queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &err);
+    }
+}
+
 void _nf_trigger_error(_nf_tempsys_t* _tempsys, uint error_flag)
 {
+    if(_tempsys->_menu_msq_queue_ptr != NULL)
+    {
+        _nf_tempsys_msg err_msg = { 
+            .msg_type = TEMPSYS_MSG_ERROR_TYPE,
+            .simple_msg_value = error_flag
+        };
+
+        queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &err);
+    }
     //multicore_fifo_push_blocking(error_flag);
 
     // TODO (DrNotThatEvil, 2024-02-02, 14:05): Fix this for a better mechanisms

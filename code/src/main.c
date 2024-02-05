@@ -9,7 +9,6 @@
 
 #include "nf_common.h"
 
-
 #include "nf_config.h"
 #include "nf_tempsys.h"
 #include "pwm-tone.h"

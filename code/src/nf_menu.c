@@ -9,9 +9,10 @@ void nf_menu_init(
 ) {
 
     _menu_state->btn_update_timeout = make_timeout_time_ms(NF_MENU_BTN_UPDATE_TIMEOUT_MS);
-    _menu_state->refresh_ms = 5;
     _menu_state->scr_update_timeout = make_timeout_time_ms(_menu_state->refresh_ms);
+    queue_init(&(_menu_state->tempsys_msg_q), sizeof(_nf_tempsys_msg), 2);
 
+    _menu_state->refresh_ms = 5;
     for(int i=0; i < 3; i++) {
         _menu_state->_buttons[i].pressed = false;
         _menu_state->_buttons[i].held = false;
@@ -34,6 +35,7 @@ void nf_menu_init(
     _menu_state->cur_temp = 0.0;
     _menu_state->heater_state = 0;
 
+    nf_tempsys_set_queue(_tempsys, &(_menu_state->tempsys_msg_q));
     nf_main_menu_init(_menu_state);
     _menu_state->current_screen = &(_menu_state->menu_screens);
 
@@ -105,6 +107,8 @@ void menu_update(_nf_menu_t* _menu_state)
     }
 
     bool error_triggered = menu_can_update(_menu_state);
+
+
     if(_menu_state->_state == MENU_STATE_ERROR || !error_triggered) {
         ssd1306_clear(_menu_state->_disp_ptr);
         if(_menu_state->_error_state.error_animation == 0) {
@@ -157,22 +161,41 @@ bool menu_can_update(_nf_menu_t* _menu_state)
 
     if(_menu_state->_state == MENU_STATE_NORMAL || _menu_state->_state == MENU_STATE_CALIBRATION)
     {
-        /*
-        if (multicore_fifo_rvalid())
+        if (!queue_is_empty(&_menu_state->tempsys_msg_q))
         {
-            uint32_t message = multicore_fifo_pop_blocking();
-            if(message >= TEMP_ERROR_FLAG) {
+            _nf_tempsys_msg msg; 
+            queue_peek_blocking(&_menu_state->tempsys_msg_q, &msg);
+            //queue_remove_blocking(&_menu_state->tempsys_msg_q, &msg);
+
+            if(msg.msg_type == TEMPSYS_MSG_ERROR_TYPE) {
+                queue_remove_blocking(&_menu_state->tempsys_msg_q, &msg);
+
                 _menu_state->_state = MENU_STATE_ERROR;
-                _menu_state->_error_state.error_type = message;
+                _menu_state->_error_state.error_type = msg.simple_msg_value;
                 return false;
             }
         }
-        */
 
         return true;
     }
 
     return false;
+}
+
+void menu_handle_non_error(_nf_menu_t* _menu_state)
+{
+    if (!queue_is_empty(&_menu_state->tempsys_msg_q))
+    {
+        _nf_tempsys_msg msg; 
+        queue_peek_blocking(&_menu_state->tempsys_msg_q, &msg);
+
+        if(msg.msg_type == TEMPSYS_MSG_TEMP_UPDATE_TYPE)
+        {
+            queue_remove_blocking(&_menu_state->tempsys_msg_q, &msg);
+            _nf_temps_t* _temps = (_nf_temps_t*) msg.value_ptr;
+            // TODO (DrNotThatEvil, 2024-02-05, 22:45): Add temp switching here and add a queue to send messages form the menu as well
+        }
+    }
 }
 
 void menu_update_buttons(_nf_menu_t* _menu_state)

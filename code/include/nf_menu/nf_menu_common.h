@@ -1,6 +1,7 @@
 #ifndef NF_MENU_COMMON_H
 #define NF_MENU_COMMON_H
 
+#include <pico/util/queue.h>
 #include <pico/multicore.h>
 
 #include "nf_common.h"
@@ -69,6 +70,7 @@ typedef struct nf_button_state {
 typedef struct nf_menu {
     absolute_time_t btn_update_timeout;
     absolute_time_t scr_update_timeout;
+    queue_t tempsys_msg_q; 
     nf_btn_state_t _buttons[3];
     tonegenerator_t* _tonegen;
     ssd1306_t* _disp_ptr;
