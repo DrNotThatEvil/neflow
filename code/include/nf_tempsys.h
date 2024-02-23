@@ -35,15 +35,16 @@ typedef struct nf_temps {
     uint bad_reading_count;
 } _nf_temps_t;
 
-typedef struct nf_tempsys_msg {
+typedef struct nf_thread_msg {
     uint8_t msg_type;
     uint16_t simple_msg_value;
     void* value_ptr;
-} _nf_tempsys_msg;
+} _nf_thread_msg;
 
 typedef struct nf_tempsys {
     _nf_memory_state_t* _memory;
     _nf_max31855_t* _temp;
+    queue_t _tempsys_msg_queue_ptr;
     queue_t* _menu_msq_queue_ptr;
     _nf_tempsys_state_t _prev_state;
     _nf_tempsys_state_t _curr_state;

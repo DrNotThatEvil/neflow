@@ -10,7 +10,7 @@ void nf_menu_init(
 
     _menu_state->btn_update_timeout = make_timeout_time_ms(NF_MENU_BTN_UPDATE_TIMEOUT_MS);
     _menu_state->scr_update_timeout = make_timeout_time_ms(_menu_state->refresh_ms);
-    queue_init(&(_menu_state->tempsys_msg_q), sizeof(_nf_tempsys_msg), 2);
+    queue_init(&(_menu_state->tempsys_msg_q), sizeof(_nf_thread_msg), 4);
 
     _menu_state->refresh_ms = 5;
     for(int i=0; i < 3; i++) {
@@ -193,7 +193,7 @@ void menu_handle_non_error(_nf_menu_t* _menu_state)
         {
             queue_remove_blocking(&_menu_state->tempsys_msg_q, &msg);
             _nf_temps_t* _temps = (_nf_temps_t*) msg.value_ptr;
-            // TODO (DrNotThatEvil, 2024-02-05, 22:45): Add temp switching here and add a queue to send messages form the menu as well
+            _menu_state->cur_temp = _temps->thermocouple;
         }
     }
 }
