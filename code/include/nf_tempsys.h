@@ -44,7 +44,6 @@ typedef struct nf_thread_msg {
 typedef struct nf_tempsys {
     _nf_memory_state_t* _memory;
     _nf_max31855_t* _temp;
-    queue_t _tempsys_msg_queue_ptr;
     queue_t* _menu_msq_queue_ptr;
     _nf_tempsys_state_t _prev_state;
     _nf_tempsys_state_t _curr_state;
@@ -66,7 +65,7 @@ typedef struct nf_tempsys {
 void nf_tempsys_init(_nf_tempsys_t* _tempsys, _nf_memory_state_t* _memory);
 void nf_tempsys_set_state(_nf_tempsys_t* _tempsys, uint new_state);
 void nf_tempsys_update(_nf_tempsys_t* _tempsys);
-void nf_tempsys_set_queue(_nf_tempsys_t* _tempsys, queue_t* _menu_msg_queue_ptr);
+void nf_tempsys_set_menu_queue(_nf_tempsys_t* _tempsys, queue_t* _menu_msg_queue_ptr);
 
 void _nf_tempsys_update_temps(_nf_tempsys_t* _tempsys, _nf_max31855_result_t* results);
 void _nf_swap_indexes(_nf_tempsys_t* _tempsys);

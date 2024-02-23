@@ -89,7 +89,7 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
         if(temp0_result.faults > 0) {
             // We where using this sensor fine before this VERRY WEIRD and bad
             _tempsys->_curr_state = ERROR;
-            _nf_trigger_error(_tempsys, TEMP_ERROR_FAULT_FLAG);
+            _nf_trigger_error(_tempsys, TEMPSYS_FAULT_ERROR);
             return;
         }
     }
@@ -101,12 +101,13 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
         if(temp1_result.faults > 0) {
             // We where using this sensor fine before this VERRY WEIRD and bad
             _tempsys->_curr_state = ERROR;
-            _nf_trigger_error(_tempsys, TEMP_ERROR_FAULT_FLAG);
+            _nf_trigger_error(_tempsys, TEMPSYS_FAULT_ERROR);
             return;
         }
     }
 
     _nf_swap_indexes(_tempsys);
+    _nf_send_temp_update(_tempsys);
 
     // SANITY CHECK (normal just for now)
     if(_tempsys->_tempmode == USE_TEMP0) {
@@ -130,7 +131,7 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
                 // SOMETHING BAD!
                 _tempsys->_curr_state = ERROR;
                 printf("%d", temps->change_thermocouple);
-                _nf_trigger_error(_tempsys, TEMP_ERROR_TEMPRATURE_FLAG);
+                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_ERROR);
             }
            return;
         }
@@ -170,7 +171,7 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
     }
 }
 
-void nf_tempsys_set_queue(_nf_tempsys_t* _tempsys, queue_t* _menu_msg_queue_ptr)
+void nf_tempsys_set_menu_queue(_nf_tempsys_t* _tempsys, queue_t* _menu_msg_queue_ptr)
 {
     _tempsys->_menu_msq_queue_ptr = _menu_msg_queue_ptr;
 }
@@ -254,11 +255,11 @@ void _nf_send_temp_update(_nf_tempsys_t* _tempsys)
     if(_tempsys->_menu_msq_queue_ptr != NULL)
     {
         // TODO (DrNotThatEvil, 2024-02-05, 21:48): Extend this for mutiple sensors
-        _nf_tempsys_msg temp_update_msg = { 
-            .msg_type = TEMPSYS_MSG_TEMP_UPDATE_TYPE ,
-            .value_ptr = (void*) &(_state->_tempsys->_results[0][_state->_tempsys->read_index[0]]);
+        _nf_thread_msg temp_update_msg = { 
+            .msg_type = TEMPSYS_MSG_TEMP_UPDATE_TYPE,
+            .value_ptr = (void*) &(_tempsys->_results[0][_tempsys->read_index[0]])
         };
-        queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &err);
+        queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &temp_update_msg);
     }
 }
 
@@ -266,12 +267,12 @@ void _nf_trigger_error(_nf_tempsys_t* _tempsys, uint error_flag)
 {
     if(_tempsys->_menu_msq_queue_ptr != NULL)
     {
-        _nf_tempsys_msg err_msg = { 
+        _nf_thread_msg err_msg = { 
             .msg_type = TEMPSYS_MSG_ERROR_TYPE,
             .simple_msg_value = error_flag
         };
 
-        queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &err);
+        queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &err_msg);
     }
     //multicore_fifo_push_blocking(error_flag);
 

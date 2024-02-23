@@ -70,6 +70,11 @@ void nf_menu_change_screen(_nf_menu_t* _menu, uint screen_id)
     nf_menu_change_screen_with_data(_menu, screen_id, NULL);
 }
 
+void nf_menu_change_state(_nf_menu_t* _menu, uint state)
+{
+    
+}
+
 void draw_prev_section(ssd1306_t* disp_ptr, const char* str)
 {
     ssd1306_draw_pixel(disp_ptr, 2, 3);

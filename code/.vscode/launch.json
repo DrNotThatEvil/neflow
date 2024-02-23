@@ -31,7 +31,7 @@
                 "continue"
             ],
             "rttConfig": {
-                "enabled": true,
+                "enabled": false,
                 "address": "auto",
                 "decoders": [
                     {

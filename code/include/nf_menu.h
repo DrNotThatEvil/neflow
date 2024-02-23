@@ -79,7 +79,7 @@ typedef struct {
 } _nf_menu_option;
 
 typedef struct nf_menu {
-    ssd1306_t* _disp_ptr;
+    ssd1306_t* _disp_ptrs
     _nf_menu_screen_t* menu_screens;
     _nf_menu_screen_t** current_screen;
     uint refresh_ms;
@@ -99,7 +99,7 @@ void nf_menu_init(
 void menu_gpio_callback(_nf_menu_t* _menu_state, uint gpio, uint32_t events);
 void menu_update(_nf_menu_t* _menu_state);
 bool menu_can_update(_nf_menu_t* _menu_state);
-void menu_handle_non_error(_nf_menu_t* _menu_state);
+void menu_handle_thread_messages(_nf_menu_t* _menu_state);
 void menu_update_buttons(_nf_menu_t* _menu_state);
 
 void nf_menu_update_cur_temp(_nf_menu_t* _menu, double temp);
