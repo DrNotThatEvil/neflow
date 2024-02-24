@@ -75,7 +75,13 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
     }
 
     if(_tempsys->_curr_state == ERROR) {
-        //_nf_trigger_error(_tempsys,);
+        // We still wanna handle msgs, to prevent deadlock.
+
+        // if we go into error state we push a message to the queue
+        // but before we do so the menu pushes a message
+        // if we would not remove that message (because of the error state)
+        // the message would prevent the menu from seeing our error message.
+        _nf_tempsys_handle_thread_messages(_tempsys);
         return;
     }
 
@@ -106,6 +112,7 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
         }
     }
 
+    _nf_tempsys_handle_thread_messages(_tempsys);
     _nf_swap_indexes(_tempsys);
     _nf_send_temp_update(_tempsys);
 
@@ -176,18 +183,21 @@ void nf_tempsys_set_menu_queue(_nf_tempsys_t* _tempsys, queue_t* _menu_msg_queue
     _tempsys->_menu_msq_queue_ptr = _menu_msg_queue_ptr;
 }
 
-void nf_tempsys_set_state(_nf_tempsys_t* _tempsys, uint new_state)
+void _nf_tempsys_set_state(_nf_tempsys_t* _tempsys, uint new_state)
 {
     _nf_tempsys_state_t state = _tempsys->_curr_state;
-    if (state == ERROR || state == PRE_INIT || state == POST_INIT) {
+    if (state == ERROR || state == PRE_INIT || state == POST_INIT)
+    {
         return;
     }
 
-    if(new_state == 1) {
+    if(new_state == MENU_STATE_CHANGE_NORMAL)
+    {
         state = NORMAL;
     }
 
-    if(new_state == 2) {
+    if(new_state == MENU_STATE_CHANGE_CALIBRATION)
+    {
         state = CALIBRATION;
     }
 
@@ -239,6 +249,31 @@ void _nf_tempsys_update_temps(_nf_tempsys_t* _tempsys, _nf_max31855_result_t* re
     }
 }
 
+void _nf_tempsys_handle_thread_messages(_nf_tempsys_t* _tempsys)
+{
+    if(_tempsys->_menu_msq_queue_ptr == NULL)
+    {
+        return;
+    }
+
+    if (!queue_is_empty(&_tempsys->_menu_msq_queue_ptr))
+    {
+        _nf_thread_msg msg; 
+        queue_peek_blocking(&_tempsys->_menu_msq_queue_ptr, &msg);
+        if ((msg.msg_type & 0xF0) == 0) {
+            // msg not ment for tempsys.
+            return;
+        }
+
+        if(msg.msg_type == MENU_STATE_CHANGE_MSG_TYPE) {
+            _nf_tempsys_set_state(_tempsys, msg.simple_msg_value);
+        }
+
+        // Always remove since the msg was for us. 
+        queue_remove_blocking(&_tempsys->_menu_msq_queue_ptr, &msg);
+    }
+}
+
 void _nf_swap_indexes(_nf_tempsys_t* _tempsys)
 {
     uint tmp_windex_0 = _tempsys->write_index[0];
@@ -252,28 +287,32 @@ void _nf_swap_indexes(_nf_tempsys_t* _tempsys)
 
 void _nf_send_temp_update(_nf_tempsys_t* _tempsys)
 {
-    if(_tempsys->_menu_msq_queue_ptr != NULL)
+    if(_tempsys->_menu_msq_queue_ptr == NULL)
     {
-        // TODO (DrNotThatEvil, 2024-02-05, 21:48): Extend this for mutiple sensors
-        _nf_thread_msg temp_update_msg = { 
-            .msg_type = TEMPSYS_MSG_TEMP_UPDATE_TYPE,
-            .value_ptr = (void*) &(_tempsys->_results[0][_tempsys->read_index[0]])
-        };
-        queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &temp_update_msg);
+        return;
     }
+
+    // TODO (DrNotThatEvil, 2024-02-05, 21:48): Extend this for mutiple sensors
+    _nf_thread_msg temp_update_msg = { 
+        .msg_type = TEMPSYS_TEMP_UPDATE_MSG_TYPE,
+        .value_ptr = (void*) &(_tempsys->_results[0][_tempsys->read_index[0]])
+    };
+    queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &temp_update_msg);
 }
 
 void _nf_trigger_error(_nf_tempsys_t* _tempsys, uint error_flag)
 {
-    if(_tempsys->_menu_msq_queue_ptr != NULL)
+    if(_tempsys->_menu_msq_queue_ptr == NULL)
     {
-        _nf_thread_msg err_msg = { 
-            .msg_type = TEMPSYS_MSG_ERROR_TYPE,
-            .simple_msg_value = error_flag
-        };
-
-        queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &err_msg);
+        return;
     }
+
+    _nf_thread_msg err_msg = { 
+        .msg_type = TEMPSYS_ERROR_MSG_TYPE,
+        .simple_msg_value = error_flag
+    };
+
+    queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &err_msg);
     //multicore_fifo_push_blocking(error_flag);
 
     // TODO (DrNotThatEvil, 2024-02-02, 14:05): Fix this for a better mechanisms

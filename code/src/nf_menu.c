@@ -165,13 +165,19 @@ bool menu_can_update(_nf_menu_t* _menu_state)
         {
             _nf_thread_msg msg; 
             queue_peek_blocking(&_menu_state->tempsys_msg_q, &msg);
-            //queue_remove_blocking(&_menu_state->tempsys_msg_q, &msg);
+            if((msg.msg_type & 0x0F) == 0)
+            {
+                // msg not for nf_menu;
+                return true;
+            }  
 
-            if(msg.msg_type == TEMPSYS_MSG_ERROR_TYPE) {
-                queue_remove_blocking(&_menu_state->tempsys_msg_q, &msg);
 
+            if(msg.msg_type == TEMPSYS_ERROR_MSG_TYPE)
+            {
                 _menu_state->_state = MENU_STATE_ERROR;
                 _menu_state->_error_state.error_type = msg.simple_msg_value;
+
+                queue_remove_blocking(&_menu_state->tempsys_msg_q, &msg);
                 return false;
             }
         }
@@ -188,13 +194,19 @@ void menu_handle_thread_messages(_nf_menu_t* _menu_state)
     {
         _nf_thread_msg msg; 
         queue_peek_blocking(&_menu_state->tempsys_msg_q, &msg);
+        if ((msg.msg_type & 0x0F) == 0) {
+            // msg not ment for tempsys.
+            return;
+        }
 
-        if(msg.msg_type == TEMPSYS_MSG_TEMP_UPDATE_TYPE)
+        if(msg.msg_type == TEMPSYS_TEMP_UPDATE_MSG_TYPE)
         {
-            queue_remove_blocking(&_menu_state->tempsys_msg_q, &msg);
             _nf_temps_t* _temps = (_nf_temps_t*) msg.value_ptr;
             _menu_state->cur_temp = _temps->thermocouple;
         }
+
+        // Always remove since msg was for us.
+        queue_remove_blocking(&_menu_state->tempsys_msg_q, &msg);
     }
 }
 

@@ -63,11 +63,12 @@ typedef struct nf_tempsys {
 
 
 void nf_tempsys_init(_nf_tempsys_t* _tempsys, _nf_memory_state_t* _memory);
-void nf_tempsys_set_state(_nf_tempsys_t* _tempsys, uint new_state);
 void nf_tempsys_update(_nf_tempsys_t* _tempsys);
 void nf_tempsys_set_menu_queue(_nf_tempsys_t* _tempsys, queue_t* _menu_msg_queue_ptr);
 
+void _nf_tempsys_set_state(_nf_tempsys_t* _tempsys, uint new_state);
 void _nf_tempsys_update_temps(_nf_tempsys_t* _tempsys, _nf_max31855_result_t* results);
+void _nf_tempsys_handle_thread_messages(_nf_tempsys_t* _tempsys);
 void _nf_swap_indexes(_nf_tempsys_t* _tempsys);
 void _nf_send_temp_update(_nf_tempsys_t* _tempsys);
 void _nf_trigger_error(_nf_tempsys_t* _tempsys, uint error_flag);
