@@ -5,9 +5,9 @@
 #include "nf_menu/nf_graph.h"
 
 #define NF_GRAPH_ZERO_X 20
-#define NF_GRAPH_MAX_X 119
+#define NF_GRAPH_MAX_X 120
 
-#define NF_GRAPH_ZERO_Y 49
+#define NF_GRAPH_ZERO_Y 50
 #define NF_GRAPH_MAX_Y 0
 
 #define NF_AVG_TIMEOUT 1000

@@ -48,7 +48,7 @@ typedef struct nf_menu_screen {
 } _nf_menu_screen_t;
 
 typedef enum nf_menu_state {
-    MENU_STATE_ERROR,
+    MENU_STATE_ERROR = 0,
     MENU_STATE_INIT,
     MENU_STATE_NORMAL,
     MENU_STATE_CALIBRATION,
@@ -92,7 +92,7 @@ void nf_menu_add_screen(_nf_menu_screen_t** _menu_screens_ptr, _nf_menu_screen_t
 void nf_menu_change_screen_with_data(_nf_menu_t* _menu, uint screen_id, void* extra_data);
 void nf_menu_change_screen(_nf_menu_t* _menu, uint screen_id);
 
-void nf_menu_change_state(_nf_menu_t* _menu, uint state);
+void nf_menu_change_state(_nf_menu_t* _menu, _nf_menu_state_t state);
 
 void draw_prev_section(ssd1306_t* disp_ptr, const char* str);
 void draw_next_arrow(ssd1306_t* disp_ptr);

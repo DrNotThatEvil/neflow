@@ -64,7 +64,7 @@ void _nf_gen_calibration_screen_state(_nf_calibration_screen_state_t* _cali_stat
     _cali_state->_temp_high_value = 50;
     _cali_state->_sec_high_value = 60;
 
-    for(uint8_t i = 0; i < 9; i++)
+    for(uint8_t i = 0; i < 100; i++)
     {
         _cali_state->_averages[i] = 0.0;
     }
@@ -150,7 +150,7 @@ void nf_calibration_screen_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, v
         {
             uint32_t last_line_end_x = ex;
             uint32_t last_line_end_y = cy;
-            
+
             double sx_d = (((double) i) * 5.0) / ((double) cali_state->_sec_high_value) * 100.0; 
             double ex_d = (((double) (i + 1)) * 5.0) / ((double) cali_state->_sec_high_value) * 100.0;
 

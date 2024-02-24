@@ -73,13 +73,12 @@ void nf_menu_change_screen(_nf_menu_t* _menu, uint screen_id)
 void nf_menu_change_state(_nf_menu_t* _menu, _nf_menu_state_t state)
 {
     _menu->_state = state;
-
     _nf_thread_msg menu_state_change_msg = {
         .msg_type = MENU_STATE_CHANGE_MSG_TYPE,
-        .simple_msg_value = // TODO (DrNotThatEvil, 2024-02-24, 09:43): Add uint for state here.
+        .simple_msg_value = ((uint) state)
     };
 
-    queue_add_blocking(_menu->tempsys_msg_q, &menu_state_change_msg);
+    queue_add_blocking(&_menu->tempsys_msg_q, &menu_state_change_msg);
 }
 
 void draw_prev_section(ssd1306_t* disp_ptr, const char* str)

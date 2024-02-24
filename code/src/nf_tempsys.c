@@ -40,7 +40,14 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
     // Initaization takes 2 loops, one to determine tempmode and read frist temp.
     // Second one does the same but also gets correct change from previous reading.
     // else first reading would be a verry high change rate.
-    if (_tempsys->_curr_state == PRE_INIT || _tempsys->_curr_state == POST_INIT) {
+    if (_tempsys->_curr_state == PRE_INIT || _tempsys->_curr_state == POST_INIT)
+    {
+        if(_tempsys->_menu_msq_queue_ptr == ((void*)0)) 
+        {
+            // Do not start if we don't have a queue yet.
+            return;
+        }
+
         // Determine temprature mode
         _nf_max31855_result_t temp0_result;
         nf_max31855_read(_tempsys->_temp, NF_TEMP0_CS, &temp0_result);
@@ -63,13 +70,19 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
 
         _nf_swap_indexes(_tempsys);
 
-        if (_tempsys->_curr_state == PRE_INIT) {
-            _tempsys->_curr_state = POST_INIT;
-            _tempsys->_prev_state = POST_INIT;
+        if (_tempsys->_curr_state == PRE_INIT)
+        {
+            _nf_tempsys_set_state(_tempsys, POST_INIT);
+            //_tempsys->_curr_state = POST_INIT;
+            //_tempsys->_prev_state = POST_INIT;
             return;
-        } else {
-            _tempsys->_curr_state = NORMAL;
-            _tempsys->_prev_state = NORMAL;
+        }
+        else
+        {
+            _nf_tempsys_set_state(_tempsys, NORMAL);
+            //_tempsys->_curr_state = POST_INIT;
+            //_tempsys->_curr_state = NORMAL;
+            //_tempsys->_prev_state = NORMAL;
             return;
         }
     }
@@ -137,30 +150,40 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
             if (temps->change_thermocouple > NORMAL_ALLOWED_CHANGERATE) {
                 // SOMETHING BAD!
                 _tempsys->_curr_state = ERROR;
-                printf("%d", temps->change_thermocouple);
+                //printf("%d", temps->change_thermocouple);
                 _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_ERROR);
+            }
+
+            if (temps->thermocouple < NORMAL_TO_LOW_TEMP) {
+                // SOMETHING BAD!
+                _tempsys->_curr_state = ERROR;
+                //printf("%d", temps->change_thermocouple);
+                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
+            }
+
+            if (temps->thermocouple < NORMAL_TO_LOW_TEMP) {
+                // SOMETHING BAD!
+                _tempsys->_curr_state = ERROR;
+                //printf("%d", temps->change_thermocouple);
+                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
             }
            return;
         }
 
         if (_tempsys->_curr_state == CALIBRATION) {
-            /*
-            TODO (2023-12-18):
-                Still to do get the PID values from the memory
-                Also you still need to modify the menu screen so the calibration
-                shows a chart so you can track the changes. 
-
-                Also you still need to turn off the SSR if an error occours.
-                secondly you might want to clean up the code a bit bit that's quite obvious atm.
-
-                Other stuff? don't know the pid works kind off so that's nice :)
-            */
+            if (temps->thermocouple > CHALIBRATION_ALLOWD_MAX_TEMP) {
+                _tempsys->_curr_state = ERROR;
+                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_HIGH_ERROR);
+                return;
+            }
 
            // Changed this to 70.f for a bit.
             if(get_absolute_time()._private_us_since_boot < _tempsys->_pid_timeout._private_us_since_boot) 
             {
                 return;
             }
+
+            return; // TESTING disabling pid.
 
             _nf_pid_controller(_tempsys, 100.f);
             if(_tempsys->pid_output > 72.f + 1.5f) {
@@ -183,26 +206,69 @@ void nf_tempsys_set_menu_queue(_nf_tempsys_t* _tempsys, queue_t* _menu_msg_queue
     _tempsys->_menu_msq_queue_ptr = _menu_msg_queue_ptr;
 }
 
-void _nf_tempsys_set_state(_nf_tempsys_t* _tempsys, uint new_state)
+void _nf_sanity_check(_nf_tempsys_t* _tempsys)
+{
+    if (_tempsys->_curr_state == CALIBRATION)
+    {
+        if (temps->change_thermocouple > CALIBRATION_ALLOWED_CHANGE_RATE) {
+            _tempsys->_curr_state = ERROR;
+            _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_ERROR);
+        }
+
+        if (temps->thermocouple > CALIBRATION_TO_HIGH_TEMP) {
+            _tempsys->_curr_state = ERROR;
+            _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_HIGH_ERROR);
+            return;
+        }
+
+        if (temps->thermocouple < NORMAL_TO_LOW_TEMP) {
+            _tempsys->_curr_state = ERROR;
+            _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
+        }
+
+        return;
+    }
+
+    // Default to NORMAL values if other states have not captured anything. 
+    if (temps->change_thermocouple > NORMAL_ALLOWED_CHANGE_RATE) {
+        _tempsys->_curr_state = ERROR;
+        _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_ERROR);
+    }
+
+    if (temps->thermocouple > NORMAL_TO_HIGH_TEMP) {
+        _tempsys->_curr_state = ERROR;
+        _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_HIGH_ERROR);
+    }
+
+    if (temps->thermocouple < NORMAL_TO_LOW_TEMP) {
+        _tempsys->_curr_state = ERROR;
+        _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
+    }
+}
+
+void _nf_tempsys_set_state(_nf_tempsys_t* _tempsys, _nf_tempsys_state_t new_state)
 {
     _nf_tempsys_state_t state = _tempsys->_curr_state;
-    if (state == ERROR || state == PRE_INIT || state == POST_INIT)
+    if (state == ERROR) // || state == PRE_INIT || state == POST_INIT)
     {
         return;
     }
 
-    if(new_state == MENU_STATE_CHANGE_NORMAL)
+    if ((state == PRE_INIT || state == POST_INIT) && (new_state == POST_INIT || new_state == NORMAL))
     {
-        state = NORMAL;
-    }
+        _tempsys->_prev_state = new_state;
+        _tempsys->_curr_state = new_state;
 
-    if(new_state == MENU_STATE_CHANGE_CALIBRATION)
-    {
-        state = CALIBRATION;
+        if(new_state == NORMAL)
+        {
+            _nf_send_temp_initialized(_tempsys);
+        }
+
+        return;
     }
 
     _tempsys->_prev_state = _tempsys->_curr_state;
-    _tempsys->_curr_state = state;
+    _tempsys->_curr_state = new_state;
 }
 
 void _nf_pid_controller(_nf_tempsys_t* _tempsys, float setpoint)
@@ -251,26 +317,38 @@ void _nf_tempsys_update_temps(_nf_tempsys_t* _tempsys, _nf_max31855_result_t* re
 
 void _nf_tempsys_handle_thread_messages(_nf_tempsys_t* _tempsys)
 {
-    if(_tempsys->_menu_msq_queue_ptr == NULL)
+    if(_tempsys->_menu_msq_queue_ptr == ((void*)0))
     {
         return;
     }
 
-    if (!queue_is_empty(&_tempsys->_menu_msq_queue_ptr))
+    if (!queue_is_empty(_tempsys->_menu_msq_queue_ptr))
     {
         _nf_thread_msg msg; 
-        queue_peek_blocking(&_tempsys->_menu_msq_queue_ptr, &msg);
+        queue_peek_blocking(_tempsys->_menu_msq_queue_ptr, &msg);
         if ((msg.msg_type & 0xF0) == 0) {
             // msg not ment for tempsys.
             return;
         }
 
-        if(msg.msg_type == MENU_STATE_CHANGE_MSG_TYPE) {
-            _nf_tempsys_set_state(_tempsys, msg.simple_msg_value);
+        if(msg.msg_type == MENU_STATE_CHANGE_MSG_TYPE)
+        {
+            _nf_tempsys_state_t state = _tempsys->_curr_state;
+            if(msg.simple_msg_value == 2)
+            {
+                state = NORMAL;
+            }
+
+            if(msg.simple_msg_value == 3)
+            {
+                state = CALIBRATION;
+            }
+
+            _nf_tempsys_set_state(_tempsys, state);
         }
 
         // Always remove since the msg was for us. 
-        queue_remove_blocking(&_tempsys->_menu_msq_queue_ptr, &msg);
+        queue_remove_blocking(_tempsys->_menu_msq_queue_ptr, &msg);
     }
 }
 
@@ -285,9 +363,24 @@ void _nf_swap_indexes(_nf_tempsys_t* _tempsys)
     _tempsys->read_index[1] = tmp_windex_1;
 }
 
+void _nf_send_temp_initialized(_nf_tempsys_t* _tempsys)
+{
+    if(_tempsys->_menu_msq_queue_ptr == ((void*)0))
+    {
+        return;
+    }
+
+    _nf_thread_msg initialized_msg = { 
+        .msg_type = TEMPSYS_INITIALIZED_MSG_TYPE,
+        .simple_msg_value = 0
+    };
+
+    queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &initialized_msg);
+}
+
 void _nf_send_temp_update(_nf_tempsys_t* _tempsys)
 {
-    if(_tempsys->_menu_msq_queue_ptr == NULL)
+    if(_tempsys->_menu_msq_queue_ptr == ((void*)0))
     {
         return;
     }
@@ -302,7 +395,9 @@ void _nf_send_temp_update(_nf_tempsys_t* _tempsys)
 
 void _nf_trigger_error(_nf_tempsys_t* _tempsys, uint error_flag)
 {
-    if(_tempsys->_menu_msq_queue_ptr == NULL)
+    gpio_put(NF_SSR0_PIN, 0);
+
+    if(_tempsys->_menu_msq_queue_ptr == ((void*)0))
     {
         return;
     }

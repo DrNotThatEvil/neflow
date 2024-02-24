@@ -106,9 +106,9 @@ void menu_update(_nf_menu_t* _menu_state)
         return;
     }
 
-    bool error_triggered = menu_can_update(_menu_state);
+    bool can_update = menu_can_update(_menu_state);
 
-    if(_menu_state->_state == MENU_STATE_ERROR || !error_triggered) {
+    if(_menu_state->_state == MENU_STATE_ERROR) {
         ssd1306_clear(_menu_state->_disp_ptr);
         if(_menu_state->_error_state.error_animation == 0) {
             char str[20];
@@ -119,7 +119,14 @@ void menu_update(_nf_menu_t* _menu_state)
         ssd1306_show(_menu_state->_disp_ptr);
         _menu_state->scr_update_timeout = make_timeout_time_ms(1000);
         _menu_state->_error_state.error_animation = (_menu_state->_error_state.error_animation + 1) % 2;
-    } else {
+    } 
+
+    if (!can_update) {
+        // Can't update due to error state or due to still inititializing.
+        ssd1306_clear(_menu_state->_disp_ptr);
+    }
+    
+    if (can_update) {
         //_nf_temps_t* temp0_temps = (_nf_temps_t*) &(_menu_state->_tempsys->_results[0][_state->_tempsys->read_index[0]]);
         //nf_menu_update_cur_temp(_menu_state->_menu, temp0_temps->thermocouple);
         menu_handle_thread_messages(_menu_state);
@@ -135,23 +142,26 @@ bool menu_can_update(_nf_menu_t* _menu_state)
 {
     if(_menu_state->_state == MENU_STATE_INIT)
     {
-        /*
-        uint32_t temp_started = multicore_fifo_pop_blocking();
-        if(temp_started != TEMP_CORE_STARTED_FLAG)
+        if (!queue_is_empty(&_menu_state->tempsys_msg_q))
         {
-            _menu_state->_state = MENU_STATE_ERROR;
-            return false;
-        }
+            _nf_thread_msg msg; 
+            queue_peek_blocking(&_menu_state->tempsys_msg_q, &msg);
+            if((msg.msg_type & 0x0F) == 0)
+            {
+                // msg not for nf_menu;
+                return true;
+            }  
 
-        if(temp_started == TEMP_CORE_STARTED_FLAG)
-        {
-            _menu_state->_state = MENU_STATE_NORMAL;
-            return true;
-        }
-        */
 
-        _menu_state->_state = MENU_STATE_NORMAL;
-        return true;
+            if(msg.msg_type == TEMPSYS_INITIALIZED_MSG_TYPE)
+            {
+                _menu_state->_state = MENU_STATE_NORMAL;
+
+                queue_remove_blocking(&_menu_state->tempsys_msg_q, &msg);
+                return true;
+            }
+        }
+        return false;
     }
 
     if(_menu_state->_state == MENU_STATE_ERROR)
@@ -170,7 +180,6 @@ bool menu_can_update(_nf_menu_t* _menu_state)
                 // msg not for nf_menu;
                 return true;
             }  
-
 
             if(msg.msg_type == TEMPSYS_ERROR_MSG_TYPE)
             {

@@ -30,7 +30,7 @@ void nf_tempsys_loop(nf_state_t* _nf_state)
     }
 
     _nf_state->_temploop_timer = make_timeout_time_ms(100);
-    uint menu_state = nf_menu_get_menu_state(_nf_state->_menu);
-    nf_tempsys_set_state(_nf_state->_tempsys, menu_state);
+    //uint menu_state = nf_menu_get_menu_state(_nf_state->_menu);
+    //nf_tempsys_set_state(_nf_state->_tempsys, menu_state);
     nf_tempsys_update(_nf_state->_tempsys);
 }
