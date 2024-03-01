@@ -20,10 +20,30 @@
 #define TEST_SCREEN_ID 5
 #define CONFIG_SCREEN_ID 6
 
+
+#define NF_AVG_TIMEOUT 1000
+//#define NF_AVG_TIMEOUT 60000
+//#define NF_SAMPLE_TIMEOUT 10000
+#define NF_SAMPLE_TIMEOUT 250
+
+
+
 typedef struct nf_menu _nf_menu_t;
 typedef struct nf_menu_screen _nf_menu_screen_t;
 
 typedef struct nf_menu_screen_fn_ptrs _nf_menu_screen_fn_ptrs_t;
+
+typedef struct nf_graph_state {
+    uint8_t _sample_count;
+    double _sum;
+    uint8_t _avg_index;
+    double _averages[100];
+    
+    uint8_t _temp_high_value;
+    uint16_t _sec_high_value;
+    absolute_time_t _sample_timeout;
+    absolute_time_t _avg_timeout;
+} _nf_graph_state_t;
 
 typedef struct nf_profile_edit_screen_state {
     _nf_profile_t* current_profile;
@@ -39,16 +59,7 @@ typedef struct nf_profile_run_screen_state {
     _nf_profile_state_t* _profile_state;
     bool _running;
 
-    uint8_t _avg_index;
-    uint8_t _sample_count;
-    double _sum;
-    double _averages[100];
-
-    uint8_t _temp_high_value;
-    uint16_t _sec_high_value;
-    absolute_time_t _sample_timeout;
-    absolute_time_t _avg_timeout;
-    
+    _nf_graph_state_t* _graph;
 } _nf_profile_run_screen_state_t;
 
 typedef struct nf_menu_screen_fn_ptrs {

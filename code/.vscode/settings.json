@@ -21,6 +21,8 @@
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
-        "nf_menu_common.h": "c"
+        "nf_menu_common.h": "c",
+        "multicore.h": "c",
+        "nf_common.h": "c"
     }
 }

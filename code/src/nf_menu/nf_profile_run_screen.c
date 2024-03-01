@@ -49,6 +49,10 @@ void nf_profile_run_screen_init(_nf_menu_t* _menu_state, _nf_profile_state_t* _p
     profile_run_state->current_profile = NULL;
     profile_run_state->_profile_state = _profile_state;
     profile_run_state->_running = false;
+    
+    _nf_graph_state_t* _graph = (_nf_graph_state_t*) malloc(sizeof(_nf_graph_state_t));
+    _nf_gen_graph_state(_graph);
+    profile_run_state->_graph = _graph;
 
     _nf_menu_screen_fn_ptrs_t profile_run_screen_fns = {
         .on_render = nf_profile_run_render,
@@ -61,5 +65,23 @@ void nf_profile_run_screen_init(_nf_menu_t* _menu_state, _nf_profile_state_t* _p
 
 
     nf_menu_add_screen(_menu_screens_ptr, profile_run_screen);
+}
+
+void _nf_gen_graph_state(_nf_graph_state_t* _graph)
+{
+    _graph->_sample_count = 0;
+    _graph->_sum = 0.0;
+    _graph->_avg_index = 0;
+
+    _graph->_temp_high_value = 50;
+    _graph->_sec_high_value = 60;
+
+    for(uint8_t i = 0; i < 100; i++)
+    {
+        _graph->_averages[i] = 0.0;
+    }
+
+    _graph->_sample_timeout = make_timeout_time_ms(NF_SAMPLE_TIMEOUT);
+    _graph->_avg_timeout = make_timeout_time_ms(NF_AVG_TIMEOUT);
 }
 

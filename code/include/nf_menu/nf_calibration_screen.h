@@ -2,7 +2,7 @@
 #define NF_CALIBRATION_SCREEN_H
 
 #include "nf_menu/nf_menu_common.h"
-#include "nf_menu/nf_graph.h"
+//#include "nf_menu/nf_graph.h"
 
 #define NF_GRAPH_ZERO_X 20
 #define NF_GRAPH_MAX_X 120
@@ -10,10 +10,10 @@
 #define NF_GRAPH_ZERO_Y 50
 #define NF_GRAPH_MAX_Y 0
 
-#define NF_AVG_TIMEOUT 1000
+//#define NF_AVG_TIMEOUT 1000
 //#define NF_AVG_TIMEOUT 60000
 //#define NF_SAMPLE_TIMEOUT 10000
-#define NF_SAMPLE_TIMEOUT 250
+//#define NF_SAMPLE_TIMEOUT 250
 
 typedef struct nf_calibration_screen_state {
     uint8_t _sample_count;
