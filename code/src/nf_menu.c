@@ -44,6 +44,7 @@ void nf_menu_init(
     nf_config_edit_menu_init(_menu_state, _memory);
     nf_profiles_menu_init(_menu_state, _profile_state);
     nf_profile_edit_menu_init(_menu_state, _profile_state);
+    nf_profile_run_screen_init(_menu_state, _profile_state);
     nf_calibration_screen_init(_menu_state);
 }
 
@@ -169,7 +170,7 @@ bool menu_can_update(_nf_menu_t* _menu_state)
         return false;
     } 
 
-    if(_menu_state->_state == MENU_STATE_NORMAL || _menu_state->_state == MENU_STATE_CALIBRATION)
+    if(_menu_state->_state == MENU_STATE_NORMAL || _menu_state->_state == MENU_STATE_CALIBRATION || _menu_state->_state == MENU_STATE_REFLOW)
     {
         if (!queue_is_empty(&_menu_state->tempsys_msg_q))
         {

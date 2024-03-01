@@ -15,9 +15,10 @@
 #define MAIN_MENU_SCREEN_ID 0
 #define PROFILES_SCREEN_ID 1
 #define PROFILE_EDIT_SCREEN_ID 2
-#define CALIBRATION_SCREEN_ID 3
-#define TEST_SCREEN_ID 4
-#define CONFIG_SCREEN_ID 5
+#define PROFILE_RUN_SCREEN_ID 3
+#define CALIBRATION_SCREEN_ID 4
+#define TEST_SCREEN_ID 5
+#define CONFIG_SCREEN_ID 6
 
 typedef struct nf_menu _nf_menu_t;
 typedef struct nf_menu_screen _nf_menu_screen_t;
@@ -32,6 +33,23 @@ typedef struct nf_profile_edit_screen_state {
     uint editing; 
     bool adjust;
 } _nf_profile_edit_screen_state_t;
+
+typedef struct nf_profile_run_screen_state {
+    _nf_profile_t* current_profile;
+    _nf_profile_state_t* _profile_state;
+    bool _running;
+
+    uint8_t _avg_index;
+    uint8_t _sample_count;
+    double _sum;
+    double _averages[100];
+
+    uint8_t _temp_high_value;
+    uint16_t _sec_high_value;
+    absolute_time_t _sample_timeout;
+    absolute_time_t _avg_timeout;
+    
+} _nf_profile_run_screen_state_t;
 
 typedef struct nf_menu_screen_fn_ptrs {
     void (*on_active)(_nf_menu_t* menu_state, void* extra_data, void* on_active_extra_data);
@@ -93,6 +111,7 @@ void nf_menu_change_screen_with_data(_nf_menu_t* _menu, uint screen_id, void* ex
 void nf_menu_change_screen(_nf_menu_t* _menu, uint screen_id);
 
 void nf_menu_change_state(_nf_menu_t* _menu, _nf_menu_state_t state);
+void nf_set_profile(_nf_menu_t* _menu, void* _profile);
 
 void draw_prev_section(ssd1306_t* disp_ptr, const char* str);
 void draw_next_arrow(ssd1306_t* disp_ptr);

@@ -6,8 +6,9 @@
 #include <pico/multicore.h>
 #include <hardware/structs/sio.h>
 
-#include "nf_memory.h"
 #include "nf_common.h"
+#include "nf_memory.h"
+#include "nf_profile.h"
 #include "nf_max31855.h"
 
 #define NORMAL_ALLOWED_CHANGE_RATE 5
@@ -22,7 +23,8 @@ typedef enum nf_tempsys_state {
     PRE_INIT,
     POST_INIT,
     NORMAL,
-    CALIBRATION
+    CALIBRATION,
+    RUNNING
 } _nf_tempsys_state_t;
 
 typedef enum nf_tempsys_temp_mode {
@@ -55,6 +57,9 @@ typedef struct nf_tempsys {
     _nf_tempsys_temp_mode_t _tempmode;
     absolute_time_t _pid_timeout; 
 
+    uint8_t _curr_stage;
+    _nf_profile_t* _profile;
+
     uint heater_state;
     float pid_data[3];
     float integral;
@@ -76,7 +81,7 @@ void _nf_tempsys_set_state(_nf_tempsys_t* _tempsys, _nf_tempsys_state_t new_stat
 void _nf_tempsys_update_temps(_nf_tempsys_t* _tempsys, _nf_max31855_result_t* results);
 void _nf_tempsys_handle_thread_messages(_nf_tempsys_t* _tempsys);
 void _nf_swap_indexes(_nf_tempsys_t* _tempsys);
-void _nf_send_initialized(_nf_tempsys_t* _tempsys);
+void _nf_send_temp_initialized(_nf_tempsys_t* _tempsys);
 void _nf_send_temp_update(_nf_tempsys_t* _tempsys);
 void _nf_trigger_error(_nf_tempsys_t* _tempsys, uint error_flag);
 

@@ -14,6 +14,7 @@
 #include "nf_menu/nf_config_edit_screen.h"
 #include "nf_menu/nf_profiles_screen.h"
 #include "nf_menu/nf_profile_edit_screen.h"
+#include "nf_menu/nf_profile_run_screen.h"
 #include "nf_menu/nf_calibration_screen.h"
 
 #define NF_MENU_BTN_UPDATE_TIMEOUT_MS 50

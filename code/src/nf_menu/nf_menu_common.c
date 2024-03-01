@@ -81,6 +81,16 @@ void nf_menu_change_state(_nf_menu_t* _menu, _nf_menu_state_t state)
     queue_add_blocking(&_menu->tempsys_msg_q, &menu_state_change_msg);
 }
 
+void nf_set_profile(_nf_menu_t* _menu, void* profile)
+{
+    _nf_thread_msg profile_msg = {
+        .msg_type = MENU_SET_PROFILE_MSG_TYPE,
+        .value_ptr = profile
+    };
+
+    queue_add_blocking(&_menu->tempsys_msg_q, &profile_msg);
+}
+
 void draw_prev_section(ssd1306_t* disp_ptr, const char* str)
 {
     ssd1306_draw_pixel(disp_ptr, 2, 3);

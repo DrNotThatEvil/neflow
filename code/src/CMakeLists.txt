@@ -10,6 +10,7 @@ set(NEFLOW_HEADER_LIST
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_main_menu_screen.h"
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_profiles_screen.h"
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_profile_edit_screen.h"
+    "${neflow_SOURCE_DIR}/include/nf_menu/nf_profile_run_screen.h"
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_config_edit_screen.h"
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_graph.h"
     "${neflow_SOURCE_DIR}/include/nf_menu/nf_graph_font.h"
@@ -35,6 +36,7 @@ add_executable(neflow
     nf_menu/nf_main_menu_screen.c
     nf_menu/nf_profiles_screen.c
     nf_menu/nf_profile_edit_screen.c
+    nf_menu/nf_profile_run_screen.c
     nf_menu/nf_config_edit_screen.c
     nf_menu/nf_calibration_screen.c
     nf_menu/nf_test_menu_screen.c

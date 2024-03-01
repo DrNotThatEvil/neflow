@@ -6,6 +6,8 @@ void nf_tempsys_init(_nf_tempsys_t* _tempsys, _nf_memory_state_t* _memory)
     _tempsys->_temp  = malloc(sizeof(_nf_max31855_t));
 
     _tempsys->_menu_msq_queue_ptr = ((void*)0);
+    _tempsys->_profile = ((void*)0);
+    _tempsys->_curr_stage = 0;
     
     nf_max31855_init(_tempsys->_temp);
 
@@ -127,9 +129,9 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
 
     _nf_tempsys_handle_thread_messages(_tempsys);
     _nf_swap_indexes(_tempsys);
+    _nf_sanity_check(_tempsys);
     _nf_send_temp_update(_tempsys);
 
-    // SANITY CHECK (normal just for now)
     if(_tempsys->_tempmode == USE_TEMP0) {
         _nf_temps_t* temps = (_nf_temps_t*) &(_tempsys->_results[0][_tempsys->read_index[0]]);
         if(_tempsys->_prev_state == NORMAL && _tempsys->_curr_state == CALIBRATION) {
@@ -142,41 +144,25 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
             _tempsys->pid_data[1] = _tempsys->_memory->current_buffer->pid_data[0][1];
             _tempsys->pid_data[2] = _tempsys->_memory->current_buffer->pid_data[0][2];
             _tempsys->_prev_state = CALIBRATION;
-            _tempsys->_pid_timeout = make_timeout_time_ms(450);
+            _tempsys->_pid_timeout = make_timeout_time_ms(225);
             return;
         }
 
-        if (_tempsys->_curr_state == NORMAL) {
-            if (temps->change_thermocouple > NORMAL_ALLOWED_CHANGERATE) {
-                // SOMETHING BAD!
-                _tempsys->_curr_state = ERROR;
-                //printf("%d", temps->change_thermocouple);
-                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_ERROR);
-            }
+        if(_tempsys->_prev_state == NORMAL && _tempsys->_curr_state == RUNNING) {
+            // Changed to calibration.
+            _tempsys->integral = 0.f;
+            _tempsys->prev_error = 0.f;
+            _tempsys->pid_output = 0.f;
 
-            if (temps->thermocouple < NORMAL_TO_LOW_TEMP) {
-                // SOMETHING BAD!
-                _tempsys->_curr_state = ERROR;
-                //printf("%d", temps->change_thermocouple);
-                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
-            }
-
-            if (temps->thermocouple < NORMAL_TO_LOW_TEMP) {
-                // SOMETHING BAD!
-                _tempsys->_curr_state = ERROR;
-                //printf("%d", temps->change_thermocouple);
-                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
-            }
-           return;
+            _tempsys->pid_data[0] = _tempsys->_memory->current_buffer->pid_data[1][0];
+            _tempsys->pid_data[1] = _tempsys->_memory->current_buffer->pid_data[1][1];
+            _tempsys->pid_data[2] = _tempsys->_memory->current_buffer->pid_data[1][2];
+            _tempsys->_prev_state = RUNNING;
+            _tempsys->_pid_timeout = make_timeout_time_ms(225);
+            return;
         }
 
         if (_tempsys->_curr_state == CALIBRATION) {
-            if (temps->thermocouple > CHALIBRATION_ALLOWD_MAX_TEMP) {
-                _tempsys->_curr_state = ERROR;
-                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_HIGH_ERROR);
-                return;
-            }
-
            // Changed this to 70.f for a bit.
             if(get_absolute_time()._private_us_since_boot < _tempsys->_pid_timeout._private_us_since_boot) 
             {
@@ -208,6 +194,7 @@ void nf_tempsys_set_menu_queue(_nf_tempsys_t* _tempsys, queue_t* _menu_msg_queue
 
 void _nf_sanity_check(_nf_tempsys_t* _tempsys)
 {
+    _nf_temps_t* temps = (_nf_temps_t*) &(_tempsys->_results[0][_tempsys->read_index[0]]);
     if (_tempsys->_curr_state == CALIBRATION)
     {
         if (temps->change_thermocouple > CALIBRATION_ALLOWED_CHANGE_RATE) {
@@ -237,7 +224,7 @@ void _nf_sanity_check(_nf_tempsys_t* _tempsys)
 
     if (temps->thermocouple > NORMAL_TO_HIGH_TEMP) {
         _tempsys->_curr_state = ERROR;
-        _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_HIGH_ERROR);
+        _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_HIGH_ERROR);
     }
 
     if (temps->thermocouple < NORMAL_TO_LOW_TEMP) {
@@ -331,6 +318,12 @@ void _nf_tempsys_handle_thread_messages(_nf_tempsys_t* _tempsys)
             return;
         }
 
+        if(msg.msg_type == MENU_SET_PROFILE_MSG_TYPE) 
+        {
+            _tempsys->_profile = msg.value_ptr;
+            _tempsys->_curr_state = 0;
+        }
+
         if(msg.msg_type == MENU_STATE_CHANGE_MSG_TYPE)
         {
             _nf_tempsys_state_t state = _tempsys->_curr_state;
@@ -342,6 +335,11 @@ void _nf_tempsys_handle_thread_messages(_nf_tempsys_t* _tempsys)
             if(msg.simple_msg_value == 3)
             {
                 state = CALIBRATION;
+            }
+            
+            if(msg.simple_msg_value == 4)
+            {
+                state = RUNNING;
             }
 
             _nf_tempsys_set_state(_tempsys, state);

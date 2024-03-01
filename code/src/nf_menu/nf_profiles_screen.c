@@ -80,6 +80,8 @@ void nf_profiles_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, void
 
             if(_profile->initialized) {
                 tone(menu_state->_tonegen, NOTE_A4, 100);
+                nf_set_profile(menu_state, (void*) _profile);
+                nf_menu_change_screen_with_data(menu_state, PROFILE_RUN_SCREEN_ID, (void*) _profile);
                 //nf_menu_change_screen_with_data(menu_state, PROFILE_EDIT_SCREEN_ID, (void*) (&profiles_state->_profile_state->_profiles[profiles_state->selected_profile]));
             } else {
                 tone(menu_state->_tonegen, NOTE_C3, 100);
