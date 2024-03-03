@@ -1,5 +1,4 @@
 #include "nf_menu/nf_calibration_screen.h"
-#include "nf_menu/nf_graph_font.h"
 
 /*
  * TODO (DrNotThatEvil, 2024-01-15, 22:16):
@@ -21,15 +20,6 @@
  * first pixel of the new line, this should make it look pretty nice i think?
 */
 
-double my_ceil(double x) {
-    int intPart = (int)x;
-    if (x > intPart) {
-        return intPart + 1.0;
-    } else {
-        return x;
-    }
-}
-
 void nf_calibration_screen_init(_nf_menu_t* _menu_state)
 {
     _nf_menu_screen_t** _menu_screens_ptr = &_menu_state->menu_screens;
@@ -40,6 +30,8 @@ void nf_calibration_screen_init(_nf_menu_t* _menu_state)
     calibration_screen->extra_data = malloc(sizeof(_nf_calibration_screen_state_t));
 
     _nf_calibration_screen_state_t* cali_state = (_nf_calibration_screen_state_t*) calibration_screen->extra_data;
+    cali_state->_graph = (_nf_graph_state_t*) malloc(sizeof(_nf_graph_state_t));
+
     _nf_gen_calibration_screen_state(cali_state);
 
     _nf_menu_screen_fn_ptrs_t calibraion_screen_fns = {
@@ -56,42 +48,35 @@ void nf_calibration_screen_init(_nf_menu_t* _menu_state)
 
 void _nf_gen_calibration_screen_state(_nf_calibration_screen_state_t* _cali_state)
 {
-    _cali_state->_sample_count = 0;
-    _cali_state->_sum = 0.0;
-    _cali_state->_avg_index = 0;
-    _cali_state->_drawing = false;
+    _nf_graph_state_t* _graph = _cali_state->_graph;
 
-    _cali_state->_temp_high_value = 50;
-    _cali_state->_sec_high_value = 60;
+    _graph->_sample_count = 0;
+    _graph->_sum = 0.0;
+    _graph->_avg_index = 0;
+    _graph->_drawing = false;
+
+    _graph->_temp_high_value = 50;
+    _graph->_sec_high_value = 60;
 
     for(uint8_t i = 0; i < 100; i++)
     {
-        _cali_state->_averages[i] = 0.0;
+        _graph->_averages[i] = 0.0;
     }
 
-    _cali_state->_sample_timeout = make_timeout_time_ms(NF_SAMPLE_TIMEOUT);
-    _cali_state->_avg_timeout = make_timeout_time_ms(NF_AVG_TIMEOUT);
-}
-
-void _nf_format_gvalue(uint16_t value, char* target)
-{
-    sprintf(target, "%d", value);
-    if (strlen(target) == 1)
-    {
-        sprintf(target, "::%d", value);
-    }
-    else if (strlen(target) == 2)
-    {
-        sprintf(target, ":%d", value);
-    }
-
+    _graph->_sample_timeout = make_timeout_time_ms(NF_SAMPLE_TIMEOUT);
+    //_graph->_avg_timeout = make_timeout_time_ms(NF_AVG_TIMEOUT);
 }
 
 void nf_calibration_screen_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data)
 {
-    _nf_calibration_screen_state_t* cali_state = (_nf_calibration_screen_state_t*) extra_data;
     ssd1306_clear(disp_ptr);
 
+    _nf_calibration_screen_state_t* cali_state = (_nf_calibration_screen_state_t*) extra_data;
+    _nf_graph_state_t* _graph = cali_state->_graph;
+    nf_graph_render(menu_state, disp_ptr, _graph);
+    return;
+
+/*
     // Left Line
     ssd1306_draw_line(disp_ptr, 17, 0, 19, 0);
     ssd1306_draw_pixel(disp_ptr, 18, 25);
@@ -243,6 +228,7 @@ void nf_calibration_screen_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, v
         sprintf(temp_str, "Avg: %.2f", average);
         ssd1306_draw_string(disp_ptr, 30, 5, 1, temp_str);
         */
+        /*
 
         cali_state->_avg_index = (cali_state->_avg_index + 1) % 100;
         cali_state->_sum = 0.0;
@@ -251,6 +237,8 @@ void nf_calibration_screen_render(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, v
         //cali_state->_last_line_end_y = cy; 
         cali_state->_avg_timeout = make_timeout_time_ms(NF_AVG_TIMEOUT);
     }
+
+    */
 
 /*
     char temp_str[20];

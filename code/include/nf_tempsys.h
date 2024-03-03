@@ -18,6 +18,9 @@
 #define CALIBRATION_TO_HIGH_TEMP 130
 #define CALIBRATION_ALLOWED_CHANGE_RATE 8
 
+#define RUNNING_TO_HIGH_TEMP 210
+#define RUNNING_ALLOWED_CHANGE_RATE 8
+
 typedef enum nf_tempsys_state {
     ERROR,
     PRE_INIT,
@@ -57,7 +60,8 @@ typedef struct nf_tempsys {
     _nf_tempsys_temp_mode_t _tempmode;
     absolute_time_t _pid_timeout; 
 
-    uint8_t _curr_stage;
+    uint8_t _cur_stage_index;
+    uint16_t _cur_stage_l_cnt;
     _nf_profile_t* _profile;
 
     uint heater_state;

@@ -7,7 +7,8 @@ void nf_tempsys_init(_nf_tempsys_t* _tempsys, _nf_memory_state_t* _memory)
 
     _tempsys->_menu_msq_queue_ptr = ((void*)0);
     _tempsys->_profile = ((void*)0);
-    _tempsys->_curr_stage = 0;
+    _tempsys->_cur_stage_index = 0;
+    _tempsys->_cur_stage_l_cnt = 0;
     
     nf_max31855_init(_tempsys->_temp);
 
@@ -149,7 +150,7 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
         }
 
         if(_tempsys->_prev_state == NORMAL && _tempsys->_curr_state == RUNNING) {
-            // Changed to calibration.
+            // Changed to RUNNING.
             _tempsys->integral = 0.f;
             _tempsys->prev_error = 0.f;
             _tempsys->pid_output = 0.f;
@@ -158,7 +159,9 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
             _tempsys->pid_data[1] = _tempsys->_memory->current_buffer->pid_data[1][1];
             _tempsys->pid_data[2] = _tempsys->_memory->current_buffer->pid_data[1][2];
             _tempsys->_prev_state = RUNNING;
-            _tempsys->_pid_timeout = make_timeout_time_ms(225);
+            _tempsys->_cur_stage_l_cnt = 0;
+
+            _tempsys->_pid_timeout = make_timeout_time_ms(200);
             return;
         }
 
@@ -184,6 +187,49 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
             _tempsys->_pid_timeout = make_timeout_time_ms(225);
             return;
         }
+
+        if (_tempsys->_curr_state == RUNNING)
+        {
+            // Changed this to 70.f for a bit.
+            if(get_absolute_time()._private_us_since_boot < _tempsys->_pid_timeout._private_us_since_boot) 
+            {
+                return;
+            }
+
+            if(_tempsys->_cur_stage_index >= PROFILE_TARGETS_SIZE) {
+                // implement finishing here... should actually already be done.
+                return;
+            }
+
+            _tempsys->_cur_stage_l_cnt++;
+            uint8_t cur_target_time = _tempsys->_profile->targets[_tempsys->_cur_stage_index][1];
+            double tar_time_div = (((double)cur_target_time) * 1000.0) / 200.0;
+
+            if (((double)_tempsys->_cur_stage_l_cnt) > tar_time_div) 
+            {
+                _tempsys->_cur_stage_l_cnt = 0;
+                _tempsys->_cur_stage_index++;  
+
+                if(_tempsys->_cur_stage_index >= PROFILE_TARGETS_SIZE) {
+                    // implement finishing here.
+                    return;
+                }
+            }
+
+            float cur_target_temp = ((float) _tempsys->_profile->targets[_tempsys->_cur_stage_index][0]);
+            _nf_pid_controller(_tempsys, cur_target_temp);
+            if(_tempsys->pid_output > 72.f + 1.5f) {
+                gpio_put(NF_SSR0_PIN, 1);
+                _tempsys->heater_state = 1;
+            } else if (_tempsys->pid_output < 72.f - 1.5f) {
+                gpio_put(NF_SSR0_PIN, 0);
+                _tempsys->heater_state = 0;
+            }
+
+            // was 450
+            _tempsys->_pid_timeout = make_timeout_time_ms(200);
+            return;
+        }
     }
 }
 
@@ -195,6 +241,27 @@ void nf_tempsys_set_menu_queue(_nf_tempsys_t* _tempsys, queue_t* _menu_msg_queue
 void _nf_sanity_check(_nf_tempsys_t* _tempsys)
 {
     _nf_temps_t* temps = (_nf_temps_t*) &(_tempsys->_results[0][_tempsys->read_index[0]]);
+    if (_tempsys->_curr_state == RUNNING)
+    {
+        if (temps->change_thermocouple > RUNNING_ALLOWED_CHANGE_RATE) {
+            _tempsys->_curr_state = ERROR;
+            _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_ERROR);
+        }
+
+        if (temps->thermocouple > RUNNING_TO_HIGH_TEMP) {
+            _tempsys->_curr_state = ERROR;
+            _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_HIGH_ERROR);
+            return;
+        }
+
+        if (temps->thermocouple < NORMAL_TO_LOW_TEMP) {
+            _tempsys->_curr_state = ERROR;
+            _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
+        }
+
+        return;
+    }
+
     if (_tempsys->_curr_state == CALIBRATION)
     {
         if (temps->change_thermocouple > CALIBRATION_ALLOWED_CHANGE_RATE) {
@@ -318,35 +385,39 @@ void _nf_tempsys_handle_thread_messages(_nf_tempsys_t* _tempsys)
             return;
         }
 
-        if(msg.msg_type == MENU_SET_PROFILE_MSG_TYPE) 
+        _nf_tempsys_state_t state = _tempsys->_curr_state;
+        if(state != ERROR)
         {
-            _tempsys->_profile = msg.value_ptr;
-            _tempsys->_curr_state = 0;
+            if(state != RUNNING && msg.msg_type == MENU_SET_PROFILE_MSG_TYPE) 
+            {
+                // Allow setting profile if not running (should not occour but better to be safe.)
+                _tempsys->_profile = msg.value_ptr;
+                _tempsys->_cur_stage_index = 0;
+            }
+
+            if(msg.msg_type == MENU_STATE_CHANGE_MSG_TYPE)
+            {
+                if(msg.simple_msg_value == 2)
+                {
+                    state = NORMAL;
+                }
+
+                if(msg.simple_msg_value == 3)
+                {
+                    state = CALIBRATION;
+                }
+                
+                if(msg.simple_msg_value == 4)
+                {
+                    state = RUNNING;
+                }
+
+                _nf_tempsys_set_state(_tempsys, state);
+            }
+
+            // Always remove since the msg was for us. 
+            queue_remove_blocking(_tempsys->_menu_msq_queue_ptr, &msg);
         }
-
-        if(msg.msg_type == MENU_STATE_CHANGE_MSG_TYPE)
-        {
-            _nf_tempsys_state_t state = _tempsys->_curr_state;
-            if(msg.simple_msg_value == 2)
-            {
-                state = NORMAL;
-            }
-
-            if(msg.simple_msg_value == 3)
-            {
-                state = CALIBRATION;
-            }
-            
-            if(msg.simple_msg_value == 4)
-            {
-                state = RUNNING;
-            }
-
-            _nf_tempsys_set_state(_tempsys, state);
-        }
-
-        // Always remove since the msg was for us. 
-        queue_remove_blocking(_tempsys->_menu_msq_queue_ptr, &msg);
     }
 }
 

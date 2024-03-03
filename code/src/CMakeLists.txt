@@ -32,6 +32,7 @@ add_executable(neflow
     nf_menu.c
     nf_max31855.c
     nf_tempsys.c
+    nf_menu/nf_graph_font.c
     nf_menu/nf_menu_common.c
     nf_menu/nf_main_menu_screen.c
     nf_menu/nf_profiles_screen.c

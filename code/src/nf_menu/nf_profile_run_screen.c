@@ -9,8 +9,27 @@ void nf_profile_run_render(_nf_menu_t* _menu_state, ssd1306_t* disp_ptr, void* e
         return;
     }
 
+    _nf_graph_state_t* _graph = profile_run_state->_graph;
+    ssd1306_clear(disp_ptr);
 
-    ssd1306_draw_string(disp_ptr, 5, 25, 2, "RUNNING");
+    nf_graph_render(_menu_state, disp_ptr, _graph);
+    for (uint8_t i = 0; i < PROFILE_TARGETS_SIZE; i++)
+    {
+
+        double l_length = (100.0 / ((double) NF_GRAPH_NUM_SEGMENTS));
+        double l = ((((double)profile_run_state->current_profile->targets[i][1]) / 300.0) * 100.0);
+
+        for(uint8_t y = NF_GRAPH_ZERO_Y; y > NF_GRAPH_MAX_Y; y -= 10)
+        {
+            ssd1306_draw_line(disp_ptr,
+                l,
+                y,
+                l,
+                y - 5
+            );
+        }
+    }
+    
 }
 
 void nf_profile_run_on_active_handler(_nf_menu_t* _menu_state, void* extra_data, void* on_active_extra_data)
@@ -29,9 +48,10 @@ void nf_profile_run_btn_handler(_nf_menu_t* _menu_state, uint btn, bool repeat, 
     {
         if(!profile_run_state->_running)
         {
-            nf_menu_change_state(_menu_state, MENU_STATE_REFLOW);
             tone(_menu_state->_tonegen, NOTE_C4, 150);
+            _nf_gen_graph_state(profile_run_state->_graph);
             profile_run_state->_running = true;
+            nf_menu_change_state(_menu_state, MENU_STATE_REFLOW);
         }
     }
 }
@@ -74,7 +94,7 @@ void _nf_gen_graph_state(_nf_graph_state_t* _graph)
     _graph->_avg_index = 0;
 
     _graph->_temp_high_value = 50;
-    _graph->_sec_high_value = 60;
+    _graph->_sec_high_value = 300;
 
     for(uint8_t i = 0; i < 100; i++)
     {
@@ -82,6 +102,6 @@ void _nf_gen_graph_state(_nf_graph_state_t* _graph)
     }
 
     _graph->_sample_timeout = make_timeout_time_ms(NF_SAMPLE_TIMEOUT);
-    _graph->_avg_timeout = make_timeout_time_ms(NF_AVG_TIMEOUT);
+    //_graph->_avg_timeout = make_timeout_time_ms(NF_AVG_TIMEOUT);
 }
 

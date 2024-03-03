@@ -4,18 +4,14 @@
 #include "nf_menu/nf_menu_common.h"
 //#include "nf_menu/nf_graph.h"
 
-#define NF_GRAPH_ZERO_X 20
-#define NF_GRAPH_MAX_X 120
-
-#define NF_GRAPH_ZERO_Y 50
-#define NF_GRAPH_MAX_Y 0
-
 //#define NF_AVG_TIMEOUT 1000
 //#define NF_AVG_TIMEOUT 60000
 //#define NF_SAMPLE_TIMEOUT 10000
 //#define NF_SAMPLE_TIMEOUT 250
 
 typedef struct nf_calibration_screen_state {
+    _nf_graph_state_t* _graph;
+    /*
     uint8_t _sample_count;
     double _sum;
     uint8_t _avg_index;
@@ -26,6 +22,7 @@ typedef struct nf_calibration_screen_state {
     uint16_t _sec_high_value;
     absolute_time_t _sample_timeout;
     absolute_time_t _avg_timeout;
+    */
 } _nf_calibration_screen_state_t;
 
 void nf_calibration_screen_init(_nf_menu_t* _menu_state);
