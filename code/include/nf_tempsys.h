@@ -11,15 +11,15 @@
 #include "nf_profile.h"
 #include "nf_max31855.h"
 
-#define NORMAL_ALLOWED_CHANGE_RATE 5
+#define NORMAL_ALLOWED_CHANGE_RATE 8
 #define NORMAL_TO_LOW_TEMP 5
 #define NORMAL_TO_HIGH_TEMP 50
 
-#define CALIBRATION_TO_HIGH_TEMP 130
-#define CALIBRATION_ALLOWED_CHANGE_RATE 8
+#define CALIBRATION_TO_HIGH_TEMP 150
+#define CALIBRATION_ALLOWED_CHANGE_RATE 10
 
 #define RUNNING_TO_HIGH_TEMP 210
-#define RUNNING_ALLOWED_CHANGE_RATE 8
+#define RUNNING_ALLOWED_CHANGE_RATE 10
 
 typedef enum nf_tempsys_state {
     ERROR,
@@ -27,7 +27,8 @@ typedef enum nf_tempsys_state {
     POST_INIT,
     NORMAL,
     CALIBRATION,
-    RUNNING
+    RUNNING,
+    FINISHED
 } _nf_tempsys_state_t;
 
 typedef enum nf_tempsys_temp_mode {
@@ -70,6 +71,7 @@ typedef struct nf_tempsys {
     float prev_error;
     float pid_output;
 
+    double bootup_temp;
     _nf_temps_t _results[2][2];
     uint read_index[2];
     uint write_index[2];
@@ -87,7 +89,10 @@ void _nf_tempsys_handle_thread_messages(_nf_tempsys_t* _tempsys);
 void _nf_swap_indexes(_nf_tempsys_t* _tempsys);
 void _nf_send_temp_initialized(_nf_tempsys_t* _tempsys);
 void _nf_send_temp_update(_nf_tempsys_t* _tempsys);
+void _nf_send_finished(_nf_tempsys_t* _tempsys);
 void _nf_trigger_error(_nf_tempsys_t* _tempsys, uint error_flag);
+
+float _nf_calculate_target_temp(_nf_tempsys_t* _tempsys);
 
 void _nf_pid_controller(_nf_tempsys_t* _tempsys, float setpoint);
 

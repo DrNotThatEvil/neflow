@@ -4,6 +4,7 @@
 #include <hardware/sync.h>
 #include <pico/multicore.h>
 #include <hardware/flash.h>
+#include <string.h>
 #include "nf_common.h"
 
 

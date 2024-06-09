@@ -34,6 +34,13 @@
 #define NF_GRAPH_ZERO_Y 50
 #define NF_GRAPH_MAX_Y 0
 
+/// NEW WAY
+#define NF_GRAPH_SAMPLE_PERIOD 200
+#define NF_GRAPH_NSAMPLES 10
+#define NF_GRAPH_SCALE_FACTOR 2 
+
+
+
 
 typedef struct nf_menu _nf_menu_t;
 typedef struct nf_menu_screen _nf_menu_screen_t;
@@ -43,14 +50,14 @@ typedef struct nf_menu_screen_fn_ptrs _nf_menu_screen_fn_ptrs_t;
 typedef struct nf_graph_state {
     uint8_t _sample_count;
     double _sum;
+
     uint8_t _avg_index;
-    double _averages[100];
+    double _averages[NF_GRAPH_NUM_SEGMENTS];
 
     bool _drawing;
     uint8_t _temp_high_value;
     uint16_t _sec_high_value;
     absolute_time_t _sample_timeout;
-    absolute_time_t _avg_timeout;
 } _nf_graph_state_t;
 
 typedef struct nf_profile_edit_screen_state {
@@ -66,6 +73,7 @@ typedef struct nf_profile_run_screen_state {
     _nf_profile_t* current_profile;
     _nf_profile_state_t* _profile_state;
     bool _running;
+    uint8_t _finished_animation;
 
     _nf_graph_state_t* _graph;
 } _nf_profile_run_screen_state_t;
@@ -89,7 +97,8 @@ typedef enum nf_menu_state {
     MENU_STATE_INIT,
     MENU_STATE_NORMAL,
     MENU_STATE_CALIBRATION,
-    MENU_STATE_REFLOW
+    MENU_STATE_REFLOW,
+    MENU_STATE_FINISHED
 } _nf_menu_state_t;
 
 typedef struct nf_menu_error_state {

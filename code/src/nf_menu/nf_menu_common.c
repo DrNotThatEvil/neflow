@@ -72,6 +72,7 @@ void nf_menu_change_screen(_nf_menu_t* _menu, uint screen_id)
 
 void nf_menu_change_state(_nf_menu_t* _menu, _nf_menu_state_t state)
 {
+    // TODO (DrNotThatEvil, 2024-06-09): Note, the FINISHED state gets set by tempsys so this should never, send a message about that.    
     _menu->_state = state;
     _nf_thread_msg menu_state_change_msg = {
         .msg_type = MENU_STATE_CHANGE_MSG_TYPE,
@@ -171,38 +172,13 @@ void nf_graph_render(_nf_menu_t* _menu_state, ssd1306_t* disp_ptr, _nf_graph_sta
     uint32_t cy = 0;
     uint32_t ex = 0;
 
-    // fix drawing line for other screen aswell.
-    /*
-    if (_graph->_temp_high_value > 100)
-    {
-        double percent_y = (100.0 / ((double)_graph->_temp_high_value));
-        uint16_t dash_line_y = NF_GRAPH_ZERO_Y - ((NF_GRAPH_ZERO_Y + 1) * percent_y);
-
-        char line_y[20];
-        sprintf(line_y, "line: %.2f", percent_y);
-        ssd1306_draw_string(disp_ptr, 30, 5, 1, line_y);
-
-        
-        for(uint8_t x = NF_GRAPH_ZERO_X; x < NF_GRAPH_MAX_X; x += 10)
-        {
-            ssd1306_draw_line(disp_ptr, 
-                x,
-                dash_line_y,
-                x + 5,
-                dash_line_y
-            );
-        }
-    }
-    */
-
+    double l_length = 100.0 / (NF_GRAPH_NUM_SEGMENTS - 1.0);
     if (_graph->_drawing) 
     {
         for(uint8_t i = 0; i < _graph->_avg_index; i++)
         {
             uint32_t last_line_end_x = ex;
             uint32_t last_line_end_y = cy;
-
-            double l_length = (100.0 / ((double) NF_GRAPH_NUM_SEGMENTS));
 
             double sx_d = (((double) i) * l_length); 
             double ex_d = (((double) (i + 1)) * l_length);
@@ -229,6 +205,44 @@ void nf_graph_render(_nf_menu_t* _menu_state, ssd1306_t* disp_ptr, _nf_graph_sta
                 cy
             );
         }
+
+        /*
+        double l_length = (100.0 / ((double) NF_GRAPH_NUM_SEGMENTS));
+
+        for(uint8_t i = 0; i < _graph->_avg_index; i++)
+        {
+            uint32_t last_line_end_x = ex;
+            uint32_t last_line_end_y = cy;
+
+            double sx_d = (((double) i) * l_length); 
+            double ex_d = (((double) (i + 1)) * l_length);
+
+            uint32_t sx = NF_GRAPH_ZERO_X + my_ceil(sx_d);
+            ex = NF_GRAPH_ZERO_X + my_ceil(ex_d);
+            //ex = ((((i + 1) * 5) / cali_state->_sec_high_value) * 100);
+            cy = NF_GRAPH_ZERO_Y - ((NF_GRAPH_ZERO_Y + 1) * (_graph->_averages[i] / _graph->_temp_high_value));
+
+            if(last_line_end_x > 0 && last_line_end_y > 0) 
+            {
+                ssd1306_draw_line(disp_ptr, 
+                    last_line_end_x,
+                    last_line_end_y,
+                    sx,
+                    cy
+                );
+            }
+
+            ssd1306_draw_line(disp_ptr, 
+                sx,
+                cy,
+                ex,
+                cy
+            );
+        }
+        */
+
+
+
     }
 
     if(get_absolute_time()._private_us_since_boot < _graph->_sample_timeout._private_us_since_boot)
@@ -236,15 +250,41 @@ void nf_graph_render(_nf_menu_t* _menu_state, ssd1306_t* disp_ptr, _nf_graph_sta
         return;
     }
 
+    // TODO (DrNotThatEvil, 2024-06-09): This needs to increase if the array has been condensed.
     _graph->_sample_timeout = make_timeout_time_ms(NF_SAMPLE_TIMEOUT);
     _graph->_sum += _menu_state->cur_temp;
     _graph->_sample_count++;
 
-    long timeout = (300.0 / ((double)NF_GRAPH_NUM_SEGMENTS)) * 1000.0;
-    if(_graph->_sample_count >= (timeout / NF_SAMPLE_TIMEOUT))
+    //long timeout = (((double)NF_GRAPH_NUM_SEGMENTS) / NF_SAMPLE_TIMEOUT) * 100.0;
+    uint16_t tavg = _graph->_sec_high_value / NF_GRAPH_NUM_SEGMENTS;
+    float sample_target_sec = (float)NF_GRAPH_SAMPLE_PERIOD / 1000.0;
+    uint16_t sample_target = (uint16_t)(tavg / sample_target_sec);
+
+    if(_graph->_sample_count > sample_target)
     {
         double avg = _graph->_sum / _graph->_sample_count;
-        _graph->_averages[_graph->_avg_index] = avg;
+        if(_graph->_avg_index < NF_GRAPH_NUM_SEGMENTS)
+        {
+            _graph->_averages[_graph->_avg_index] = avg;
+        }
+        else
+        {
+            float temp[(NF_GRAPH_NUM_SEGMENTS / 2)];
+            for (uint8_t i = 0; i < (NF_GRAPH_NUM_SEGMENTS / 2); i++)
+            {
+                temp[i] = (_graph->_averages[2 * i] + _graph->_averages[2 * i + 1]) / 2.0f;
+            }
+
+            for (uint8_t i = 0; i < (NF_GRAPH_NUM_SEGMENTS-1); i++)
+            {
+                _graph->_averages[i] = temp[i];
+            }
+
+            _graph->_sec_high_value = (_graph->_sec_high_value * NF_GRAPH_SCALE_FACTOR);
+            _graph->_averages[(NF_GRAPH_NUM_SEGMENTS / 2)] = avg;
+            _graph->_avg_index = (NF_GRAPH_NUM_SEGMENTS / 2);
+        }
+
         _graph->_drawing = true;
 
         /*

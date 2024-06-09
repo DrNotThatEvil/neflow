@@ -56,9 +56,9 @@ void _nf_gen_calibration_screen_state(_nf_calibration_screen_state_t* _cali_stat
     _graph->_drawing = false;
 
     _graph->_temp_high_value = 50;
-    _graph->_sec_high_value = 60;
+    _graph->_sec_high_value = 100;
 
-    for(uint8_t i = 0; i < 100; i++)
+    for(uint8_t i = 0; i < NF_GRAPH_NUM_SEGMENTS; i++)
     {
         _graph->_averages[i] = 0.0;
     }

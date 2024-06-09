@@ -56,7 +56,7 @@ void nf_main_menu_btn_handler(_nf_menu_t* menu_state, uint btn, bool repeat, voi
         if(*data == CALIBRATION_INDEX) {
             //menu_state->_state = MENU_STATE_CALIBRATION;
             nf_menu_change_state(menu_state, MENU_STATE_CALIBRATION);
-            //nf_menu_change_screen(menu_state, CALIBRATION_SCREEN_ID);
+            nf_menu_change_screen(menu_state, CALIBRATION_SCREEN_ID);
         }
 #if ENABLE_TEST_MENU == 1
         if(*data == TEST_MENU_INDEX) {

@@ -170,7 +170,10 @@ bool menu_can_update(_nf_menu_t* _menu_state)
         return false;
     } 
 
-    if(_menu_state->_state == MENU_STATE_NORMAL || _menu_state->_state == MENU_STATE_CALIBRATION || _menu_state->_state == MENU_STATE_REFLOW)
+    if(_menu_state->_state == MENU_STATE_NORMAL || 
+       _menu_state->_state == MENU_STATE_CALIBRATION ||
+       _menu_state->_state == MENU_STATE_REFLOW ||
+       _menu_state->_state == MENU_STATE_FINISHED)
     {
         if (!queue_is_empty(&_menu_state->tempsys_msg_q))
         {
@@ -213,6 +216,11 @@ void menu_handle_thread_messages(_nf_menu_t* _menu_state)
         {
             _nf_temps_t* _temps = (_nf_temps_t*) msg.value_ptr;
             _menu_state->cur_temp = _temps->thermocouple;
+        }
+
+        if(msg.msg_type == TEMPSYS_FINISHED_MSG_TYPE)
+        {
+            _menu_state->_state = MENU_STATE_FINISHED;
         }
 
         // Always remove since msg was for us.
