@@ -205,6 +205,7 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
 
             if(_tempsys->_cur_stage_index >= PROFILE_TARGETS_SIZE) {
                 // implement finishing here... should actually already be done.
+                gpio_put(NF_SSR0_PIN, 0);
                 return;
             }
 
@@ -227,6 +228,8 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
 
                 if(_tempsys->_cur_stage_index >= PROFILE_TARGETS_SIZE && _tempsys->_curr_state != FINISHED)
                 {
+                    gpio_put(NF_SSR0_PIN, 0);
+
                     _tempsys->_curr_state = FINISHED;
                     _nf_send_finished(_tempsys);
                     return;
@@ -285,7 +288,7 @@ void nf_tempsys_set_menu_queue(_nf_tempsys_t* _tempsys, queue_t* _menu_msg_queue
 void _nf_sanity_check(_nf_tempsys_t* _tempsys)
 {
     _nf_temps_t* temps = (_nf_temps_t*) &(_tempsys->_results[0][_tempsys->read_index[0]]);
-    if (_tempsys->_curr_state == RUNNING)
+    if (_tempsys->_curr_state == RUNNING || _tempsys->_curr_state == FINISHED)
     {
         if (temps->change_thermocouple > RUNNING_ALLOWED_CHANGE_RATE) {
             _tempsys->_curr_state = ERROR;

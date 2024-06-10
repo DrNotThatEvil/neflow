@@ -73,7 +73,8 @@ typedef struct nf_profile_run_screen_state {
     _nf_profile_t* current_profile;
     _nf_profile_state_t* _profile_state;
     bool _running;
-    uint8_t _finished_animation;
+    uint8_t _finished_door_state;
+    absolute_time_t _beep_timeout;
 
     _nf_graph_state_t* _graph;
 } _nf_profile_run_screen_state_t;
