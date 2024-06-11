@@ -25,6 +25,7 @@ void nf_tempsys_init(_nf_tempsys_t* _tempsys, _nf_memory_state_t* _memory)
     }
 
     _tempsys->bootup_temp = 0.0;
+    _tempsys->hit_target = false;
 
     _tempsys->pid_data[0] = 25.f;
     _tempsys->pid_data[1] = 0.3f;
@@ -140,8 +141,9 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
     _nf_sanity_check(_tempsys);
     _nf_send_temp_update(_tempsys);
 
+    _nf_temps_t* temps;
     if(_tempsys->_tempmode == USE_TEMP0) {
-        _nf_temps_t* temps = (_nf_temps_t*) &(_tempsys->_results[0][_tempsys->read_index[0]]);
+        temps = (_nf_temps_t*) &(_tempsys->_results[0][_tempsys->read_index[0]]);
         if(_tempsys->_prev_state == NORMAL && _tempsys->_curr_state == CALIBRATION) {
             // Changed to calibration.
             _tempsys->integral = 0.f;
@@ -167,6 +169,7 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
             _tempsys->pid_data[2] = _tempsys->_memory->current_buffer->pid_data[1][2];
             _tempsys->_prev_state = RUNNING;
             _tempsys->_cur_stage_l_cnt = 0;
+            _tempsys->hit_target = false;
 
             _tempsys->_pid_timeout = make_timeout_time_ms(200);
             return;
@@ -209,30 +212,54 @@ void nf_tempsys_update(_nf_tempsys_t* _tempsys)
                 return;
             }
 
+            float cur_total_target = ((float) _tempsys->_profile->targets[_tempsys->_cur_stage_index][0]);
+            if(!_tempsys->hit_target && temps->thermocouple >= cur_total_target)
+            {
+                _tempsys->hit_target = true;
+            }
+
             _tempsys->_cur_stage_l_cnt++;
 
             float cur_time = ((float)((float)_tempsys->_cur_stage_l_cnt * 200.f) / 1000.0);
-
             uint16_t prev_time = 0;
             if(_tempsys->_cur_stage_index > 0)
             {
                 prev_time = _tempsys->_profile->targets[(_tempsys->_cur_stage_index - 1)][1];
             }
-            
+
+
+            // if next_target > current_unhit => allow
+            // if next_target > current_hit => allow
+            // if next_target < current_unhit => NO
+
             // minus the previous stage
             uint16_t cur_target_time = _tempsys->_profile->targets[_tempsys->_cur_stage_index][1] - prev_time;
             if (cur_time > cur_target_time) 
             {
-                _tempsys->_cur_stage_l_cnt = 0;
-                _tempsys->_cur_stage_index++;  
-
-                if(_tempsys->_cur_stage_index >= PROFILE_TARGETS_SIZE && _tempsys->_curr_state != FINISHED)
+                float next_target = cur_total_target;
+                // 0 -> 1 = next
+                // 1 -> 2 = next 
+                // 2 -> 3 = next
+                // 3 -> 4 = current
+                if((_tempsys->_cur_stage_index + 1) < PROFILE_TARGETS_SIZE)
                 {
-                    gpio_put(NF_SSR0_PIN, 0);
+                    next_target = ((float) _tempsys->_profile->targets[(_tempsys->_cur_stage_index + 1)][0]);
+                }
 
-                    _tempsys->_curr_state = FINISHED;
-                    _nf_send_finished(_tempsys);
-                    return;
+                if((next_target >= cur_total_target) || (next_target < cur_total_target && _tempsys->hit_target))
+                {
+                    _tempsys->_cur_stage_l_cnt = 0;
+                    _tempsys->_cur_stage_index++;
+                    _tempsys->hit_target = false;
+
+                    if(_tempsys->_cur_stage_index >= PROFILE_TARGETS_SIZE && _tempsys->_curr_state != FINISHED)
+                    {
+                        gpio_put(NF_SSR0_PIN, 0);
+
+                        _tempsys->_curr_state = FINISHED;
+                        _nf_send_finished(_tempsys);
+                        return;
+                    }
                 }
             }
 
@@ -258,6 +285,7 @@ float _nf_calculate_target_temp(_nf_tempsys_t* _tempsys)
 {
     _nf_temps_t* temps = (_nf_temps_t*) &(_tempsys->_results[0][_tempsys->read_index[0]]);
     float prev_target_temp = temps->thermocouple;
+    uint16_t prev_target_time = 0;
     
     float cur_target_temp = ((float) _tempsys->_profile->targets[_tempsys->_cur_stage_index][0]);
     uint16_t cur_target_time = _tempsys->_profile->targets[_tempsys->_cur_stage_index][1];
@@ -265,10 +293,11 @@ float _nf_calculate_target_temp(_nf_tempsys_t* _tempsys)
     if(_tempsys->_cur_stage_index > 0)
     {
         prev_target_temp = ((float) _tempsys->_profile->targets[(_tempsys->_cur_stage_index-1)][0]); 
+        prev_target_time = _tempsys->_profile->targets[(_tempsys->_cur_stage_index-1)][1];
     }
 
     float total_change = cur_target_temp - prev_target_temp;
-    float temp_per_s = total_change / cur_target_time;
+    float temp_per_s = total_change / (cur_target_time - prev_target_time);
     float temp_adj = prev_target_temp + ((temp_per_s / 0.2f) * _tempsys->_cur_stage_l_cnt);
 
     if ((total_change > 0.0f && temp_adj > cur_target_temp) ||

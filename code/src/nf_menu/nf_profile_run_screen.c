@@ -103,6 +103,29 @@ void nf_profile_run_btn_handler(_nf_menu_t* _menu_state, uint btn, bool repeat, 
             return;
         }
     }
+
+    if(btn == 0)
+    {
+        if(!profile_run_state->_running || 
+            (_menu_state->_state == MENU_STATE_FINISHED && profile_run_state->_running && profile_run_state->_finished_door_state == 5 && _menu_state->cur_temp < 50.0))
+        {
+            if(_menu_state->_state == MENU_STATE_FINISHED && profile_run_state->_running && profile_run_state->_finished_door_state == 5)
+            {
+                tone(_menu_state->_tonegen, NOTE_A2, 150);
+            }
+            else
+            {
+                tone(_menu_state->_tonegen, NOTE_B4, 150);
+            }
+            nf_menu_change_screen(_menu_state, PROFILES_SCREEN_ID);
+            return;
+        }
+
+
+        tone(_menu_state->_tonegen, NOTE_B4, 150);
+    }
+
+
 }
 
 void nf_profile_run_screen_init(_nf_menu_t* _menu_state, _nf_profile_state_t* _profile_state)

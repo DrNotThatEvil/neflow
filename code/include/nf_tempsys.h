@@ -16,10 +16,10 @@
 #define NORMAL_TO_HIGH_TEMP 50
 
 #define CALIBRATION_TO_HIGH_TEMP 150
-#define CALIBRATION_ALLOWED_CHANGE_RATE 10
+#define CALIBRATION_ALLOWED_CHANGE_RATE 15
 
 #define RUNNING_TO_HIGH_TEMP 210
-#define RUNNING_ALLOWED_CHANGE_RATE 10
+#define RUNNING_ALLOWED_CHANGE_RATE 15
 
 typedef enum nf_tempsys_state {
     ERROR,
@@ -70,6 +70,8 @@ typedef struct nf_tempsys {
     float integral;
     float prev_error;
     float pid_output;
+
+    bool hit_target;
 
     double bootup_temp;
     _nf_temps_t _results[2][2];
