@@ -60,3 +60,6 @@ pcb/*.ses
 # Exported BOM files
 pcb/*.xml
 pcb/*.csv
+pcb/*.zip
+pcb/plots/*
+pcb/production/*
