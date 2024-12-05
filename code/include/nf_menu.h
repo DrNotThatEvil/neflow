@@ -1,21 +1,21 @@
 #ifndef NF_MENU_H
 #define NF_MENU_H
 
-#include <string.h>
 #include <pico/stdlib.h>
 #include <pico/types.h>
+#include <string.h>
 
-#include "ssd1306.h"
-#include "pwm-tone.h"
 #include "debounce.h"
-#include "nf_menu/nf_menu_common.h"
-#include "nf_menu/nf_main_menu_screen.h"
-#include "nf_menu/nf_test_menu_screen.h"
+#include "nf_menu/nf_calibration_screen.h"
 #include "nf_menu/nf_config_edit_screen.h"
-#include "nf_menu/nf_profiles_screen.h"
+#include "nf_menu/nf_main_menu_screen.h"
+#include "nf_menu/nf_menu_common.h"
 #include "nf_menu/nf_profile_edit_screen.h"
 #include "nf_menu/nf_profile_run_screen.h"
-#include "nf_menu/nf_calibration_screen.h"
+#include "nf_menu/nf_profiles_screen.h"
+#include "nf_menu/nf_test_menu_screen.h"
+#include "pwm-tone.h"
+#include "ssd1306.h"
 
 #define NF_MENU_BTN_UPDATE_TIMEOUT_MS 50
 #define NF_MENU_BTN_REPEAT_UNTIL_HELD 8
@@ -34,9 +34,9 @@ typedef struct nf_menu_screen _nf_menu_screen_t;
 typedef struct nf_menu_screen_fn_ptrs _nf_menu_screen_fn_ptrs_t;
 
 typedef struct nf_menu_screen_fn_ptrs {
-    void (*on_render)(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void* extra_data);
-    void (*on_btn)(_nf_menu_t* menu_state, uint btn, bool repeat, void* extra_data);
-} _nf_menu_screen_fn_ptrs_t;
+    void (*on_render)(_nf_menu_t* menu_state, ssd1306_t* disp_ptr, void*
+extra_data); void (*on_btn)(_nf_menu_t* menu_state, uint btn, bool repeat, void*
+extra_data); } _nf_menu_screen_fn_ptrs_t;
 
 typedef struct nf_menu_screen {
     uint id;
@@ -54,7 +54,8 @@ typedef struct nf_menu_screen {
 // Split up screens in seperate files,
 // Each screen gets a init functions
 // Also aproach it diffently it's not a list of menu options
-// its a list of screens, the main_menu just handles the display change in the renderer
+// its a list of screens, the main_menu just handles the display change in the
+renderer
 
 
 typedef void (*on_select)(void* _menu_state, bool repeat);
@@ -88,27 +89,21 @@ typedef struct nf_menu {
 
 */
 
+void nf_menu_init(_nf_menu_t *_menu_state, tonegenerator_t *_tonegen,
+                  _nf_profile_state_t *_profile_state,
+                  _nf_memory_state_t *_memory, _nf_tempsys_t *_tempsys);
 
-void nf_menu_init(
-    _nf_menu_t* _menu_state, 
-    tonegenerator_t* _tonegen, 
-    _nf_profile_state_t* _profile_state, 
-    _nf_memory_state_t* _memory,
-    _nf_tempsys_t* _tempsys
-);
+void menu_gpio_callback(_nf_menu_t *_menu_state, uint gpio, uint32_t events);
+void menu_update(_nf_menu_t *_menu_state);
+bool menu_can_update(_nf_menu_t *_menu_state);
+void menu_handle_thread_messages(_nf_menu_t *_menu_state);
+void menu_update_buttons(_nf_menu_t *_menu_state);
 
-void menu_gpio_callback(_nf_menu_t* _menu_state, uint gpio, uint32_t events);
-void menu_update(_nf_menu_t* _menu_state);
-bool menu_can_update(_nf_menu_t* _menu_state);
-void menu_handle_thread_messages(_nf_menu_t* _menu_state);
-void menu_update_buttons(_nf_menu_t* _menu_state);
+void nf_menu_update_cur_temp(_nf_menu_t *_menu, double temp);
+void nf_menu_update_heater_state(_nf_menu_t *_menu, uint state);
 
-void nf_menu_update_cur_temp(_nf_menu_t* _menu, double temp);
-void nf_menu_update_heater_state(_nf_menu_t* _menu, uint state);
-
-uint nf_menu_get_menu_state(_nf_menu_t* _menu_state);
-void nf_menu_render(_nf_menu_t* _menu_state);
-void nf_menu_btn_handler(_nf_menu_t* _menu_state, uint btn, bool repeat);
-
+uint nf_menu_get_menu_state(_nf_menu_t *_menu_state);
+void nf_menu_render(_nf_menu_t *_menu_state);
+void nf_menu_btn_handler(_nf_menu_t *_menu_state, uint btn, bool repeat);
 
 #endif

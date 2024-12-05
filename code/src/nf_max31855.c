@@ -1,18 +1,20 @@
 #include "nf_max31855.h"
 
-static inline void nf_max31855_cs_select(uint cs_pin) {
+static inline void nf_max31855_cs_select(uint cs_pin)
+{
     asm volatile("nop \n nop \n nop");
     gpio_put(cs_pin, 0);
     asm volatile("nop \n nop \n nop");
 }
 
-static inline void nf_max31855_cs_deselect(uint cs_pin) {
+static inline void nf_max31855_cs_deselect(uint cs_pin)
+{
     asm volatile("nop \n nop \n nop");
     gpio_put(cs_pin, 1);
     asm volatile("nop \n nop \n nop");
 }
 
-void nf_max31855_init(_nf_max31855_t* sensor_state)
+void nf_max31855_init(_nf_max31855_t *sensor_state)
 {
     sensor_state->spi = spi0;
 
@@ -37,7 +39,8 @@ void nf_max31855_init(_nf_max31855_t* sensor_state)
     nf_max31855_cs_deselect(NF_TEMP1_CS);
 }
 
-void nf_max31855_read(_nf_max31855_t* sensor_state, uint temp_sensor, _nf_max31855_result_t* result)
+void nf_max31855_read(_nf_max31855_t *sensor_state, uint temp_sensor,
+                      _nf_max31855_result_t *result)
 {
     result->sensor = temp_sensor;
     result->status = false;
@@ -62,19 +65,25 @@ void nf_max31855_read(_nf_max31855_t* sensor_state, uint temp_sensor, _nf_max318
 
     result->faults = (data & 0x7); // TODO convert to constant.
 
-    if (data & 0x80000000) {
-        // Negative value, drop the lower 18 bits and explicitly extend sign bits.
-        result->thermocouple = (double) (0xFFFFC000 | ((data >> 18) & 0x00003FFF));
-    } else {
+    if (data & 0x80000000)
+    {
+        // Negative value, drop the lower 18 bits and explicitly extend sign
+        // bits.
+        result->thermocouple =
+            (double)(0xFFFFC000 | ((data >> 18) & 0x00003FFF));
+    }
+    else
+    {
         // Positive value, just drop the lower 18 bits.
-        result->thermocouple = (double) (data >> 18);
+        result->thermocouple = (double)(data >> 18);
     }
     result->thermocouple *= 0.25;
 
     int32_t tmp = (data >> 4);
-    result->internal = (double) (tmp & 0x7FF);
-    if(tmp & 0x800) {
-        result->internal = (double) (0xF800 | (tmp & 0x7FF));
+    result->internal = (double)(tmp & 0x7FF);
+    if (tmp & 0x800)
+    {
+        result->internal = (double)(0xF800 | (tmp & 0x7FF));
     }
     result->internal *= 0.0625;
 }

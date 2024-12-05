@@ -3,9 +3,9 @@
 
 #include "nf_common.h"
 
-typedef struct _nf_system {
+typedef struct _nf_system
+{
 
 } _nf_system_t;
-
 
 #endif

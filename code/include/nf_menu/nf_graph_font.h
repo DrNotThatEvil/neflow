@@ -3,6 +3,6 @@
 
 #include "nf_common.h"
 
-extern const uint8_t graph_font_5x5[];  
+extern const uint8_t graph_font_5x5[];
 
 #endif

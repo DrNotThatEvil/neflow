@@ -1,0 +1,11 @@
+---
+InsertNewlineAtEOF: true
+InsertBraces: true
+BreakBeforeBraces: Allman
+IndentWidth: 4
+AlignEscapedNewlines: Left
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+InsertTrailingCommas: None
