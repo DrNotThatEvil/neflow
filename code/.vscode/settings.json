@@ -25,5 +25,7 @@
         "multicore.h": "c",
         "nf_common.h": "c"
     },
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "xaver.clang-format"
 }
