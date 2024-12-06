@@ -21,7 +21,8 @@ Added basic profiles (no flash yet but thats gonna go after editing and saving)
 * ~~Add loading the profiles from flash storage.~~ (????-??-??: Done!)
 * Restructure the nf_menu.c functions to reduce the duplicate code.
 * ~~Add 'confirm screen' after the 'Run' menu option to make sure it's not being called on accident (use different button maybe?)~~
-* Temprature system still only supports one temprature probe and currently its a duplicated line to get the temprature which is ugly, both should be fixed.
+* ~~Temprature system still only supports one temprature probe and currently its a duplicated line to get the temprature which is ugly, both should be fixed.~~
+* Multiple probes should be usable, but don't know if the code is still duplicated/ugly.
 * Currently PCB has fan ports but the codebase does not use em, implement these in the future
 * ~~The 'confirm screen' needs some more info before starting it's somewhat barebones.~~
 * The 'graph' has no temprature target lines, also the current temp is not displayed in text maybe implement a text version that gets shown when holding a button?

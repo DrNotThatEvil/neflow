@@ -85,8 +85,7 @@ void nf_calibration_screen_render(_nf_menu_t *menu_state, ssd1306_t *disp_ptr,
 
 void nf_calibration_screen_btn_handler(_nf_menu_t *menu_state, uint btn,
                                        bool repeat, void *extra_data)
-{
-}
+{}
 
 void nf_calibration_screen_on_active(_nf_menu_t *_menu_state, void *extra_data,
                                      void *on_active_extra_data)

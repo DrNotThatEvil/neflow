@@ -84,7 +84,7 @@ void nf_menu_change_screen(_nf_menu_t *_menu, uint screen_id)
 
 void nf_menu_change_state(_nf_menu_t *_menu, _nf_menu_state_t state)
 {
-    // TODO (DrNotThatEvil, 2024-06-09): Note, the FINISHED state gets set by
+    // NOTE (DrNotThatEvil, 2024-12-05): the FINISHED state gets set by
     // tempsys so this should never, send a message about that.
     _menu->_state = state;
     _nf_thread_msg menu_state_change_msg = {.msg_type =
@@ -296,22 +296,6 @@ void nf_graph_render(_nf_menu_t *_menu_state, ssd1306_t *disp_ptr,
 
         _graph->_drawing = true;
 
-        /*
-        if(_graph->_sec_high_value < 500)
-        {
-            double sec_percentage = (((double)_graph->_avg_index) * 2.5) /
-        ((double) _graph->_sec_high_value) ; if (sec_percentage > 0.7)
-            {
-                _graph->_sec_high_value += 60;
-
-                if(_graph->_sec_high_value > 500)
-                {
-                    _graph->_sec_high_value = 500;
-                }
-            }
-        }
-        */
-
         if (_graph->_temp_high_value < 200)
         {
             double temp_percentage = (avg / ((double)_graph->_temp_high_value));
@@ -326,41 +310,8 @@ void nf_graph_render(_nf_menu_t *_menu_state, ssd1306_t *disp_ptr,
             }
         }
 
-        /*
-        uint32_t sx = NF_GRAPH_ZERO_X + cali_state->_avg_count;
-        uint32_t ex = NF_GRAPH_ZERO_X + (cali_state->_avg_count + 1);
-        uint32_t cy = NF_GRAPH_ZERO_Y - ((NF_GRAPH_ZERO_Y + 1) * (average /
-        200.0));
-
-        if(cali_state->_last_line_end_x > 0 && cali_state->_last_line_end_y > 0)
-        {
-            ssd1306_draw_line(disp_ptr,
-                cali_state->_last_line_end_x,
-                cali_state->_last_line_end_y,
-                sx,
-                cy
-            );
-        }
-
-        ssd1306_draw_line(disp_ptr,
-            sx,
-            cy,
-            ex,
-            cy
-        );
-
-
-        ssd1306_clear_square(disp_ptr, 28, 4, 70, 10);
-        char temp_str[20];
-        sprintf(temp_str, "Avg: %.2f", average);
-        ssd1306_draw_string(disp_ptr, 30, 5, 1, temp_str);
-        */
-
         _graph->_avg_index = (_graph->_avg_index + 1) % 100;
         _graph->_sum = 0.0;
         _graph->_sample_count = 0;
-        // cali_state->_last_line_end_x = ex;
-        // cali_state->_last_line_end_y = cy;
-        //_graph->_avg_timeout = make_timeout_time_ms(NF_AVG_TIMEOUT);
     }
 }

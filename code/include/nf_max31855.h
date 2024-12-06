@@ -8,9 +8,11 @@
 
 #define MAX31855_FAULT \
     0x100 // 1 when any of the SCV, SCG, or OC faults are active
-#define MAX31855_SCV_FAULT 0x04 // short-circuited to VCC
-#define MAX31855_SCG_FAULT 0x02 // short-circuited to GND
-#define MAX31855_OC_FAULT  0x01 // open (no connections)
+
+#define MAX32855_FAULT_MASK 0x07 // last bits of 0
+#define MAX31855_SCV_FAULT  0x04 // short-circuited to VCC
+#define MAX31855_SCG_FAULT  0x02 // short-circuited to GND
+#define MAX31855_OC_FAULT   0x01 // open (no connections)
 
 #define MAX31855_SIGN_EXTEND(value, bit) \
     (((value) ^ (1u << ((bit) - 1))) - (1u << ((bit) - 1)))

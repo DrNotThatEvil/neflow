@@ -99,15 +99,35 @@ void nf_tempsys_update(_nf_tempsys_t *_tempsys)
         {
             _nf_tempsys_set_state(_tempsys, NORMAL);
 
-            // TODO (DrNotThatEvil, 2024-06-08): This is not safe when using
-            // both sensors or the other sensor PLZ fix.
-            _nf_temps_t *temps = (_nf_temps_t *)&(
-                _tempsys->_results[0][_tempsys->read_index[0]]);
-            _tempsys->bootup_temp = temps->thermocouple;
+            // here, use the correct sensor.
+            _tempsys->bootup_temp = 0.0;
 
-            //_tempsys->_curr_state = POST_INIT;
-            //_tempsys->_curr_state = NORMAL;
-            //_tempsys->_prev_state = NORMAL;
+            // defualt use SENSOR0
+            uint8_t min_sensor = 0;
+            uint8_t max_sensor = 1;
+            if (_tempsys->_tempmode == USE_TEMP1)
+            {
+                min_sensor = 1;
+                max_sensor = 2;
+            }
+            else if (_tempsys->_tempmode == USE_BOTH)
+            {
+                max_sensor = 2;
+            }
+
+            for (uint8_t i = min_sensor; i < max_sensor; i++)
+            {
+                _tempsys->bootup_temp =
+                    ((_nf_temps_t *)&(
+                         _tempsys->_results[i][_tempsys->read_index[i]]))
+                        ->thermocouple;
+            }
+
+            // max sensor - min sensor makes sure that the divide works when
+            // only using TEMP0 or TEMP1.
+            _tempsys->bootup_temp =
+                _tempsys->bootup_temp / (max_sensor - min_sensor);
+
             return;
         }
     }
@@ -213,8 +233,6 @@ void nf_tempsys_update(_nf_tempsys_t *_tempsys)
                 return;
             }
 
-            // return; // TESTING disabling pid.
-
             _nf_pid_controller(_tempsys, 100.f);
             if (_tempsys->pid_output > 72.f + 1.5f)
             {
@@ -250,6 +268,7 @@ void nf_tempsys_update(_nf_tempsys_t *_tempsys)
             float cur_total_target =
                 ((float)_tempsys->_profile
                      ->targets[_tempsys->_cur_stage_index][0]);
+
             if (!_tempsys->hit_target &&
                 temps->thermocouple >= cur_total_target)
             {
@@ -630,10 +649,31 @@ void _nf_send_temp_update(_nf_tempsys_t *_tempsys)
         return;
     }
 
-    // TODO (DrNotThatEvil, 2024-02-05, 21:48): Extend this for mutiple sensors
+    uint16_t flags = 0;
+    if (_tempsys->_tempmode == USE_TEMP0)
+    {
+        SET_TEMPSYS_TEMP0_READABLE(flags);
+        SET_TEMPSYS_TEMP0_READABLE_INDEX(flags, _tempsys->read_index[0]);
+    }
+    else if (_tempsys->_tempmode == USE_TEMP1)
+    {
+        SET_TEMPSYS_TEMP1_READABLE(flags);
+        SET_TEMPSYS_TEMP1_READABLE_INDEX(flags, _tempsys->read_index[1]);
+    }
+    else if (_tempsys->_tempmode == USE_BOTH)
+    {
+        SET_TEMPSYS_TEMP0_READABLE(flags);
+        SET_TEMPSYS_TEMP1_READABLE(flags);
+
+        SET_TEMPSYS_TEMP0_READABLE_INDEX(flags, _tempsys->read_index[0]);
+        SET_TEMPSYS_TEMP1_READABLE_INDEX(flags, _tempsys->read_index[1]);
+    }
+
     _nf_thread_msg temp_update_msg = {
         .msg_type = TEMPSYS_TEMP_UPDATE_MSG_TYPE,
-        .value_ptr = (void *)&(_tempsys->_results[0][_tempsys->read_index[0]])};
+        .simple_msg_value = flags,
+        .value_ptr = (void *)_tempsys->_results,
+    };
     queue_add_blocking(_tempsys->_menu_msq_queue_ptr, &temp_update_msg);
 }
 

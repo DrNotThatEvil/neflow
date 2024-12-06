@@ -10,7 +10,7 @@ void nf_init(nf_state_t *_state)
     _state->_profile_state =
         (_nf_profile_state_t *)malloc(sizeof(_nf_profile_state_t));
     //_state->_profiles = (_nf_profile_t*) malloc(NUMBER_OF_PROFILES *
-    //sizeof(_nf_profile_t));
+    // sizeof(_nf_profile_t));
     _state->_memory = (_nf_memory_state_t *)malloc(sizeof(_nf_memory_state_t));
     _state->_tempsys = (_nf_tempsys_t *)malloc(sizeof(_nf_tempsys_t));
 

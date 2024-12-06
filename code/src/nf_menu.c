@@ -239,8 +239,31 @@ void menu_handle_thread_messages(_nf_menu_t *_menu_state)
 
         if (msg.msg_type == TEMPSYS_TEMP_UPDATE_MSG_TYPE)
         {
-            _nf_temps_t *_temps = (_nf_temps_t *)msg.value_ptr;
-            _menu_state->cur_temp = _temps->thermocouple;
+            _menu_state->cur_temp = 0.0;
+            _nf_temps_t(*results)[2] = (_nf_temps_t(*)[2])msg.value_ptr;
+            if (GET_TEMPSYS_TEMP0_READABLE(msg.simple_msg_value))
+            {
+                // TEMP0 is working.
+                _menu_state->cur_temp +=
+                    results[0][GET_TEMPSYS_TEMP0_READABLE_INDEX(
+                                   msg.simple_msg_value)]
+                        .thermocouple;
+            }
+
+            if (GET_TEMPSYS_TEMP1_READABLE(msg.simple_msg_value))
+            {
+                // TEMP0 is working.
+                _menu_state->cur_temp +=
+                    results[1][GET_TEMPSYS_TEMP1_READABLE_INDEX(
+                                   msg.simple_msg_value)]
+                        .thermocouple;
+            }
+
+            if (GET_TEMPSYS_TEMP0_READABLE(msg.simple_msg_value) &&
+                GET_TEMPSYS_TEMP1_READABLE(msg.simple_msg_value))
+            {
+                _menu_state->cur_temp = _menu_state->cur_temp / 2.0;
+            }
         }
 
         if (msg.msg_type == TEMPSYS_FINISHED_MSG_TYPE)
@@ -358,7 +381,7 @@ uint nf_menu_get_menu_state(_nf_menu_t *_menu)
 void nf_menu_btn_handler(_nf_menu_t *_menu, uint btn, bool repeat)
 {
     //_menu->menu_options[_menu->current_menu_option].render_fn((void*)_menu,
-    //false);
+    // false);
     (*_menu->current_screen)
         ->fnptrs.on_btn(_menu, btn, repeat,
                         (*_menu->current_screen)->extra_data);
@@ -367,7 +390,7 @@ void nf_menu_btn_handler(_nf_menu_t *_menu, uint btn, bool repeat)
 void nf_menu_render(_nf_menu_t *_menu)
 {
     //_menu->menu_options[_menu->current_menu_option].render_fn((void*)_menu,
-    //false);
+    // false);
     if ((*_menu->current_screen)->autoclear)
     {
         ssd1306_clear(_menu->_disp_ptr);

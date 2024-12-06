@@ -63,7 +63,7 @@ void nf_max31855_read(_nf_max31855_t *sensor_state, uint temp_sensor,
     data <<= 8;
     data |= buf[3];
 
-    result->faults = (data & 0x7); // TODO convert to constant.
+    result->faults = (data & MAX32855_FAULT_MASK);
 
     if (data & 0x80000000)
     {

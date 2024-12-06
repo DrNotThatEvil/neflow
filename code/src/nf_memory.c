@@ -27,8 +27,6 @@ void nf_memory_init(_nf_memory_state_t *_memory)
 
     if (_memory->was_saved)
     {
-        // bool loaded = nf_memory_load_page(_memory, (_memory->empty_page_index
-        // - 1));
         nf_memory_load_page(_memory, (_memory->empty_page_index - 1));
 
         // load failed
@@ -85,7 +83,6 @@ void nf_memory_clear(_nf_memory_state_t *_memory)
 bool nf_memory_load_page(_nf_memory_state_t *_memory, uint page)
 {
     uint32_t ints = save_and_disable_interrupts();
-    // multicore_lockout_start_blocking(); // Stop core1
     int addr = XIP_BASE + FLASH_TARGET_OFFSET + (page * FLASH_PAGE_SIZE);
 
     uint8_t *buffer = (uint8_t *)addr;
@@ -120,7 +117,6 @@ bool nf_memory_load_page(_nf_memory_state_t *_memory, uint page)
         }
     }
 
-    // multicore_lockout_end_blocking(); // Restart core1
     restore_interrupts(ints);
 }
 
@@ -168,18 +164,3 @@ void nf_memory_save_with_callback(_nf_memory_state_t *_memory,
     nf_memory_save(_memory);
     cb(ptr);
 }
-/*
-TODO:
- Do some more testing with the memory but it seems to page correctly and write
-correctly. Maybe do something with the 'wrong read' stuff? might be a neat nice
-to have.
-
- Next thing is put the /save method in the profile edit screen
- and check if that loads correctly, also the loading of the profiles i have not
-extensivly tested.
-
- For now the TEMPRATURE system can be worked on so that's neat! Yay!
- Just when finishing up found a bug in the test _clear_memory option
- it comes from the fact that i'm doing it from a interupt that does not work so
-shoudl be a easy fix by moving it in the screen / button logic.
-*/
