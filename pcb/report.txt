@@ -1,0 +1,603 @@
+Info: Processing symbol 'FB103:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'J105:Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical'.
+Info: Processing symbol 'SW101:silicone_btn:BUTTON_SILICON'.
+Info: Processing symbol 'J104:Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical'.
+Info: Processing symbol 'SW102:silicone_btn:BUTTON_SILICON'.
+Info: Processing symbol 'J103:Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical'.
+Info: Processing symbol 'SW103:silicone_btn:BUTTON_SILICON'.
+Info: Processing symbol 'J102:Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical'.
+Info: Processing symbol 'SW104:silicone_btn:BUTTON_SILICON'.
+Info: Processing symbol 'U101:MCU_RaspberryPi_and_Boards:RPi_Pico_SMD_TH'.
+Info: Processing symbol 'J101:Unshareable:1333870'.
+Info: Processing symbol 'FB104:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'J106:Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical'.
+Info: Processing symbol 'FB102:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'FB101:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'D103:Diode_SMD:D_SOD-123'.
+Info: Processing symbol 'D102:Diode_SMD:D_SOD-123'.
+Info: Processing symbol 'D101:Diode_SMD:D_SOD-123'.
+Info: Processing symbol 'C110:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'C109:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'C108:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'C107:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'C106:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'C105:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'R106:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'Q106:Package_TO_SOT_SMD:SOT-23'.
+Info: Processing symbol 'Q105:Package_TO_SOT_SMD:SOT-23'.
+Info: Processing symbol 'R101:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'Q104:Package_TO_SOT_SMD:SOT-23'.
+Info: Processing symbol 'R102:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'Q103:Package_TO_SOT_SMD:SOT-23'.
+Info: Processing symbol 'R103:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'Q102:Package_TO_SOT_SMD:SOT-23'.
+Info: Processing symbol 'R104:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'R105:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'Q101:Package_TO_SOT_SMD:SOT-23'.
+Info: Processing symbol 'Brd101:SSD1306:128x64OLED'.
+Info: Processing symbol 'PS101:Converter_ACDC:Converter_ACDC_HiLink_HLK-PMxx'.
+Info: Processing symbol 'R107:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'LS101:Library:PassiveBuzzerSMD_JiangsuHuaneng_MLT-5030'.
+Info: Processing symbol 'R108:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'JP102:Jumper:SolderJumper-3_P1.3mm_Open_Pad1.0x1.5mm'.
+Info: Processing symbol 'R109:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'JP101:Jumper:SolderJumper-3_P1.3mm_Open_Pad1.0x1.5mm'.
+Info: Processing symbol 'R110:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'J107:Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical'.
+Info: Processing symbol 'R111:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'C101:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'C102:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'C104:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'C103:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'U103:Package_SO:SOIC-8_3.9x4.9mm_P1.27mm'.
+Info: Processing symbol 'U102:Package_SO:SOIC-8_3.9x4.9mm_P1.27mm'.
+Changed REF** reference designator to R110.
+Connected R108 pin 1 to GND.
+Connected R108 pin 2 to SSR1.
+Connected U102 pin 5 to MAX_SCK.
+Added R109 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to R109.
+Changed R109 value from R_0603_1608Metric to 10K.
+Connected U102 pin 4 to +3.3V.
+Updated R109 symbol association from  to /743acdcf-0393-4105-969c-5a4c781891bd.
+Updated R110 symbol association from  to /1990dfcb-8bcd-47eb-a7d5-d74df72451a6.
+Updated R109 properties.
+Connected R109 pin 1 to GND.
+Connected R109 pin 2 to FAN1.
+Connected U102 pin 3 to /TC0+.
+Added R110 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Updated R108 properties.
+Updated R108 symbol association from  to /6041577a-71f1-45a7-85cc-83382a903644.
+Changed R108 value from R_0603_1608Metric to 10K.
+Changed REF** reference designator to R108.
+Connected U102 pin 6 to PI_TEMP0_~{CS}.
+Added R108 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Connected U102 pin 7 to MAX_SO.
+Connected R107 pin 2 to +3.3V.
+Connected R107 pin 1 to BTN3.
+Add net BTN3.
+Updated R107 properties.
+Updated R107 symbol association from  to /bec871d4-ef9e-4178-9de1-69433a86e96c.
+Changed R107 value from R_0603_1608Metric to 10K.
+Changed REF** reference designator to R107.
+Added R107 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Connected SW101 pin 2 to BTN0.
+Updated U102 symbol association from  to /d8166e27-86f7-4b00-98bd-aade8d53b259.
+Added SW101 (footprint 'silicone_btn:BUTTON_SILICON').
+Changed REF** reference designator to SW101.
+Changed SW101 value from BUTTON_6X6_SILICON to SW_Push.
+Updated SW101 symbol association from  to /2f5f0c7b-8115-4531-ae60-35b5cd893746.
+Updated SW101 properties.
+Connected SW101 pin 1 to GND.
+Changed U102 value from SOIC-8_3.9x4.9mm_P1.27mm to MAX31855KASA+T.
+Updated U102 properties.
+Changed REF** reference designator to U102.
+Added SW102 (footprint 'silicone_btn:BUTTON_SILICON').
+Changed REF** reference designator to SW102.
+Changed SW102 value from BUTTON_6X6_SILICON to SW_Push.
+Updated SW102 symbol association from  to /a16b0d40-66ce-429e-9201-6d597acb8a9f.
+Updated SW102 properties.
+Connected SW102 pin 1 to GND.
+Connected U102 pin 2 to /TC0-.
+Connected R111 pin 2 to +3.3V.
+Connected R111 pin 1 to PI_TEMP1_~{CS}.
+Add net PI_TEMP1_~{CS}.
+Updated R111 properties.
+Updated R111 symbol association from  to /bbbbbb8f-0575-4d36-8967-c1182bd5c4e7.
+Changed R111 value from R_0603_1608Metric to 10K.
+Changed REF** reference designator to R111.
+Added R111 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Connected U102 pin 1 to GND.
+Connected R110 pin 2 to +3.3V.
+Connected R110 pin 1 to PI_TEMP0_~{CS}.
+Add net PI_TEMP0_~{CS}.
+Updated R110 properties.
+Connected R106 pin 2 to +3.3V.
+Changed R110 value from R_0603_1608Metric to 10K.
+Updated R102 symbol association from  to /161c42de-424a-4a7f-b79d-5b43863395c3.
+Add net BTN0.
+Connected U103 pin 5 to MAX_SCK.
+Connected R101 pin 1 to BTN0.
+Connected R101 pin 2 to +3.3V.
+Connected U103 pin 4 to +3.3V.
+Added R102 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to R102.
+Changed R102 value from R_0603_1608Metric to 10K.
+Updated R101 properties.
+Updated R102 properties.
+Add net BTN2.
+Connected U103 pin 3 to /TC1+.
+Connected R102 pin 1 to BTN2.
+Connected R102 pin 2 to +3.3V.
+Connected U103 pin 2 to /TC1-.
+Added R103 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Connected U103 pin 7 to MAX_SO.
+Connected U101 pin 38 to unconnected-(U101-GND-Pad38).
+Added Q106 (footprint 'Package_TO_SOT_SMD:SOT-23').
+Changed REF** reference designator to Q106.
+Changed Q106 value from SOT-23 to IRLML2502.
+Updated Q106 symbol association from  to /9bd9dfb5-6e31-47e8-bbb2-a3403ebe9037.
+Updated Q106 properties.
+Add net FAN1.
+Connected Q106 pin 1 to FAN1.
+Changed REF** reference designator to R103.
+Connected Q106 pin 2 to GND.
+Connected Q106 pin 3 to FAN1B.
+Connected U103 pin 6 to PI_TEMP1_~{CS}.
+Added R101 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to R101.
+Changed R101 value from R_0603_1608Metric to 10K.
+Updated R101 symbol association from  to /e064d7ec-30cb-42d7-a51e-b62e632e6ae2.
+Added R106 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Added R105 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to R105.
+Changed R105 value from R_0603_1608Metric to 10K.
+Updated R105 symbol association from  to /edd9f9f6-1549-49e3-9897-9d94b9ef57da.
+Updated R105 properties.
+Connected R105 pin 1 to GND.
+Connected R105 pin 2 to SPK.
+Changed REF** reference designator to U103.
+Changed U103 value from SOIC-8_3.9x4.9mm_P1.27mm to MAX31855KASA+T.
+Changed REF** reference designator to R106.
+Added U103 (footprint 'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm').
+Changed R106 value from R_0603_1608Metric to 10K.
+Updated R106 symbol association from  to /22dcd344-c30c-457e-af12-166244a22e7e.
+Updated R106 properties.
+Add net BTN1.
+Connected R106 pin 1 to BTN1.
+Added Brd101 (footprint 'SSD1306:128x64OLED').
+Updated U103 symbol association from  to /e3bb4800-048a-4514-bcf7-16ecbbe69f9e.
+Connected R104 pin 2 to FAN0.
+Connected R104 pin 1 to GND.
+Updated R104 properties.
+Updated R104 symbol association from  to /9d4a1ca2-986a-4e62-822f-79a63dd913f6.
+Changed R104 value from R_0603_1608Metric to 10K.
+Changed REF** reference designator to R104.
+Added R104 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Updated U103 properties.
+Connected R103 pin 2 to SSR0.
+Connected U103 pin 1 to GND.
+Connected R103 pin 1 to GND.
+Updated R103 properties.
+Updated R103 symbol association from  to /88fe7e9b-6b4d-403e-8391-9c1f3f5068a7.
+Changed R103 value from R_0603_1608Metric to 10K.
+Connected U101 pin 24 to SSR0.
+Add net unconnected-(U101-GPIO17-Pad22).
+Connected U101 pin 22 to unconnected-(U101-GPIO17-Pad22).
+Connected U101 pin 22 to unconnected-(U101-GPIO17-Pad22).
+Add net unconnected-(U101-GND-Pad23).
+Connected U101 pin 23 to unconnected-(U101-GND-Pad23).
+Connected U101 pin 23 to unconnected-(U101-GND-Pad23).
+Connected U101 pin 24 to SSR0.
+Connected U101 pin 40 to PICO_VBUS.
+Connected U101 pin 21 to SPK.
+Connected U101 pin 25 to SSR1.
+Connected U101 pin 25 to SSR1.
+Connected U101 pin 26 to FAN0.
+Connected U101 pin 26 to FAN0.
+Connected U101 pin 27 to FAN1.
+Connected U101 pin 27 to FAN1.
+Add net unconnected-(U101-GND-Pad28).
+Connected U101 pin 18 to unconnected-(U101-GND-Pad18).
+Connected U101 pin 14 to PI_TEMP0_~{CS}.
+Connected U101 pin 15 to PI_TEMP1_~{CS}.
+Connected U101 pin 15 to PI_TEMP1_~{CS}.
+Connected U101 pin 16 to BTN0.
+Connected U101 pin 16 to BTN0.
+Connected U101 pin 17 to BTN1.
+Connected U101 pin 17 to BTN1.
+Add net unconnected-(U101-GND-Pad18).
+Connected U101 pin 28 to unconnected-(U101-GND-Pad28).
+Connected U101 pin 18 to unconnected-(U101-GND-Pad18).
+Connected U101 pin 19 to BTN2.
+Connected U101 pin 19 to BTN2.
+Connected U101 pin 20 to BTN3.
+Connected U101 pin 20 to BTN3.
+Add net unconnected-(U101-SWCLK-Pad41).
+Connected U101 pin 21 to SPK.
+Connected U101 pin 38 to unconnected-(U101-GND-Pad38).
+Connected U101 pin 39 to PICO_VSYS.
+Connected U101 pin 33 to unconnected-(U101-AGND-Pad33).
+Connected U101 pin 33 to unconnected-(U101-AGND-Pad33).
+Add net unconnected-(U101-GPIO28_ADC2-Pad34).
+Connected U101 pin 34 to unconnected-(U101-GPIO28_ADC2-Pad34).
+Connected U101 pin 34 to unconnected-(U101-GPIO28_ADC2-Pad34).
+Add net unconnected-(U101-ADC_VREF-Pad35).
+Connected U101 pin 35 to unconnected-(U101-ADC_VREF-Pad35).
+Add net unconnected-(U101-AGND-Pad33).
+Connected U101 pin 35 to unconnected-(U101-ADC_VREF-Pad35).
+Connected U101 pin 36 to +3.3V.
+Connected U101 pin 36 to +3.3V.
+Add net unconnected-(U101-3V3_EN-Pad37).
+Connected U101 pin 37 to unconnected-(U101-3V3_EN-Pad37).
+Connected U101 pin 37 to unconnected-(U101-3V3_EN-Pad37).
+Add net unconnected-(U101-GND-Pad38).
+Connected U101 pin 14 to PI_TEMP0_~{CS}.
+Connected U101 pin 32 to unconnected-(U101-GPIO27_ADC1-Pad32).
+Connected U101 pin 32 to unconnected-(U101-GPIO27_ADC1-Pad32).
+Add net unconnected-(U101-GPIO27_ADC1-Pad32).
+Connected U101 pin 31 to unconnected-(U101-GPIO26_ADC0-Pad31).
+Connected U101 pin 31 to unconnected-(U101-GPIO26_ADC0-Pad31).
+Add net unconnected-(U101-GPIO26_ADC0-Pad31).
+Connected U101 pin 39 to PICO_VSYS.
+Connected U101 pin 30 to unconnected-(U101-RUN-Pad30).
+Connected U101 pin 30 to unconnected-(U101-RUN-Pad30).
+Add net unconnected-(U101-RUN-Pad30).
+Connected U101 pin 29 to unconnected-(U101-GPIO22-Pad29).
+Connected U101 pin 29 to unconnected-(U101-GPIO22-Pad29).
+Add net unconnected-(U101-GPIO22-Pad29).
+Connected U101 pin 28 to unconnected-(U101-GND-Pad28).
+Connected U101 pin 40 to PICO_VBUS.
+Connected U101 pin 1 to unconnected-(U101-GPIO0-Pad1).
+Connected U101 pin 43 to unconnected-(U101-SWDIO-Pad43).
+Added U101 (footprint 'MCU_RaspberryPi_and_Boards:RPi_Pico_SMD_TH').
+Add net unconnected-(U101-SWDIO-Pad43).
+Changed REF** reference designator to U101.
+Changed U101 value from RPi_Pico_SMD_TH to Pico.
+Updated U101 symbol association from  to /067fea3e-d91c-438c-9729-c65dc20e1330.
+Updated U101 properties.
+Add net unconnected-(U101-GPIO0-Pad1).
+Connected SW104 pin 2 to BTN3.
+Connected U101 pin 1 to unconnected-(U101-GPIO0-Pad1).
+Add net unconnected-(U101-GPIO1-Pad2).
+Connected U101 pin 42 to unconnected-(U101-GND-Pad42).
+Connected U101 pin 2 to unconnected-(U101-GPIO1-Pad2).
+Connected U101 pin 2 to unconnected-(U101-GPIO1-Pad2).
+Add net unconnected-(U101-GND-Pad3).
+Connected U101 pin 3 to unconnected-(U101-GND-Pad3).
+Connected U101 pin 3 to unconnected-(U101-GND-Pad3).
+Connected SW104 pin 1 to GND.
+Updated SW104 properties.
+Updated SW104 symbol association from  to /c9fd1410-8c8f-4468-95ff-e9f679395eac.
+Changed SW104 value from BUTTON_6X6_SILICON to SW_Push.
+Changed REF** reference designator to SW104.
+Added SW104 (footprint 'silicone_btn:BUTTON_SILICON').
+Connected U101 pin 43 to unconnected-(U101-SWDIO-Pad43).
+Connected SW103 pin 2 to BTN1.
+Connected SW103 pin 1 to GND.
+Updated SW103 properties.
+Updated SW103 symbol association from  to /c0b8d9b4-ab22-4d72-b502-45132d3f3fef.
+Changed SW103 value from BUTTON_6X6_SILICON to SW_Push.
+Changed REF** reference designator to SW103.
+Added SW103 (footprint 'silicone_btn:BUTTON_SILICON').
+Connected SW102 pin 2 to BTN2.
+Connected U101 pin 11 to MAX_SO.
+Connected U101 pin 9 to MAX_SCK.
+Connected U101 pin 9 to MAX_SCK.
+Add net unconnected-(U101-GPIO7-Pad10).
+Connected U101 pin 10 to unconnected-(U101-GPIO7-Pad10).
+Connected U101 pin 10 to unconnected-(U101-GPIO7-Pad10).
+Connected U101 pin 41 to unconnected-(U101-SWCLK-Pad41).
+Add net MAX_SO.
+Connected U101 pin 11 to MAX_SO.
+Add net MAX_SCK.
+Add net unconnected-(U101-GPIO9-Pad12).
+Connected U101 pin 12 to unconnected-(U101-GPIO9-Pad12).
+Connected U101 pin 12 to unconnected-(U101-GPIO9-Pad12).
+Add net unconnected-(U101-GND-Pad13).
+Connected U101 pin 13 to unconnected-(U101-GND-Pad13).
+Connected U101 pin 41 to unconnected-(U101-SWCLK-Pad41).
+Connected U101 pin 13 to unconnected-(U101-GND-Pad13).
+Added U102 (footprint 'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm').
+Connected U101 pin 8 to unconnected-(U101-GND-Pad8).
+Connected U101 pin 8 to unconnected-(U101-GND-Pad8).
+Add net unconnected-(U101-GND-Pad42).
+Add net unconnected-(U101-GND-Pad8).
+Connected U101 pin 7 to unconnected-(U101-GPIO5-Pad7).
+Connected U101 pin 7 to unconnected-(U101-GPIO5-Pad7).
+Add net unconnected-(U101-GPIO5-Pad7).
+Connected U101 pin 6 to unconnected-(U101-GPIO4-Pad6).
+Connected U101 pin 6 to unconnected-(U101-GPIO4-Pad6).
+Add net unconnected-(U101-GPIO4-Pad6).
+Connected U101 pin 5 to SCREEN_SCL.
+Connected U101 pin 42 to unconnected-(U101-GND-Pad42).
+Connected U101 pin 5 to SCREEN_SCL.
+Connected U101 pin 4 to SCREEN_SDA.
+Connected U101 pin 4 to SCREEN_SDA.
+Changed REF** reference designator to D102.
+Changed REF** reference designator to D101.
+Changed D101 value from D_SOD-123 to 1N4148W.
+Updated D101 symbol association from  to /0d1d2208-adb6-42cd-a5c5-9773077f6c1b.
+Updated D101 properties.
+Connected D101 pin 1 to +5V.
+Add net FAN0B.
+Connected D101 pin 2 to FAN0B.
+Added D102 (footprint 'Diode_SMD:D_SOD-123').
+Added D101 (footprint 'Diode_SMD:D_SOD-123').
+Changed D102 value from D_SOD-123 to 1N4148W.
+Updated D102 symbol association from  to /2773f882-f6df-430e-9039-28fa58c0bb27.
+Updated D102 properties.
+Connected D102 pin 1 to +5V.
+Add net FAN1B.
+Connected D102 pin 2 to FAN1B.
+Added D103 (footprint 'Diode_SMD:D_SOD-123').
+Changed REF** reference designator to D103.
+Added C110 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to C109.
+Changed C109 value from R_0603_1608Metric to 10nF.
+Updated C109 symbol association from  to /cbee64fe-b517-4d00-a4c4-7f92e5fc8394.
+Updated C109 properties.
+Add net /TC0+.
+Connected C109 pin 1 to /TC0+.
+Add net /TC0-.
+Connected C109 pin 2 to /TC0-.
+Changed D103 value from D_SOD-123 to 1N4148W.
+Changed REF** reference designator to C110.
+Changed C110 value from R_0603_1608Metric to 10nF.
+Updated C110 symbol association from  to /39f544d9-7613-4f20-a397-f482802a4594.
+Updated C110 properties.
+Add net /TC1+.
+Connected C110 pin 1 to /TC1+.
+Add net /TC1-.
+Connected C110 pin 2 to /TC1-.
+Updated FB103 properties.
+Updated FB102 properties.
+Connected FB102 pin 1 to /TC1+.
+Add net /T1+.
+Connected FB102 pin 2 to /T1+.
+Added FB103 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to FB103.
+Changed FB103 value from R_0603_1608Metric to BLM18PG471.
+Updated FB103 symbol association from  to /de42f338-03db-436f-b623-a7440512f671.
+Updated FB102 symbol association from  to /eea34a17-e3be-4c88-8d56-f5505e9435a3.
+Add net /T0-.
+Connected FB103 pin 1 to /T0-.
+Connected FB103 pin 2 to /TC0-.
+Added FB104 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to FB104.
+Changed FB104 value from R_0603_1608Metric to BLM18PG471.
+Updated FB104 symbol association from  to /37fcefe7-9f16-4e4d-bd34-ea4c15f7b372.
+Updated FB104 properties.
+Updated FB101 symbol association from  to /2f3873e1-25ec-42f9-b6cc-f37672b82c05.
+Updated D103 symbol association from  to /dadf453a-a19b-4877-8ffb-9c1e741325e7.
+Updated D103 properties.
+Connected D103 pin 1 to +3.3V.
+Add net SPKB.
+Connected D103 pin 2 to SPKB.
+Added FB101 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to FB101.
+Changed FB101 value from R_0603_1608Metric to BLM18PG471.
+Added C109 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Updated FB101 properties.
+Connected FB101 pin 1 to /TC0+.
+Add net /T0+.
+Connected FB101 pin 2 to /T0+.
+Added FB102 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to FB102.
+Changed FB102 value from R_0603_1608Metric to BLM18PG471.
+Connected C102 pin 2 to GND.
+Connected C101 pin 1 to +3.3V.
+Connected C101 pin 2 to GND.
+Added C102 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to C102.
+Changed C102 value from R_0603_1608Metric to 10uF.
+Updated C102 symbol association from  to /5fc13cfc-871d-4d2b-9cb3-49f1d5a402ac.
+Updated C102 properties.
+Connected C102 pin 1 to +3.3V.
+Updated C101 properties.
+Added C103 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to C103.
+Changed C103 value from R_0603_1608Metric to 10uF.
+Updated C103 symbol association from  to /207f0e69-a83b-47fd-ade5-8a2ad2f099b5.
+Updated C103 properties.
+Add net +5V.
+Connected C103 pin 1 to +5V.
+Connected C103 pin 2 to GND.
+Add net GND.
+Changed SSD1306 reference designator to Brd101.
+Changed Brd101 value from 128x64OLED to SSD1306.
+Updated Brd101 symbol association from  to /8f2187a6-ceda-4025-9373-12990e887b33.
+Updated Brd101 properties.
+Add net SCREEN_SDA.
+Connected Brd101 pin 4 to SCREEN_SDA.
+Add net SCREEN_SCL.
+Connected Brd101 pin 3 to SCREEN_SCL.
+Added C104 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Connected Brd101 pin 1 to GND.
+Add net +3.3V.
+Connected Brd101 pin 2 to +3.3V.
+Added C101 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to C101.
+Changed C101 value from R_0603_1608Metric to 10uF.
+Updated C101 symbol association from  to /ec5a9592-4549-4e17-a974-d55362046f2f.
+Connected C107 pin 1 to +3.3V.
+Updated C106 properties.
+Connected C106 pin 1 to +3.3V.
+Connected C106 pin 2 to GND.
+Added C107 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to C107.
+Changed C107 value from R_0603_1608Metric to 10uF.
+Updated C107 symbol association from  to /8ea6e5eb-6bc7-49e7-afec-bae08a860b87.
+Updated C107 properties.
+Updated C106 symbol association from  to /77884369-dea8-4406-8b0f-162698c663ae.
+Connected C107 pin 2 to GND.
+Added C108 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to C108.
+Changed C108 value from R_0603_1608Metric to 10uF.
+Updated C108 symbol association from  to /46fb9d97-11b7-44f9-a83c-e89405ba7611.
+Updated C108 properties.
+Connected C108 pin 1 to +3.3V.
+Connected C108 pin 2 to GND.
+Changed C105 value from R_0603_1608Metric to 10uF.
+Changed REF** reference designator to C104.
+Changed C104 value from R_0603_1608Metric to 10uF.
+Updated C104 symbol association from  to /e5ba55f5-e346-4852-992b-500bc83d4c0a.
+Updated C104 properties.
+Connected C104 pin 1 to +5V.
+Connected C104 pin 2 to GND.
+Added C105 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to C105.
+Connected Q105 pin 2 to GND.
+Updated C105 symbol association from  to /536bab15-bb48-4aa9-a5b6-29a1d056e026.
+Updated C105 properties.
+Connected C105 pin 1 to +3.3V.
+Connected C105 pin 2 to GND.
+Added C106 (footprint 'Resistor_SMD:R_0603_1608Metric').
+Changed REF** reference designator to C106.
+Changed C106 value from R_0603_1608Metric to 10uF.
+Changed REF** reference designator to Q101.
+Updated PS101 symbol association from  to /4e8b596a-579e-438b-b5ed-6b16af6e4d36.
+Updated PS101 properties.
+Added PS101 'exclude from BOM' fabrication attribute.
+Connected PS101 pin 1 to Net-(PS101-AC/L).
+Connected PS101 pin 2 to Net-(PS101-AC/N).
+Connected PS101 pin 3 to Net-(JP102-C).
+Connected PS101 pin 4 to Net-(JP101-C).
+Added Q101 (footprint 'Package_TO_SOT_SMD:SOT-23').
+Changed PS101 value from Converter_ACDC_HiLink_HLK-PMxx to HLK-PM01.
+Changed Q101 value from SOT-23 to Q_PMOS_GSD.
+Updated Q101 symbol association from  to /2ad59d74-cad1-4f19-b71e-f059acde98a6.
+Updated Q101 properties.
+Add net PICO_VBUS.
+Connected Q101 pin 1 to PICO_VBUS.
+Add net PICO_VSYS.
+Connected Q101 pin 2 to PICO_VSYS.
+Connected Q101 pin 3 to +5V.
+Added LS101 (footprint 'Library:PassiveBuzzerSMD_JiangsuHuaneng_MLT-5030').
+Changed JP102 value from SolderJumper-3_P1.3mm_Open_Pad1.0x1.5mm to VSel1.
+Updated JP102 symbol association from  to /84cdf074-d930-465b-ba63-9b07fc1bb9df.
+Updated JP102 properties.
+Removed JP102 'exclude from BOM' fabrication attribute.
+Connected JP102 pin 1 to +5V.
+Add net Net-(JP102-C).
+Connected JP102 pin 2 to Net-(JP102-C).
+Connected JP102 pin 3 to GND.
+Added Q102 (footprint 'Package_TO_SOT_SMD:SOT-23').
+Changed REF** reference designator to LS101.
+Changed LS101 value from PassiveBuzzerSMD_JiangsuHuaneng_MLT-5030 to Speaker.
+Updated LS101 symbol association from  to /a659cc5c-b60a-4bbe-9786-83e4a331afa2.
+Updated LS101 properties.
+Connected LS101 pin 2 to SPKB.
+Connected LS101 pin 1 to +3.3V.
+Added PS101 (footprint 'Converter_ACDC:Converter_ACDC_HiLink_HLK-PMxx').
+Changed REF** reference designator to PS101.
+Connected Q104 pin 3 to SPKB.
+Added Q104 (footprint 'Package_TO_SOT_SMD:SOT-23').
+Changed REF** reference designator to Q104.
+Changed Q104 value from SOT-23 to IRLML2502.
+Updated Q104 symbol association from  to /c9639db3-2d85-4b5f-9fa3-e0fec9009a75.
+Updated Q104 properties.
+Add net SPK.
+Connected Q104 pin 1 to SPK.
+Connected Q104 pin 2 to GND.
+Connected Q103 pin 3 to FAN0B.
+Added Q105 (footprint 'Package_TO_SOT_SMD:SOT-23').
+Changed REF** reference designator to Q105.
+Changed Q105 value from SOT-23 to IRLML2502.
+Updated Q105 symbol association from  to /3aa44824-bf14-4c69-88ca-cb177aec0112.
+Updated Q105 properties.
+Add net SSR1.
+Connected Q105 pin 1 to SSR1.
+Connected Q105 pin 3 to SSR1B.
+Added Q103 (footprint 'Package_TO_SOT_SMD:SOT-23').
+Changed REF** reference designator to Q102.
+Changed Q102 value from SOT-23 to IRLML2502.
+Updated Q102 symbol association from  to /a38bad32-6e77-4681-9454-e1f503b896ba.
+Updated Q102 properties.
+Add net SSR0.
+Connected Q102 pin 1 to SSR0.
+Connected Q102 pin 2 to GND.
+Connected Q102 pin 3 to SSR0B.
+Connected FB104 pin 1 to /T1-.
+Changed REF** reference designator to Q103.
+Changed Q103 value from SOT-23 to IRLML2502.
+Updated Q103 symbol association from  to /2a836ee6-176e-462e-8c5c-0d4a243cf77c.
+Updated Q103 properties.
+Add net FAN0.
+Connected Q103 pin 1 to FAN0.
+Connected Q103 pin 2 to GND.
+Updated J103 properties.
+Updated J102 symbol association from  to /f8920b02-3030-4ae2-992c-97643a58df23.
+Updated J102 properties.
+Connected J102 pin 1 to +5V.
+Connected J102 pin 2 to FAN0B.
+Added J103 (footprint 'Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical').
+Changed REF** reference designator to J103.
+Changed J103 value from JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical to SSR0.
+Updated J103 symbol association from  to /2b4b943d-bb32-4341-9fb6-083bcf8b4216.
+Changed J102 value from JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical to FAN0.
+Connected J103 pin 1 to +5V.
+Add net SSR0B.
+Connected J103 pin 2 to SSR0B.
+Added J104 (footprint 'Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical').
+Changed REF** reference designator to J104.
+Changed J104 value from JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical to FAN1.
+Updated J104 symbol association from  to /239298a5-5c4f-4b59-892f-af81f899aad5.
+Updated J104 properties.
+Add net Net-(PS101-AC/N).
+Add net /T1-.
+Connected FB104 pin 2 to /TC1-.
+Added J101 (footprint 'Unshareable:1333870').
+Changed J** reference designator to J101.
+Updated J101 symbol association from  to /7e542f20-e70a-4dac-a552-b245b6c4d545.
+Updated J101 properties.
+Add net Net-(PS101-AC/L).
+Connected J101 pin 1 to Net-(PS101-AC/L).
+Added JP102 (footprint 'Jumper:SolderJumper-3_P1.3mm_Open_Pad1.0x1.5mm').
+Connected J101 pin 2 to Net-(PS101-AC/N).
+Connected J101 pin 3 to Net-(PS101-AC/L).
+Connected J101 pin 4 to Net-(PS101-AC/N).
+Connected J101 pin 5 to Net-(PS101-AC/L).
+Connected J101 pin 6 to Net-(PS101-AC/N).
+Added J102 (footprint 'Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical').
+Changed REF** reference designator to J102.
+Changed JP101 value from SolderJumper-3_P1.3mm_Open_Pad1.0x1.5mm to VSel0.
+Changed REF** reference designator to J107.
+Changed J107 value from JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical to Temp1.
+Updated J107 symbol association from  to /66adb9b8-e29b-4820-b605-c1a8e35bcb7c.
+Updated J107 properties.
+Connected J107 pin 1 to /T1-.
+Connected J107 pin 2 to /T1+.
+Added JP101 (footprint 'Jumper:SolderJumper-3_P1.3mm_Open_Pad1.0x1.5mm').
+Changed REF** reference designator to JP101.
+Connected J104 pin 2 to FAN1B.
+Updated JP101 symbol association from  to /6b294354-79d6-44fe-9e58-fd9b60fe7639.
+Updated JP101 properties.
+Removed JP101 'exclude from BOM' fabrication attribute.
+Connected JP101 pin 1 to +5V.
+Add net Net-(JP101-C).
+Connected JP101 pin 2 to Net-(JP101-C).
+Connected JP101 pin 3 to GND.
+Changed REF** reference designator to JP102.
+Connected J106 pin 2 to /T0+.
+Connected J104 pin 1 to +5V.
+Added J105 (footprint 'Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical').
+Changed REF** reference designator to J105.
+Changed J105 value from JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical to SSR1.
+Updated J105 symbol association from  to /a70bbe7a-b4b2-4d1d-97fd-28bc60f64724.
+Updated J105 properties.
+Connected J105 pin 1 to +5V.
+Add net SSR1B.
+Connected J105 pin 2 to SSR1B.
+Added J106 (footprint 'Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical').
+Changed REF** reference designator to J106.
+Changed J106 value from JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical to Temp0.
+Updated J106 symbol association from  to /0faa7e7d-5c18-469d-b0b6-dab0b532e8d4.
+Updated J106 properties.
+Connected J106 pin 1 to /T0-.
+Added J107 (footprint 'Connector_JST:JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical').
+Warning: No net found for symbol U102 pin 8.
+Warning: No net found for symbol U103 pin 8.
+
+
+Info: Total warnings: 2, errors: 0.

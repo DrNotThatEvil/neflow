@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.28)
 
 set(PICO_BOARD pico)
 include(cmake/pico_sdk_import.cmake)
@@ -23,4 +23,5 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+add_subdirectory(libs)
 add_subdirectory(src)
