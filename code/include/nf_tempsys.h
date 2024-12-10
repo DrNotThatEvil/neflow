@@ -79,9 +79,10 @@ typedef struct nf_tempsys
     bool hit_target;
 
     double bootup_temp;
-    _nf_temps_t _results[2][2];
-    uint read_index[2];
-    uint write_index[2];
+    // Result
+    _nf_temps_t _results[TEMPSYS_RESULT_INDEX_MAX][TEMPSYS_RESULT_INDEX_MAX];
+    uint read_index[TEMPSYS_RESULT_INDEX_MAX];
+    uint write_index[TEMPSYS_RESULT_INDEX_MAX];
 } _nf_tempsys_t;
 
 void nf_tempsys_init(_nf_tempsys_t *_tempsys, _nf_memory_state_t *_memory);
@@ -94,6 +95,8 @@ void _nf_tempsys_set_state(_nf_tempsys_t *_tempsys,
                            _nf_tempsys_state_t new_state);
 void _nf_tempsys_update_temps(_nf_tempsys_t *_tempsys,
                               _nf_max31855_result_t *results);
+void _nf_tempsys_update_avg_temp(_nf_tempsys_t *_tempsys);
+
 void _nf_tempsys_handle_thread_messages(_nf_tempsys_t *_tempsys);
 void _nf_swap_indexes(_nf_tempsys_t *_tempsys);
 void _nf_send_temp_initialized(_nf_tempsys_t *_tempsys);

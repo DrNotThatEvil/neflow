@@ -21,8 +21,12 @@ Added basic profiles (no flash yet but thats gonna go after editing and saving)
 * ~~Add loading the profiles from flash storage.~~ (????-??-??: Done!)
 * Restructure the nf_menu.c functions to reduce the duplicate code.
 * ~~Add 'confirm screen' after the 'Run' menu option to make sure it's not being called on accident (use different button maybe?)~~
-* ~~Temprature system still only supports one temprature probe and currently its a duplicated line to get the temprature which is ugly, both should be fixed.~~
-* Multiple probes should be usable, but don't know if the code is still duplicated/ugly.
+* ~~Temprature system still only supports one temprature probe and currently its a duplicated line to get the temprature which is ugly, both should be fixed.~~ (2024-12-05: Kind of done...)
+* ~~The second sensor temprature can now be sent to the UI thread but it has not been implementend in the PID loop, this should not be hard to do but still needs to be done.~~ (2024-12-10: Done!, BUT STILL UNTESTED need second probe!)
+* ~~Check if other parts of the code still have a hardcoded temprature probe.~~ (2024-12-10: Done!)
+* Test with a second temprature probe, and test second probe port with only one probe to see if sensor selection works well.
+* Add second temprature to display
+* Show current temprature mode on display and avg if using 2 probes.
 * Currently PCB has fan ports but the codebase does not use em, implement these in the future
 * ~~The 'confirm screen' needs some more info before starting it's somewhat barebones.~~
 * The 'graph' has no temprature target lines, also the current temp is not displayed in text maybe implement a text version that gets shown when holding a button?

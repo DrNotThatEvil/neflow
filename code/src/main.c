@@ -53,10 +53,6 @@ void ui_core_entry(void)
     for (;;)
     {
         menu_update(_state->_menu);
-        // _nf_temps_t* temp0_temps = (_nf_temps_t*)
-        // &(_state->_tempsys->_results[0][_state->_tempsys->read_index[0]]);
-
-        // nf_menu_update_cur_temp(_state->_menu, temp0_temps->thermocouple);
 
         uint heater_state = _state->_tempsys->heater_state;
         nf_menu_update_heater_state(_state->_menu, heater_state);

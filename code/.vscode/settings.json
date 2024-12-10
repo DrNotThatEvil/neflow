@@ -27,5 +27,8 @@
     },
     "cmake.configureOnOpen": true,
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "xaver.clang-format"
+    "editor.defaultFormatter": "xaver.clang-format",
+    "editor.rulers": [
+        {"color": "#FF0000", "column": 80}
+    ]
 }

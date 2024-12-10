@@ -17,9 +17,10 @@ void nf_tempsys_init(_nf_tempsys_t *_tempsys, _nf_memory_state_t *_memory)
     _tempsys->_tempmode = UNKNOWN;
     _tempsys->heater_state = 0;
 
-    for (uint i = 0; i < 2; i++)
+    for (uint i = 0; i < TEMPSYS_RESULT_INDEX_MAX; i++)
     {
-        for (uint j = 0; j < 2; j++)
+
+        for (uint j = 0; j < TEMPSYS_RESULT_INDEX_MAX; j++)
         {
             _nf_temps_t empty_temp = {.internal = 0.0,
                                       .thermocouple = 0.0,
@@ -39,11 +40,13 @@ void nf_tempsys_init(_nf_tempsys_t *_tempsys, _nf_memory_state_t *_memory)
     _tempsys->prev_error = 0.f;
     _tempsys->pid_output = 0.f;
 
-    _tempsys->read_index[0] = 0;
-    _tempsys->read_index[1] = 0;
+    _tempsys->read_index[TEMPSYS_RESULT_INDEX_TEMP0] = 0;
+    _tempsys->read_index[TEMPSYS_RESULT_INDEX_TEMP1] = 0;
+    _tempsys->read_index[TEMPSYS_RESULT_INDEX_BOTH] = 0;
 
-    _tempsys->write_index[0] = 1;
-    _tempsys->write_index[1] = 1;
+    _tempsys->write_index[TEMPSYS_RESULT_INDEX_TEMP0] = 1;
+    _tempsys->write_index[TEMPSYS_RESULT_INDEX_TEMP1] = 1;
+    _tempsys->write_index[TEMPSYS_RESULT_INDEX_BOTH] = 1;
 }
 
 void nf_tempsys_update(_nf_tempsys_t *_tempsys)
@@ -175,183 +178,200 @@ void nf_tempsys_update(_nf_tempsys_t *_tempsys)
         }
     }
 
+    _nf_tempsys_update_avg_temp(_tempsys);
     _nf_tempsys_handle_thread_messages(_tempsys);
     _nf_swap_indexes(_tempsys);
     _nf_sanity_check(_tempsys);
     _nf_send_temp_update(_tempsys);
 
     _nf_temps_t *temps;
-    if (_tempsys->_tempmode == USE_TEMP0)
+    uint8_t sensor_index = TEMPSYS_RESULT_INDEX_TEMP0;
+    if (_tempsys->_tempmode == USE_TEMP1)
     {
-        temps =
-            (_nf_temps_t *)&(_tempsys->_results[0][_tempsys->read_index[0]]);
-        if (_tempsys->_prev_state == NORMAL &&
-            _tempsys->_curr_state == CALIBRATION)
-        {
-            // Changed to calibration.
-            _tempsys->integral = 0.f;
-            _tempsys->prev_error = 0.f;
-            _tempsys->pid_output = 0.f;
+        sensor_index = TEMPSYS_RESULT_INDEX_TEMP1;
+    }
+    else if (_tempsys->_tempmode == USE_TEMP1)
+    {
+        sensor_index = TEMPSYS_RESULT_INDEX_BOTH;
+    }
 
-            _tempsys->pid_data[0] =
-                _tempsys->_memory->current_buffer->pid_data[0][0];
-            _tempsys->pid_data[1] =
-                _tempsys->_memory->current_buffer->pid_data[0][1];
-            _tempsys->pid_data[2] =
-                _tempsys->_memory->current_buffer->pid_data[0][2];
-            _tempsys->_prev_state = CALIBRATION;
-            _tempsys->_pid_timeout = make_timeout_time_ms(225);
+    temps = (_nf_temps_t *)&(
+        _tempsys->_results[sensor_index][_tempsys->read_index[sensor_index]]);
+    if (_tempsys->_prev_state == NORMAL && _tempsys->_curr_state == CALIBRATION)
+    {
+        // Changed to calibration.
+        _tempsys->integral = 0.f;
+        _tempsys->prev_error = 0.f;
+        _tempsys->pid_output = 0.f;
+
+        _tempsys->pid_data[0] =
+            _tempsys->_memory->current_buffer->pid_data[0][0];
+        _tempsys->pid_data[1] =
+            _tempsys->_memory->current_buffer->pid_data[0][1];
+        _tempsys->pid_data[2] =
+            _tempsys->_memory->current_buffer->pid_data[0][2];
+        _tempsys->_prev_state = CALIBRATION;
+        _tempsys->_pid_timeout = make_timeout_time_ms(225);
+        return;
+    }
+
+    if (_tempsys->_prev_state == NORMAL && _tempsys->_curr_state == RUNNING)
+    {
+        // Changed to RUNNING.
+        _tempsys->integral = 0.f;
+        _tempsys->prev_error = 0.f;
+        _tempsys->pid_output = 0.f;
+
+        _tempsys->pid_data[0] =
+            _tempsys->_memory->current_buffer->pid_data[1][0];
+        _tempsys->pid_data[1] =
+            _tempsys->_memory->current_buffer->pid_data[1][1];
+        _tempsys->pid_data[2] =
+            _tempsys->_memory->current_buffer->pid_data[1][2];
+        _tempsys->_prev_state = RUNNING;
+        _tempsys->_cur_stage_l_cnt = 0;
+        _tempsys->hit_target = false;
+
+        _tempsys->_pid_timeout = make_timeout_time_ms(200);
+        return;
+    }
+
+    if (_tempsys->_curr_state == CALIBRATION)
+    {
+        // Changed this to 70.f for a bit.
+        if (get_absolute_time() < _tempsys->_pid_timeout)
+        {
             return;
         }
 
-        if (_tempsys->_prev_state == NORMAL && _tempsys->_curr_state == RUNNING)
+        _nf_pid_controller(_tempsys, 100.f);
+        if (_tempsys->pid_output > 72.f + 1.5f)
         {
-            // Changed to RUNNING.
-            _tempsys->integral = 0.f;
-            _tempsys->prev_error = 0.f;
-            _tempsys->pid_output = 0.f;
+            gpio_put(NF_SSR0_PIN, 1);
+            _tempsys->heater_state = 1;
+        }
+        else if (_tempsys->pid_output < 72.f - 1.5f)
+        {
+            gpio_put(NF_SSR0_PIN, 0);
+            _tempsys->heater_state = 0;
+        }
 
-            _tempsys->pid_data[0] =
-                _tempsys->_memory->current_buffer->pid_data[1][0];
-            _tempsys->pid_data[1] =
-                _tempsys->_memory->current_buffer->pid_data[1][1];
-            _tempsys->pid_data[2] =
-                _tempsys->_memory->current_buffer->pid_data[1][2];
-            _tempsys->_prev_state = RUNNING;
-            _tempsys->_cur_stage_l_cnt = 0;
-            _tempsys->hit_target = false;
+        // was 450
+        _tempsys->_pid_timeout = make_timeout_time_ms(200);
+        return;
+    }
 
-            _tempsys->_pid_timeout = make_timeout_time_ms(200);
+    if (_tempsys->_curr_state == RUNNING)
+    {
+        // Changed this to 70.f for a bit.
+        if (get_absolute_time() < _tempsys->_pid_timeout)
+        {
             return;
         }
 
-        if (_tempsys->_curr_state == CALIBRATION)
+        if (_tempsys->_cur_stage_index >= PROFILE_TARGETS_SIZE)
         {
-            // Changed this to 70.f for a bit.
-            if (get_absolute_time() < _tempsys->_pid_timeout)
-            {
-                return;
-            }
-
-            _nf_pid_controller(_tempsys, 100.f);
-            if (_tempsys->pid_output > 72.f + 1.5f)
-            {
-                gpio_put(NF_SSR0_PIN, 1);
-                _tempsys->heater_state = 1;
-            }
-            else if (_tempsys->pid_output < 72.f - 1.5f)
-            {
-                gpio_put(NF_SSR0_PIN, 0);
-                _tempsys->heater_state = 0;
-            }
-
-            // was 450
-            _tempsys->_pid_timeout = make_timeout_time_ms(200);
+            // implement finishing here... should actually already be done.
+            gpio_put(NF_SSR0_PIN, 0);
             return;
         }
 
-        if (_tempsys->_curr_state == RUNNING)
+        float cur_total_target =
+            ((float)_tempsys->_profile->targets[_tempsys->_cur_stage_index][0]);
+
+        if (!_tempsys->hit_target && temps->thermocouple >= cur_total_target)
         {
-            // Changed this to 70.f for a bit.
-            if (get_absolute_time() < _tempsys->_pid_timeout)
+            _tempsys->hit_target = true;
+        }
+
+        _tempsys->_cur_stage_l_cnt++;
+
+        float cur_time =
+            ((float)((float)_tempsys->_cur_stage_l_cnt * 200.f) / 1000.0);
+        uint16_t prev_time = 0;
+        if (_tempsys->_cur_stage_index > 0)
+        {
+            prev_time = _tempsys->_profile
+                            ->targets[(_tempsys->_cur_stage_index - 1)][1];
+        }
+
+        // if next_target > current_unhit => allow
+        // if next_target > current_hit => allow
+        // if next_target < current_unhit => NO
+
+        // minus the previous stage
+        uint16_t cur_target_time =
+            _tempsys->_profile->targets[_tempsys->_cur_stage_index][1] -
+            prev_time;
+        if (cur_time > cur_target_time)
+        {
+            float next_target = cur_total_target;
+            // 0 -> 1 = next
+            // 1 -> 2 = next
+            // 2 -> 3 = next
+            // 3 -> 4 = current
+            if ((_tempsys->_cur_stage_index + 1) < PROFILE_TARGETS_SIZE)
             {
-                return;
+                next_target =
+                    ((float)_tempsys->_profile
+                         ->targets[(_tempsys->_cur_stage_index + 1)][0]);
             }
 
-            if (_tempsys->_cur_stage_index >= PROFILE_TARGETS_SIZE)
+            if ((next_target >= cur_total_target) ||
+                (next_target < cur_total_target && _tempsys->hit_target))
             {
-                // implement finishing here... should actually already be done.
-                gpio_put(NF_SSR0_PIN, 0);
-                return;
-            }
+                _tempsys->_cur_stage_l_cnt = 0;
+                _tempsys->_cur_stage_index++;
+                _tempsys->hit_target = false;
 
-            float cur_total_target =
-                ((float)_tempsys->_profile
-                     ->targets[_tempsys->_cur_stage_index][0]);
-
-            if (!_tempsys->hit_target &&
-                temps->thermocouple >= cur_total_target)
-            {
-                _tempsys->hit_target = true;
-            }
-
-            _tempsys->_cur_stage_l_cnt++;
-
-            float cur_time =
-                ((float)((float)_tempsys->_cur_stage_l_cnt * 200.f) / 1000.0);
-            uint16_t prev_time = 0;
-            if (_tempsys->_cur_stage_index > 0)
-            {
-                prev_time = _tempsys->_profile
-                                ->targets[(_tempsys->_cur_stage_index - 1)][1];
-            }
-
-            // if next_target > current_unhit => allow
-            // if next_target > current_hit => allow
-            // if next_target < current_unhit => NO
-
-            // minus the previous stage
-            uint16_t cur_target_time =
-                _tempsys->_profile->targets[_tempsys->_cur_stage_index][1] -
-                prev_time;
-            if (cur_time > cur_target_time)
-            {
-                float next_target = cur_total_target;
-                // 0 -> 1 = next
-                // 1 -> 2 = next
-                // 2 -> 3 = next
-                // 3 -> 4 = current
-                if ((_tempsys->_cur_stage_index + 1) < PROFILE_TARGETS_SIZE)
+                if (_tempsys->_cur_stage_index >= PROFILE_TARGETS_SIZE &&
+                    _tempsys->_curr_state != FINISHED)
                 {
-                    next_target =
-                        ((float)_tempsys->_profile
-                             ->targets[(_tempsys->_cur_stage_index + 1)][0]);
-                }
+                    gpio_put(NF_SSR0_PIN, 0);
 
-                if ((next_target >= cur_total_target) ||
-                    (next_target < cur_total_target && _tempsys->hit_target))
-                {
-                    _tempsys->_cur_stage_l_cnt = 0;
-                    _tempsys->_cur_stage_index++;
-                    _tempsys->hit_target = false;
-
-                    if (_tempsys->_cur_stage_index >= PROFILE_TARGETS_SIZE &&
-                        _tempsys->_curr_state != FINISHED)
-                    {
-                        gpio_put(NF_SSR0_PIN, 0);
-
-                        _tempsys->_curr_state = FINISHED;
-                        _nf_send_finished(_tempsys);
-                        return;
-                    }
+                    _tempsys->_curr_state = FINISHED;
+                    _nf_send_finished(_tempsys);
+                    return;
                 }
             }
-
-            float cur_target_temp = _nf_calculate_target_temp(_tempsys);
-
-            _nf_pid_controller(_tempsys, cur_target_temp);
-            if (_tempsys->pid_output > 72.f + 1.5f)
-            {
-                gpio_put(NF_SSR0_PIN, 1);
-                _tempsys->heater_state = 1;
-            }
-            else if (_tempsys->pid_output < 72.f - 1.5f)
-            {
-                gpio_put(NF_SSR0_PIN, 0);
-                _tempsys->heater_state = 0;
-            }
-
-            // was 450
-            _tempsys->_pid_timeout = make_timeout_time_ms(200);
-            return;
         }
+
+        float cur_target_temp = _nf_calculate_target_temp(_tempsys);
+
+        _nf_pid_controller(_tempsys, cur_target_temp);
+        if (_tempsys->pid_output > 72.f + 1.5f)
+        {
+            gpio_put(NF_SSR0_PIN, 1);
+            _tempsys->heater_state = 1;
+        }
+        else if (_tempsys->pid_output < 72.f - 1.5f)
+        {
+            gpio_put(NF_SSR0_PIN, 0);
+            _tempsys->heater_state = 0;
+        }
+
+        // was 450
+        _tempsys->_pid_timeout = make_timeout_time_ms(200);
+        return;
     }
 }
 
 float _nf_calculate_target_temp(_nf_tempsys_t *_tempsys)
 {
-    _nf_temps_t *temps =
-        (_nf_temps_t *)&(_tempsys->_results[0][_tempsys->read_index[0]]);
+    // TODO (DrNotThatEvil, 2024-12-10): Clearifiy the other indexes with names
+    uint8_t result_index = TEMPSYS_RESULT_INDEX_TEMP0;
+    if (_tempsys->_tempmode == USE_TEMP1)
+    {
+        result_index = TEMPSYS_RESULT_INDEX_TEMP1;
+    }
+    else if (_tempsys->_tempmode == USE_BOTH)
+    {
+        // Use both sensor avarage
+        result_index = TEMPSYS_RESULT_INDEX_BOTH;
+    }
+
+    _nf_temps_t *temps = (_nf_temps_t *)&(
+        _tempsys->_results[result_index][_tempsys->read_index[result_index]]);
     float prev_target_temp = temps->thermocouple;
     uint16_t prev_target_time = 0;
 
@@ -390,22 +410,95 @@ void nf_tempsys_set_menu_queue(_nf_tempsys_t *_tempsys,
 
 void _nf_sanity_check(_nf_tempsys_t *_tempsys)
 {
-    _nf_temps_t *temps =
-        (_nf_temps_t *)&(_tempsys->_results[0][_tempsys->read_index[0]]);
-    if (_tempsys->_curr_state == RUNNING || _tempsys->_curr_state == FINISHED)
+    // defualt use SENSOR0
+    uint8_t min_sensor = 0;
+    uint8_t max_sensor = 1;
+    if (_tempsys->_tempmode == USE_TEMP1)
     {
-        if (temps->change_thermocouple > RUNNING_ALLOWED_CHANGE_RATE)
+        min_sensor = 1;
+        max_sensor = 2;
+    }
+    else if (_tempsys->_tempmode == USE_BOTH)
+    {
+        max_sensor = 2;
+    }
+
+    for (uint8_t i = min_sensor; i < max_sensor; i++)
+    {
+        _nf_temps_t *temps =
+            (_nf_temps_t *)&(_tempsys->_results[i][_tempsys->read_index[i]]);
+        if (_tempsys->_curr_state == RUNNING ||
+            _tempsys->_curr_state == FINISHED)
+        {
+            if (temps->change_thermocouple > RUNNING_ALLOWED_CHANGE_RATE)
+            {
+                _tempsys->_curr_state = ERROR;
+                _nf_trigger_error(_tempsys,
+                                  TEMPSYS_TEMPRATURE_CHANGERATE_ERROR);
+                return;
+            }
+
+            if (temps->thermocouple > RUNNING_TO_HIGH_TEMP)
+            {
+                _tempsys->_curr_state = ERROR;
+                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_HIGH_ERROR);
+                return;
+            }
+
+            if (temps->thermocouple < NORMAL_TO_LOW_TEMP)
+            {
+                _tempsys->_curr_state = ERROR;
+                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
+            }
+
+            return;
+        }
+
+        if (_tempsys->_curr_state == CALIBRATION)
+        {
+            if (temps->change_thermocouple > CALIBRATION_ALLOWED_CHANGE_RATE)
+            {
+                _tempsys->_curr_state = ERROR;
+                _nf_trigger_error(_tempsys,
+                                  TEMPSYS_TEMPRATURE_CHANGERATE_ERROR);
+                return;
+            }
+
+            if (temps->thermocouple > CALIBRATION_TO_HIGH_TEMP)
+            {
+                _tempsys->_curr_state = ERROR;
+                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_HIGH_ERROR);
+                return;
+            }
+
+            if (temps->thermocouple < NORMAL_TO_LOW_TEMP)
+            {
+                _tempsys->_curr_state = ERROR;
+                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
+            }
+
+            return;
+        }
+
+        // Default to NORMAL values if other states have not captured anything.
+        if (temps->change_thermocouple > NORMAL_ALLOWED_CHANGE_RATE)
         {
             _tempsys->_curr_state = ERROR;
             _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_CHANGERATE_ERROR);
             return;
         }
 
-        if (temps->thermocouple > RUNNING_TO_HIGH_TEMP)
+        if (temps->thermocouple > NORMAL_TO_HIGH_TEMP)
         {
-            _tempsys->_curr_state = ERROR;
-            _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_HIGH_ERROR);
-            return;
+            // This check prevents this trigger if the boot up temp was higher
+            // then the trigger temp but keeps it triggering if the temp keeps
+            // rising
+            if (_tempsys->bootup_temp < NORMAL_TO_HIGH_TEMP ||
+                temps->change_thermocouple > 1.0)
+            {
+                _tempsys->_curr_state = ERROR;
+                _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_HIGH_ERROR);
+            }
         }
 
         if (temps->thermocouple < NORMAL_TO_LOW_TEMP)
@@ -413,59 +506,6 @@ void _nf_sanity_check(_nf_tempsys_t *_tempsys)
             _tempsys->_curr_state = ERROR;
             _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
         }
-
-        return;
-    }
-
-    if (_tempsys->_curr_state == CALIBRATION)
-    {
-        if (temps->change_thermocouple > CALIBRATION_ALLOWED_CHANGE_RATE)
-        {
-            _tempsys->_curr_state = ERROR;
-            _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_CHANGERATE_ERROR);
-            return;
-        }
-
-        if (temps->thermocouple > CALIBRATION_TO_HIGH_TEMP)
-        {
-            _tempsys->_curr_state = ERROR;
-            _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_HIGH_ERROR);
-            return;
-        }
-
-        if (temps->thermocouple < NORMAL_TO_LOW_TEMP)
-        {
-            _tempsys->_curr_state = ERROR;
-            _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
-        }
-
-        return;
-    }
-
-    // Default to NORMAL values if other states have not captured anything.
-    if (temps->change_thermocouple > NORMAL_ALLOWED_CHANGE_RATE)
-    {
-        _tempsys->_curr_state = ERROR;
-        _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_CHANGERATE_ERROR);
-        return;
-    }
-
-    if (temps->thermocouple > NORMAL_TO_HIGH_TEMP)
-    {
-        // This check prevents this trigger if the boot up temp was higher then
-        // the trigger temp but keeps it triggering if the temp keeps rising
-        if (_tempsys->bootup_temp < NORMAL_TO_HIGH_TEMP ||
-            temps->change_thermocouple > 1.0)
-        {
-            _tempsys->_curr_state = ERROR;
-            _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_HIGH_ERROR);
-        }
-    }
-
-    if (temps->thermocouple < NORMAL_TO_LOW_TEMP)
-    {
-        _tempsys->_curr_state = ERROR;
-        _nf_trigger_error(_tempsys, TEMPSYS_TEMPRATURE_TO_LOW_ERROR);
     }
 }
 
@@ -498,10 +538,19 @@ void _nf_tempsys_set_state(_nf_tempsys_t *_tempsys,
 
 void _nf_pid_controller(_nf_tempsys_t *_tempsys, float setpoint)
 {
-    _nf_temps_t *temps =
-        (_nf_temps_t *)&(_tempsys->_results[0][_tempsys->read_index[0]]);
-    float error = setpoint - temps->thermocouple;
+    uint8_t sensor_index = TEMPSYS_RESULT_INDEX_TEMP0;
+    if (_tempsys->_tempmode == USE_TEMP1)
+    {
+        sensor_index = TEMPSYS_RESULT_INDEX_TEMP1;
+    }
+    else if (_tempsys->_tempmode == USE_BOTH)
+    {
+        sensor_index = TEMPSYS_RESULT_INDEX_BOTH;
+    }
 
+    _nf_temps_t *temps = (_nf_temps_t *)&(
+        _tempsys->_results[sensor_index][_tempsys->read_index[sensor_index]]);
+    float error = setpoint - temps->thermocouple;
     float P = _tempsys->pid_data[0] * error;
 
     _tempsys->integral += _tempsys->pid_data[1] * error;
@@ -518,6 +567,49 @@ void _nf_pid_controller(_nf_tempsys_t *_tempsys, float setpoint)
     _tempsys->pid_output = P + _tempsys->integral + D;
 
     _tempsys->prev_error = error;
+}
+
+void _nf_tempsys_update_avg_temp(_nf_tempsys_t *_tempsys)
+{
+    if (_tempsys->_tempmode != USE_BOTH)
+    {
+        // Can't calcuate avarages if one is not used, kind of obvious.
+        return;
+    }
+
+    _nf_temps_t *avg_temp = (_nf_temps_t *)&(
+        _tempsys->_results[TEMPSYS_RESULT_INDEX_BOTH]
+                          [_tempsys->write_index[TEMPSYS_RESULT_INDEX_BOTH]]);
+
+    // Reset current.
+    avg_temp->thermocouple = 0.0;
+    avg_temp->internal = 0.0;
+    avg_temp->change_internal = 0.0;
+    avg_temp->change_thermocouple = 0.0;
+    avg_temp->bad_reading_count = 0;
+
+    for (uint8_t i = 0; i < (TEMPSYS_RESULT_INDEX_MAX - 1); i++)
+    {
+        _nf_temps_t *temps =
+            (_nf_temps_t *)&(_tempsys->_results[i][_tempsys->write_index[i]]);
+
+        avg_temp->internal += temps->internal;
+        avg_temp->thermocouple += temps->thermocouple;
+    }
+
+    avg_temp->internal /= 2.0;
+    avg_temp->thermocouple /= 2.0;
+
+    if (_tempsys->_curr_state != PRE_INIT)
+    {
+        _nf_temps_t *prev_avg = (_nf_temps_t *)&(
+            _tempsys
+                ->_results[TEMPSYS_RESULT_INDEX_BOTH]
+                          [_tempsys->read_index[TEMPSYS_RESULT_INDEX_BOTH]]);
+        avg_temp->change_internal = (avg_temp->internal - prev_avg->internal);
+        avg_temp->change_thermocouple =
+            (avg_temp->thermocouple - prev_avg->thermocouple);
+    }
 }
 
 void _nf_tempsys_update_temps(_nf_tempsys_t *_tempsys,
@@ -620,13 +712,14 @@ void _nf_tempsys_handle_thread_messages(_nf_tempsys_t *_tempsys)
 
 void _nf_swap_indexes(_nf_tempsys_t *_tempsys)
 {
-    uint tmp_windex_0 = _tempsys->write_index[0];
-    uint tmp_windex_1 = _tempsys->write_index[1];
-    _tempsys->write_index[0] = _tempsys->read_index[0];
-    _tempsys->write_index[1] = _tempsys->read_index[1];
-
-    _tempsys->read_index[0] = tmp_windex_0;
-    _tempsys->read_index[1] = tmp_windex_1;
+    // TODO (DrNotThatEvil, 2024-12-10): This technically wastes time copying
+    // sensors that might not be used. Not that big of a oof but still an oof?
+    for (uint8_t i = 0; i < TEMPSYS_RESULT_INDEX_MAX; i++)
+    {
+        uint tmp_windex = _tempsys->write_index[i];
+        _tempsys->write_index[i] = _tempsys->read_index[i];
+        _tempsys->read_index[i] = tmp_windex;
+    }
 }
 
 void _nf_send_temp_initialized(_nf_tempsys_t *_tempsys)
@@ -653,20 +746,24 @@ void _nf_send_temp_update(_nf_tempsys_t *_tempsys)
     if (_tempsys->_tempmode == USE_TEMP0)
     {
         SET_TEMPSYS_TEMP0_READABLE(flags);
-        SET_TEMPSYS_TEMP0_READABLE_INDEX(flags, _tempsys->read_index[0]);
+        SET_TEMPSYS_TEMP0_READABLE_INDEX(
+            flags, _tempsys->read_index[TEMPSYS_RESULT_INDEX_TEMP0]);
     }
     else if (_tempsys->_tempmode == USE_TEMP1)
     {
         SET_TEMPSYS_TEMP1_READABLE(flags);
-        SET_TEMPSYS_TEMP1_READABLE_INDEX(flags, _tempsys->read_index[1]);
+        SET_TEMPSYS_TEMP1_READABLE_INDEX(
+            flags, _tempsys->read_index[TEMPSYS_RESULT_INDEX_TEMP1]);
     }
     else if (_tempsys->_tempmode == USE_BOTH)
     {
         SET_TEMPSYS_TEMP0_READABLE(flags);
         SET_TEMPSYS_TEMP1_READABLE(flags);
 
-        SET_TEMPSYS_TEMP0_READABLE_INDEX(flags, _tempsys->read_index[0]);
-        SET_TEMPSYS_TEMP1_READABLE_INDEX(flags, _tempsys->read_index[1]);
+        SET_TEMPSYS_TEMP0_READABLE_INDEX(
+            flags, _tempsys->read_index[TEMPSYS_RESULT_INDEX_TEMP0]);
+        SET_TEMPSYS_TEMP1_READABLE_INDEX(
+            flags, _tempsys->read_index[TEMPSYS_RESULT_INDEX_TEMP1]);
     }
 
     _nf_thread_msg temp_update_msg = {
