@@ -16,6 +16,16 @@ but it's fun getting to play with the breadboard and designing the pcb along sid
 Added the basic menu system, please see drawio diagrams for flow.
 Added basic profiles (no flash yet but thats gonna go after editing and saving)
 
+# 2024-12-10: Reworked the tempsys and added formating.
+Reworked the tempsys, reworked and refactored a lot of code (this branch was main branch for way to long)
+Added a .clang-format file to just stick to a format it's not perfect but i will get used to it i guess.
+On the note of refacoring, i know it's not the most 'clean'? but i'm happy with the stucture rework
+there is still some work to do on readability but it's this can be done more piece meal i think.
+
+Also if some folks read this due to showing this thing off at the tinker-dag, HI!
+Don't judge to harshly and if you do then I would love to know how you get the time to do
+super clean hobby projects xD only joking would love any feedback!
+
 # TODO:
 * ~~Add the editing flow for the profile~~ (2023-10-30: DONE!)
 * ~~Add loading the profiles from flash storage.~~ (????-??-??: Done!)
