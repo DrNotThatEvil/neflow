@@ -3,4 +3,7 @@
   (lib (name "SSD1306-128x64_OLED")(type "Legacy")(uri "${KIPRJMOD}/ssd1306/SSD1306-128x64_OLED.lib")(options "")(descr ""))
   (lib (name "1333870")(type "KiCad")(uri "${KICAD_UNSHARE_SYMBOL_DIR}/1333870.kicad_sym")(options "")(descr ""))
   (lib (name "MCU_RaspberryPi_and_Boards")(type "KiCad")(uri "${KIPRJMOD}/KiCad-RP-Pico/RP-Pico Libraries/MCU_RaspberryPi_and_Boards.kicad_sym")(options "")(descr ""))
+  (lib (name "custom_power")(type "KiCad")(uri "${KIPRJMOD}/custom_power.kicad_sym")(options "")(descr ""))
+  (lib (name "RP2350_KiCad")(type "KiCad")(uri "${KIPRJMOD}/RP2350_KiCad/rp2350a-qfn60.kicad_sym")(options "")(descr ""))
+  (lib (name "custom_memory")(type "KiCad")(uri "${KIPRJMOD}/custom_memory.kicad_sym")(options "")(descr ""))
 )

@@ -4,3 +4,6 @@
 [submodule "code/libs/RP2040-PWM-Tone"]
 	path = code/libs/RP2040-PWM-Tone
 	url = git@github.com:DrNotThatEvil/RP2040-PWM-Tone.git
+[submodule "pcb/RP2350_KiCad"]
+	path = pcb/RP2350_KiCad
+	url = git@github.com:HDR/RP2350_KiCad.git

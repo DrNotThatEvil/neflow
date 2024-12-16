@@ -432,7 +432,7 @@
       "no_connect_dangling": "warning",
       "pin_not_connected": "error",
       "pin_not_driven": "error",
-      "pin_to_pin": "warning",
+      "pin_to_pin": "error",
       "power_pin_not_driven": "error",
       "similar_labels": "warning",
       "simulation_model_issue": "ignore",
@@ -638,6 +638,30 @@
     [
       "2b8c4445-9677-4853-aeb5-49b62fb896ea",
       "Root"
+    ],
+    [
+      "d803088c-ec64-4cbe-a985-c6e7acd6de8a",
+      "power_supply"
+    ],
+    [
+      "fe2e7696-5d3f-4547-b925-f94ef90db5a8",
+      "RP2350 Core"
+    ],
+    [
+      "23cb6363-d53b-42c8-a861-a60db396cb59",
+      "Flash PSRAM"
+    ],
+    [
+      "455345cb-ca8c-46e2-bc3b-81b9d621effa",
+      "Temprature Control"
+    ],
+    [
+      "1088176a-818a-4398-9e87-4bf0b497b203",
+      "Input Output"
+    ],
+    [
+      "084cd19d-17be-4fda-88f1-81a5fe2cb8cc",
+      "SD Card"
     ]
   ],
   "text_variables": {}
