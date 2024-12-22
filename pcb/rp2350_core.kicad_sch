@@ -2795,6 +2795,15 @@
 		(uuid "05d03aaf-d24e-4297-b17a-f2278f7c22ef")
 	)
 	(bus_entry
+		(at 190.5 64.77)
+		(size -2.54 2.54)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "080b8441-ed02-40af-b5e9-d6bf9285fe30")
+	)
+	(bus_entry
 		(at 73.66 86.36)
 		(size 2.54 -2.54)
 		(stroke
@@ -2982,6 +2991,15 @@
 			(type default)
 		)
 		(uuid "945262ea-5f89-4131-a44e-64604d177f36")
+	)
+	(bus_entry
+		(at 190.5 62.23)
+		(size -2.54 2.54)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9a1eb4ba-85d7-4275-b4e8-dde6d0792bf6")
 	)
 	(bus_entry
 		(at 73.66 92.71)
@@ -3609,6 +3627,16 @@
 	)
 	(wire
 		(pts
+			(xy 152.4 148.59) (xy 154.94 148.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4746d7b3-48e9-413b-b62f-997c3bb5c8f8")
+	)
+	(wire
+		(pts
 			(xy 152.4 85.09) (xy 154.94 85.09)
 		)
 		(stroke
@@ -3709,7 +3737,7 @@
 	)
 	(wire
 		(pts
-			(xy 175.26 59.69) (xy 187.96 59.69)
+			(xy 171.45 59.69) (xy 187.96 59.69)
 		)
 		(stroke
 			(width 0)
@@ -4079,6 +4107,16 @@
 	)
 	(wire
 		(pts
+			(xy 170.18 67.31) (xy 187.96 67.31)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7bbe7069-b3b7-4a55-8f19-33543d39dea9")
+	)
+	(wire
+		(pts
 			(xy 152.4 74.93) (xy 154.94 74.93)
 		)
 		(stroke
@@ -4276,6 +4314,16 @@
 			(type default)
 		)
 		(uuid "8bd86340-3412-4b57-904e-7448d705a44d")
+	)
+	(wire
+		(pts
+			(xy 171.45 64.77) (xy 187.96 64.77)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8e4f5269-7677-47b2-ab39-7dfead67829e")
 	)
 	(bus
 		(pts
@@ -4497,16 +4545,6 @@
 		)
 		(uuid "a31d3e71-e016-4f2e-a10c-fca322ffaad7")
 	)
-	(wire
-		(pts
-			(xy 152.4 107.95) (xy 154.94 107.95)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a3ea5a1b-44e1-4a05-9f16-9da9c53e2957")
-	)
 	(bus
 		(pts
 			(xy 189.23 102.87) (xy 189.23 105.41)
@@ -4636,16 +4674,6 @@
 			(type default)
 		)
 		(uuid "b2b608bd-c534-4777-891b-553cc11eec17")
-	)
-	(wire
-		(pts
-			(xy 152.4 105.41) (xy 154.94 105.41)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b2f03938-80eb-4328-8c88-5256a93c1108")
 	)
 	(wire
 		(pts
@@ -4926,6 +4954,16 @@
 			(type default)
 		)
 		(uuid "d90f6949-0460-4be3-a4bd-49f94a7e2402")
+	)
+	(wire
+		(pts
+			(xy 152.4 143.51) (xy 154.94 143.51)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d94fbcf0-a8a0-41c2-a460-0c73fedd595e")
 	)
 	(wire
 		(pts
@@ -5239,7 +5277,7 @@
 	)
 	(wire
 		(pts
-			(xy 175.26 62.23) (xy 187.96 62.23)
+			(xy 170.18 62.23) (xy 187.96 62.23)
 		)
 		(stroke
 			(width 0)
@@ -5299,6 +5337,17 @@
 		)
 		(uuid "062d8357-2e80-4434-a849-77758c041dae")
 	)
+	(label "MAX_SPI.SCK"
+		(at 154.94 143.51 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "0707c8c8-966d-47f2-97ef-24ed20abc75c")
+	)
 	(label "BTN.1"
 		(at 154.94 95.25 0)
 		(fields_autoplaced yes)
@@ -5310,19 +5359,8 @@
 		)
 		(uuid "0dbd8327-8236-4523-82df-ec2a861dc4a1")
 	)
-	(label "MAX_SPI.SCK"
-		(at 154.94 107.95 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "16d289c1-050a-4c42-813d-e96a08e585fa")
-	)
-	(label "MAX_SPI.RX"
-		(at 175.26 59.69 0)
+	(label "MAX_SPI.RX0"
+		(at 171.45 59.69 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -5409,8 +5447,8 @@
 		)
 		(uuid "34edbb0e-0eca-45a9-a0e1-9d6475885d95")
 	)
-	(label "MAX_SPI.SCK"
-		(at 175.26 62.23 0)
+	(label "MAX_SPI.SCK1"
+		(at 170.18 62.23 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -5452,6 +5490,17 @@
 			(justify left bottom)
 		)
 		(uuid "485511a4-8cdf-4c27-bfa9-7014cc78f838")
+	)
+	(label "MAX_SPI.RX"
+		(at 154.94 148.59 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "4f0388bc-82f5-46ec-959a-906bca15fd4c")
 	)
 	(label "SCREEN.SCL"
 		(at 175.26 93.98 0)
@@ -5519,6 +5568,17 @@
 		)
 		(uuid "6d0d08b9-bdbf-486b-a04d-d9abb0d17600")
 	)
+	(label "MAX_SPI.SCK[0..1]"
+		(at 170.18 67.31 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "6f824114-a39b-4172-b422-b5cdc49cb917")
+	)
 	(label "SDIO.CLK"
 		(at 184.15 100.33 180)
 		(fields_autoplaced yes)
@@ -5529,6 +5589,17 @@
 			(justify right bottom)
 		)
 		(uuid "70374117-2df6-460a-a5a4-8451681c8096")
+	)
+	(label "MAX_SPI.RX[0..1]"
+		(at 171.45 64.77 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "724ef659-6a6d-4c81-a364-9517a196e696")
 	)
 	(label "DEBUG.SWCLK"
 		(at 33.02 147.32 0)
@@ -5552,7 +5623,7 @@
 		)
 		(uuid "74717992-0cec-473a-a974-b076ed65d4aa")
 	)
-	(label "PI_TEMP_~{CS}.1"
+	(label "MAX_SPI_~{CS}1"
 		(at 196.85 67.31 0)
 		(fields_autoplaced yes)
 		(effects
@@ -5739,17 +5810,6 @@
 		)
 		(uuid "af6f1fcd-e647-4503-a0dc-ae83c5f3c0f1")
 	)
-	(label "MAX_SPI.RX"
-		(at 154.94 105.41 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "b09b3672-9c09-46b5-a8d1-784e21eef2e4")
-	)
 	(label "FAN.1"
 		(at 186.69 49.53 180)
 		(fields_autoplaced yes)
@@ -5860,7 +5920,7 @@
 		)
 		(uuid "d10b8f3e-d1c7-4035-8da5-10c7d11217f1")
 	)
-	(label "PI_TEMP_~{CS}.0"
+	(label "MAX_SPI.~{CS}0"
 		(at 196.85 64.77 0)
 		(fields_autoplaced yes)
 		(effects
@@ -5948,30 +6008,6 @@
 		)
 		(uuid "f7f6e750-6e2f-4677-8b1d-58c35b106cba")
 	)
-	(hierarchical_label "BTN{0..2} SCREEN{SDA SCL} SPK"
-		(shape bidirectional)
-		(at 193.04 73.66 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "29398d20-18ea-4a45-945e-7d078dd46e4d")
-	)
-	(hierarchical_label "MAX_SPI{SCK RX} PI_TEMP_~{CS}[0..1] SSR[0..1] FAN[0..1]"
-		(shape bidirectional)
-		(at 193.04 45.72 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "7f357987-9773-4316-91cc-e6c241e0a075")
-	)
 	(hierarchical_label "~{RESET}"
 		(shape input)
 		(at 86.36 120.65 180)
@@ -5983,30 +6019,6 @@
 			(justify right)
 		)
 		(uuid "87947bd4-0e44-4983-91a6-42624717fcd7")
-	)
-	(hierarchical_label "SDIO{SMD CLK D[0..3]} ~{SD_DET}"
-		(shape bidirectional)
-		(at 191.77 96.52 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "f293acf8-2f84-40d1-aa03-db846758e43c")
-	)
-	(hierarchical_label "QSPI{SD[0..3] SCLK CSN[0..1]}"
-		(shape bidirectional)
-		(at 71.12 107.95 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "f7ae9672-60be-4e1d-8329-cb65c9e22a4d")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -6977,7 +6989,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_SMD:LED_0805_2012Metric"
 			(at 25.4 58.42 90)
 			(effects
 				(font
@@ -7110,7 +7122,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_JST:JST_XH_B3B-XH-AM_1x03_P2.50mm_Vertical"
 			(at 26.67 149.86 0)
 			(effects
 				(font
@@ -9425,6 +9437,16 @@
 				(justify left top)
 			)
 		)
+		(pin "SDIO{SMD CLK D[0..3]} ~{SD_DET}" input
+			(at 191.77 96.52 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "e20bbffe-ce21-4414-a5e9-05955dd23b9b")
+		)
 		(instances
 			(project "neflow"
 				(path "/2b8c4445-9677-4853-aeb5-49b62fb896ea/fe2e7696-5d3f-4547-b925-f94ef90db5a8"
@@ -9463,6 +9485,16 @@
 				(justify left top)
 			)
 		)
+		(pin "BTN{0..2} SCREEN{SDA SCL} SPK" bidirectional
+			(at 193.04 73.66 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "a3549afc-5cce-4ab4-aecc-e7a9d3c6cb0a")
+		)
 		(instances
 			(project "neflow"
 				(path "/2b8c4445-9677-4853-aeb5-49b62fb896ea/fe2e7696-5d3f-4547-b925-f94ef90db5a8"
@@ -9500,6 +9532,16 @@
 				)
 				(justify left top)
 			)
+		)
+		(pin "QSPI{SD[0..3] SCLK CSN[0..1]}" bidirectional
+			(at 71.12 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "075d8c26-5fe5-48e7-a4f3-9f519ee9a740")
 		)
 		(instances
 			(project "neflow"
@@ -9547,6 +9589,16 @@
 				)
 				(hide yes)
 			)
+		)
+		(pin "MAX_SPI{SCK[0..1] RX[0..1] ~{CS}[0..1]} SSR[0..1] FAN[0..1]" bidirectional
+			(at 193.04 45.72 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "f447a060-8d6a-40f0-9930-1cd172be90d6")
 		)
 		(instances
 			(project "neflow"

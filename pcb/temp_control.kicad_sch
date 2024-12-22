@@ -3029,17 +3029,6 @@
 		)
 		(uuid "fdead7de-c962-4b46-9ad1-41135b5cffa8")
 	)
-	(label "PI_TEMP_~{CS}.1"
-		(at 213.36 86.36 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "024fd29e-4393-449f-ac76-653520a80311")
-	)
 	(label "FAN.0"
 		(at 107.95 151.13 0)
 		(fields_autoplaced yes)
@@ -3106,17 +3095,6 @@
 		)
 		(uuid "23647c10-09eb-4931-9cd9-9968cc6b302c")
 	)
-	(label "PI_TEMP_~{CS}.0"
-		(at 124.46 85.09 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "2d7514c4-0036-4e7f-a11b-5bf6ddb270c9")
-	)
 	(label "MAX_SPI.RX"
 		(at 213.36 81.28 0)
 		(fields_autoplaced yes)
@@ -3139,17 +3117,6 @@
 		)
 		(uuid "4931b4a9-5783-4f52-b402-c2a15154be0f")
 	)
-	(label "MAX_SPI.SCK"
-		(at 124.46 77.47 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "4b17c2a0-d6bf-4ea0-8be6-74ea9bee2e6f")
-	)
 	(label "MAX_SPI.RX"
 		(at 21.59 52.07 0)
 		(fields_autoplaced yes)
@@ -3171,6 +3138,17 @@
 			(justify left bottom)
 		)
 		(uuid "5b02a4f6-655f-4f0d-b4e6-d4a249e16635")
+	)
+	(label "MAX_SPI.~{CS}0"
+		(at 124.46 85.09 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5b87f8cd-ee6b-462e-909b-5e56185e363d")
 	)
 	(label "T1+"
 		(at 158.75 80.01 0)
@@ -3205,7 +3183,7 @@
 		)
 		(uuid "6bee3ba9-e42e-450b-85de-0687c165787a")
 	)
-	(label "PI_TEMP_~{CS}.0"
+	(label "MAX_SPI.~{CS}0"
 		(at 24.13 45.72 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3238,6 +3216,17 @@
 		)
 		(uuid "7e4606b3-8afb-4294-b883-20e4b5d01eed")
 	)
+	(label "MAX_SPI.~{CS}1"
+		(at 213.36 86.36 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "8323d73a-65f1-4d8f-b9a2-8daf42c750e3")
+	)
 	(label "T0-"
 		(at 71.12 83.82 0)
 		(fields_autoplaced yes)
@@ -3260,7 +3249,18 @@
 		)
 		(uuid "944b8fc0-d9af-4399-b5d1-a3148d9250a3")
 	)
-	(label "PI_TEMP_~{CS}.1"
+	(label "MAX_SPI.SCK"
+		(at 124.46 77.47 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "ae7a09a2-58c5-40c4-baa7-b174c73081c9")
+	)
+	(label "MAX_SPI.~{CS}1"
 		(at 24.13 27.94 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3315,7 +3315,7 @@
 		)
 		(uuid "f08c16ca-260b-4541-95ad-174f6d844c00")
 	)
-	(hierarchical_label "MAX_SPI{SCK RX} PI_TEMP_~{CS}[0..1] SSR[0..1] FAN[0..1]"
+	(hierarchical_label "MAX_SPI{SCK RX ~{CS}[0..1]} SSR[0..1] FAN[0..1]"
 		(shape bidirectional)
 		(at 19.05 66.04 0)
 		(fields_autoplaced yes)

@@ -2778,6 +2778,16 @@
 		)
 		(uuid "fda89675-9db7-4991-8693-c16b91df6f84")
 	)
+	(text "Decoupling cap needed?\n"
+		(exclude_from_sim no)
+		(at 169.926 47.498 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "44c08f86-e9ec-4811-9f9f-89370daddad9")
+	)
 	(label "AC{slash}N"
 		(at 96.52 77.47 0)
 		(fields_autoplaced yes)
@@ -3114,7 +3124,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Converter_ACDC:Converter_ACDC_HiLink_HLK-PMxx"
+		(property "Footprint" "ACDCLibrary:Converter_ACDC_HiLink_HLK-PMxx"
 			(at 116.84 74.93 0)
 			(effects
 				(font
